@@ -1,0 +1,6 @@
+{ 
+	weapons : ["gun", "knife"], 
+	people  : ["joe", "bob"],
+	rooms   : ["study", "kitchen"]
+	
+}
