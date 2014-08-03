@@ -1,4 +1,4 @@
-package cluedo.cards;
+package cluedo.game.cards;
 
 public class WeaponCard extends Card {
 

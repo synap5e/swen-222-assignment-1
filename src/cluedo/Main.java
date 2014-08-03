@@ -1,7 +1,7 @@
-package main;
+package cluedo;
 
-import game.Board;
-import gui.CluedoFrame;
+import cluedo.game.board.Board;
+import cluedo.gui.CluedoFrame;
 
 public class Main {
 

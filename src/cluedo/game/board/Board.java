@@ -1,11 +1,11 @@
-package game;
-
-import game.Location.Direction;
+package cluedo.game.board;
 
 import java.awt.Point;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
+
+import cluedo.game.board.Location.Direction;
 
 public class Board {
 	private Set<Room> rooms;

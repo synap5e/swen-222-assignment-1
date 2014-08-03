@@ -1,4 +1,4 @@
-package cluedo.cards;
+package cluedo.game.cards;
 
 import java.util.ArrayList;
 import java.util.List;

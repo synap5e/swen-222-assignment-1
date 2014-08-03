@@ -1,4 +1,4 @@
-package cluedo.cards;
+package cluedo.game.cards;
 
 public abstract class Card {
 	

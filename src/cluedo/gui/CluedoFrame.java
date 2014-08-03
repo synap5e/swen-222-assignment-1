@@ -1,12 +1,12 @@
-package gui;
+package cluedo.gui;
 
 import java.awt.Dimension;
-
-import game.Board;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+
+import cluedo.game.board.Board;
 
 public class CluedoFrame extends JFrame {
 	

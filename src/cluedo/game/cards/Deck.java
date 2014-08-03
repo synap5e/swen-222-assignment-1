@@ -1,4 +1,4 @@
-package cluedo.cards;
+package cluedo.game.cards;
 
 import java.io.File;
 import java.io.FileInputStream;

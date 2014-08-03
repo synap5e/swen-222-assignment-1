@@ -1,10 +1,4 @@
-package gui;
-
-import game.Board;
-import game.Location;
-import game.Location.Direction;
-import game.Room;
-import game.Tile;
+package cluedo.gui;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -22,6 +16,12 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 
 import javax.swing.JPanel;
+
+import cluedo.game.board.Board;
+import cluedo.game.board.Location;
+import cluedo.game.board.Room;
+import cluedo.game.board.Tile;
+import cluedo.game.board.Location.Direction;
 
 public class Canvas extends JPanel {
 	
