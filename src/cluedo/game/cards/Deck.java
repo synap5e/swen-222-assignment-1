@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-
-import sun.org.mozilla.javascript.json.JsonParser;
 import cluedo.util.json.JsonEntity;
 import cluedo.util.json.JsonList;
 import cluedo.util.json.JsonObject;
