@@ -1,4 +1,4 @@
-package cluedo.game.board;
+package cluedo.game;
 
 public class Player {
 
