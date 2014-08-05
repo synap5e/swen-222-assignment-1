@@ -2,12 +2,9 @@ package cluedo.gui;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
@@ -16,9 +13,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-
 import javax.swing.JPanel;
-
 import cluedo.game.board.Board;
 import cluedo.game.board.Location;
 import cluedo.game.board.Room;
@@ -41,9 +36,12 @@ public class Canvas extends JPanel implements MouseListener{
 	private int xOffset;
 	private int yOffset;
 	
+	private Location selected;
+	
 	public Canvas(Board board){
 		this.board = board;
 		setBackground(BACKGROUND);
+		addMouseListener(this);
 		
 		addComponentListener(new ComponentListener() {
 			
@@ -78,6 +76,7 @@ public class Canvas extends JPanel implements MouseListener{
 		
 		for(Tile tile : board.getTiles()){
 			g2d.setColor(TILE);
+			if (tile == selected) g2d.setColor(Color.ORANGE);
 			
 			//Apply offset, scaling and translation for the tile
 			applyTransform(tile.getX(), tile.getY(), tileWidth, g2d);
@@ -100,6 +99,7 @@ public class Canvas extends JPanel implements MouseListener{
 		g2d.setStroke(new BasicStroke(WALL_THICKNESS));
 		for(Room room : board.getRooms()){
 			g2d.setColor(ROOM);
+			if (room == selected) g2d.setColor(Color.ORANGE);
 			
 			//Apply offset, scaling and translation for the room
 			applyTransform(room.getX(), room.getY(), tileWidth, g2d);
@@ -192,6 +192,24 @@ public class Canvas extends JPanel implements MouseListener{
 
 	@Override
 	public void mousePressed(MouseEvent arg0) {
+		double x = ((double) (arg0.getX()-xOffset))/tileWidth;
+		double y = ((double) (arg0.getY()-yOffset))/tileWidth;
+		for (Room room : board.getRooms()){
+			double relX = x - room.getX();
+			double relY = y - room.getY();
+			if (room.getShape().contains(relX, relY)){
+				selected = room;
+				repaint();
+				return;
+			}
+		}
+		
+		Location loc = board.getLocation((int) x,(int) y);
+		if (loc != null){
+			selected = loc;
+			repaint();
+			return;
+		}
 	}
 
 	@Override

@@ -60,7 +60,7 @@ public class Board {
 		board = new Location[24][25];
 		
 		rooms.add(kitchen);
-		board[0][0] = kitchen; //to neighbour the study
+		board[0][1] = kitchen; //to neighbour the study
 		board[4][6] = kitchen;
 		
 		rooms.add(ballroom);
@@ -70,7 +70,7 @@ public class Board {
 		board[15][5] = ballroom;
 		
 		rooms.add(conservatory);
-		board[0][2] = conservatory; //to neighbour the lounge
+		board[0][3] = conservatory; //to neighbour the lounge
 		board[1][4] = conservatory; 
 
 		rooms.add(billiard);
@@ -83,7 +83,7 @@ public class Board {
 		
 		rooms.add(study);
 		board[23][24] = study;
-		board[1][0] = study; //to neighbour the kitchen
+		board[1][1] = study; //to neighbour the kitchen
 		
 		rooms.add(hall);
 		board[14][20] = hall;
@@ -91,7 +91,7 @@ public class Board {
 		board[10][22] = hall;
 		
 		rooms.add(lounge);
-		board[1][2] = lounge; //to neighbour the conservatory
+		board[1][3] = lounge; //to neighbour the conservatory
 		board[0][24] = lounge;
 		
 		rooms.add(dining);
@@ -130,6 +130,11 @@ public class Board {
 				}
 			}
 		}
+	}
+	
+	public Location getLocation(int x, int y){
+		if (x < 0 || x >= 24 || y < 0 || y >= 25) return null;
+		return board[x][y];
 	}
 	
 	public Set<Room> getRooms(){
