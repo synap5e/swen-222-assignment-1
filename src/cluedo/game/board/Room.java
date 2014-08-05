@@ -1,9 +1,11 @@
 package cluedo.game.board;
 
 import java.awt.Point;
+import java.util.List;
 
 public class Room  extends Location{
 	private String name;
+	private List<Token> tokens;
 	
 	public Room(String name, int x, int y, Point... pts){
 		super(x, y, true, pts);
