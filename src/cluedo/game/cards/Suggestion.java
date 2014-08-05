@@ -1,4 +1,4 @@
-package cluedo.game.board.player;
+package cluedo.game.cards;
 
 import cluedo.game.board.CharacterToken;
 import cluedo.game.board.WeaponToken;

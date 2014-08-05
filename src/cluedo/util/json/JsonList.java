@@ -2,7 +2,11 @@ package cluedo.util.json;
 
 import java.util.Iterator;
 import java.util.List;
-
+/**
+ * 
+ * @author Simon Pinfold
+ *
+ */
 public class JsonList implements JsonEntity, Iterable<JsonEntity>{
 
 	private List<JsonEntity> elems;

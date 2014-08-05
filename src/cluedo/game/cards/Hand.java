@@ -2,7 +2,11 @@ package cluedo.game.cards;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * 
+ * @author Simon Pinfold
+ *
+ */
 public class Hand {
 
 	private List<Card> cards;

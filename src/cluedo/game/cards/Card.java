@@ -1,5 +1,9 @@
 package cluedo.game.cards;
-
+/**
+ * 
+ * @author Simon Pinfold
+ *
+ */
 public abstract class Card {
 	
 	protected String name;

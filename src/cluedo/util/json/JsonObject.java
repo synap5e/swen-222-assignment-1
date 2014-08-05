@@ -1,7 +1,11 @@
 package cluedo.util.json;
 
 import java.util.Map;
-
+/**
+ * 
+ * @author Simon Pinfold
+ *
+ */
 public class JsonObject implements JsonEntity {
 
 	private Map<String, JsonEntity> elems;

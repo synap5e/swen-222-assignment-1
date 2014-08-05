@@ -1,5 +1,9 @@
 package cluedo.util.json;
-
+/**
+ * 
+ * @author Simon Pinfold
+ *
+ */
 public class JsonNumber implements JsonEntity {
 
 	private double value;

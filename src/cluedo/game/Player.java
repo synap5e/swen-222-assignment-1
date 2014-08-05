@@ -1,29 +1,40 @@
 package cluedo.game;
 
-import cluedo.game.board.CharacterToken;
-import cluedo.game.board.player.BoardPlayer;
+import java.util.List;
+
+import cluedo.game.board.Location;
+import cluedo.game.cards.Accusation;
 import cluedo.game.cards.Card;
-import cluedo.game.cards.CardPlayer;
 import cluedo.game.cards.CharacterCard;
 import cluedo.game.cards.Hand;
-
-public abstract class Player implements CardPlayer, BoardPlayer{
+import cluedo.game.cards.Suggestion;
+/**
+ * 
+ * @author Simon Pinfold
+ *
+ */
+public abstract class Player implements GameListener{
 
 	private Hand hand;
-	private CharacterToken character;
+	private GameView gameView;
 
-	public Player(Hand h, CharacterToken character){
+	public Player(Hand h, GameView view){
 		hand = h;
-		this.character = character;
+		this.gameView = view;
 	}
+	
+	public abstract CharacterCard pickCharacter(List<CharacterCard> possibleCharacters);
 
-	@Override
-	public CharacterToken getToken() {
-		return character;
-	}
+	public abstract Location getDestination(List<Location> possibleLocations);
 
-	public boolean hasCard(Card c){
-		return hand.hasCard(c);
-	}
+	public abstract boolean hasSuggestion();
+
+	public abstract Suggestion getSuggestion();
+
+	public abstract boolean hasAccusation();
+
+	public abstract Accusation getAccusation();
+	
+	
 
 }
