@@ -1,5 +1,9 @@
 package cluedo.util.json;
-
+/**
+ * 
+ * @author Simon Pinfold
+ *
+ */
 public class JsonString implements JsonEntity {
 
 	private String value;
