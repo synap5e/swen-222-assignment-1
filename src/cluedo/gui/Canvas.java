@@ -2,40 +2,46 @@ package cluedo.gui;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-
 import javax.swing.JPanel;
-
 import cluedo.game.board.Board;
 import cluedo.game.board.Location;
 import cluedo.game.board.Room;
 import cluedo.game.board.Tile;
 import cluedo.game.board.Location.Direction;
 
-public class Canvas extends JPanel {
+public class Canvas extends JPanel implements MouseListener{
 	
-	private static Color background;
-	//private static 
+	private static final Color BACKGROUND = new Color(51,201,137);
+	private static final Color TILE = new Color(255,240,117);
+	private static final Color ROOM = new Color(201,193,154);
+	private static final Color WALL_COLOR = Color.BLACK;
+	private static final Color GRID_COLOR = Color.DARK_GRAY;
+	
+	private static final int WALL_THICKNESS = 3;
+	
 	
 	private Board board;
 	private int tileWidth = 20;
 	private int xOffset;
 	private int yOffset;
 	
+	private Location selected;
+	
 	public Canvas(Board board){
 		this.board = board;
-		setBackground(new Color(51,201,137));
+		setBackground(BACKGROUND);
+		addMouseListener(this);
 		
 		addComponentListener(new ComponentListener() {
 			
@@ -44,7 +50,6 @@ public class Canvas extends JPanel {
 			
 			@Override
 			public void componentResized(ComponentEvent arg0) {
-				// TODO Auto-generated method stub
 				Canvas can = (Canvas) arg0.getSource();
 				tileWidth = (can.getWidth()/24 < can.getHeight()/25) ? can.getWidth()/24:can.getHeight()/25;
 				xOffset = (can.getWidth()-tileWidth*24)/2;
@@ -70,81 +75,144 @@ public class Canvas extends JPanel {
 		AffineTransform saveTransform = g2d.getTransform();
 		
 		for(Tile tile : board.getTiles()){
-			g2d.setColor(new Color(255,240,117));
-			AffineTransform trans = new AffineTransform();
-		    trans.concatenate(saveTransform);
-		    trans.translate(xOffset, yOffset);
-		    trans.scale(tileWidth, tileWidth);
-		    trans.translate(tile.getX(), tile.getY());
-		    g2d.setTransform(trans);
+			g2d.setColor(TILE);
+			if (tile == selected) g2d.setColor(Color.ORANGE);
+			
+			//Apply offset, scaling and translation for the tile
+			applyTransform(tile.getX(), tile.getY(), tileWidth, g2d);
+		    
+		    //Draw tile
 		    g2d.fillPolygon(tile.getShape());
 		    g2d.setTransform(saveTransform);
-		    trans = new AffineTransform();
-		    trans.concatenate(saveTransform);
-		    trans.translate(xOffset, yOffset);
-		    g2d.setTransform(trans);
-		    g2d.setColor(Color.DARK_GRAY);
-		    g2d.drawPolygon(createBorderPolygon(tile.getShape(), tile.getX(), tile.getY()));
-			//g2d.drawString("" + loc.getNeighbours().size(), (int) (loc.getShape().getBounds2D().getCenterX()+loc.getX())*tileWidth, (int) (loc.getShape().getBounds2D().getCenterY()+loc.getY())*tileWidth+20);
-		    g2d.setTransform(saveTransform);
+		    
+		    //Apply only offset
+		    applyTransform(0, 0, 1, g2d);
+		   
+		    //Draw the outline
+		    g2d.setColor(GRID_COLOR);
+		    g2d.drawPolygon(createBorderPolygon(tile));
 			
+		    //Reset transform
+		    g2d.setTransform(saveTransform);
 		}
 		
-		g2d.setStroke(new BasicStroke(3));
+		g2d.setStroke(new BasicStroke(WALL_THICKNESS));
 		for(Room room : board.getRooms()){
-			g2d.setColor(new Color(201,193,154));
-			AffineTransform trans = new AffineTransform();
-		    trans.concatenate(saveTransform);
-		    trans.translate(xOffset, yOffset);
-		    trans.scale(tileWidth, tileWidth);
-		    trans.translate(room.getX(), room.getY());
-		    g2d.setTransform(trans);
+			g2d.setColor(ROOM);
+			if (room == selected) g2d.setColor(Color.ORANGE);
+			
+			//Apply offset, scaling and translation for the room
+			applyTransform(room.getX(), room.getY(), tileWidth, g2d);
+			
+		    //Draw room
 		    g2d.fillPolygon(room.getShape());
+		    
+		    //Apply only offset
 		    g2d.setTransform(saveTransform);
-		    trans = new AffineTransform();
-		    trans.concatenate(saveTransform);
-		    trans.translate(xOffset, yOffset);
-		    g2d.setTransform(trans);
-		    g2d.setColor(Color.BLACK);
-		    g2d.drawPolygon(createBorderPolygon(room.getShape(), room.getX(), room.getY()));
+		    applyTransform(0,0, 1, g2d);
+		    
+		    //Draw the walls
+		    g2d.setColor(WALL_COLOR);
+		    g2d.drawPolygon(createBorderPolygon(room));
+		    
+		    //Draw the name
 		    Rectangle2D nameBounds = g2d.getFontMetrics().getStringBounds(room.getName(), g2d);
 		    g2d.drawString(room.getName(), 
 		    		(int) ((room.getShape().getBounds2D().getCenterX()+room.getX())*tileWidth-nameBounds.getWidth()/2), 
 		    		(int) ((room.getShape().getBounds2D().getCenterY()+room.getY())*tileWidth+nameBounds.getHeight()/2));
-		    for (Location neigh : room.getNeighbours()){
-		    	g2d.setColor(new Color(255,240,117));
+			
+		    drawDoors(g2d, room);
+		    
+		    //Reset transform
+		    g2d.setTransform(saveTransform);
+		}
+	}
+	
+	private void applyTransform(double tranX, double tranY, double scale, Graphics2D g){
+		AffineTransform trans = new AffineTransform(g.getTransform());
+		trans.translate(xOffset, yOffset);
+	    trans.scale(scale, scale);
+	    trans.translate(tranX, tranY);
+	    g.setTransform(trans);
+	}
+	
+	private void drawDoors(Graphics2D g, Room r){
+		 for (Location neigh : r.getNeighbours()){
+		    	g.setColor(TILE);
 		    	if (!neigh.isRoom()){
 		    		Tile tile = (Tile) neigh;
-		    		Direction dir = room.neighboursDirection(tile);
+		    		Direction dir = r.neighboursDirection(tile);
 		    		int x = tile.getX();
 		    		int y = tile.getY();
 		    		switch(dir){
 		    		case NORTH:
-		    			g2d.drawLine((x)*tileWidth+3, (y+1)*tileWidth, (x+1)*tileWidth-3, (y+1)*tileWidth);
+		    			g.drawLine((x)*tileWidth+WALL_THICKNESS, (y+1)*tileWidth, (x+1)*tileWidth-WALL_THICKNESS, (y+1)*tileWidth);
 		    			break;
 		    		case SOUTH:
-		    			g2d.drawLine((x)*tileWidth+3, (y)*tileWidth, (x+1)*tileWidth-3, (y)*tileWidth);
+		    			g.drawLine((x)*tileWidth+WALL_THICKNESS, (y)*tileWidth, (x+1)*tileWidth-WALL_THICKNESS, (y)*tileWidth);
 		    			break;
 		    		case EAST:
-		    			g2d.drawLine((x)*tileWidth, (y)*tileWidth+3, (x)*tileWidth, (y+1)*tileWidth-3);
+		    			g.drawLine((x)*tileWidth, (y)*tileWidth+WALL_THICKNESS, (x)*tileWidth, (y+1)*tileWidth-WALL_THICKNESS);
 		    			break;
 		    		case WEST:
-		    			g2d.drawLine((x+1)*tileWidth, (y)*tileWidth+3, (x+1)*tileWidth, (y+1)*tileWidth-3);
+		    			g.drawLine((x+1)*tileWidth, (y)*tileWidth+WALL_THICKNESS, (x+1)*tileWidth, (y+1)*tileWidth-WALL_THICKNESS);
 		    		}
- 		    	}
+		    	}
 		    }
-			//g2d.drawString("" + loc.getNeighbours().size(), (int) (loc.getShape().getBounds2D().getCenterX()+loc.getX())*tileWidth, (int) (loc.getShape().getBounds2D().getCenterY()+loc.getY())*tileWidth+20);
-		    g2d.setTransform(saveTransform);
-		}
 	}
 
-	private Polygon createBorderPolygon(Polygon p, int x, int y){
+	/**
+	 * Creates a scaled border of the given location. The border is scaled by the current tile width. 
+	 * 
+	 * @param loc - the location to create the border for
+	 * @return a border of the given location.
+	 */
+	private Polygon createBorderPolygon(Location loc){
+		Polygon p = loc.getShape();
 		int[] xs = new int[p.npoints];
 		int[] ys = new int[p.npoints];
 		for (int i = 0; i < p.npoints; ++i){
-			xs[i] = p.xpoints[i]*tileWidth+x*tileWidth;
-			ys[i] = p.ypoints[i]*tileWidth+y*tileWidth;
+			xs[i] = (p.xpoints[i]+loc.getX())*tileWidth;
+			ys[i] = (p.ypoints[i]+loc.getY())*tileWidth;
 		}
 		return new Polygon(xs, ys, p.npoints);
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+	}
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		double x = ((double) (arg0.getX()-xOffset))/tileWidth;
+		double y = ((double) (arg0.getY()-yOffset))/tileWidth;
+		for (Room room : board.getRooms()){
+			double relX = x - room.getX();
+			double relY = y - room.getY();
+			if (room.getShape().contains(relX, relY)){
+				selected = room;
+				repaint();
+				return;
+			}
+		}
+		
+		Location loc = board.getLocation((int) x,(int) y);
+		if (loc != null){
+			selected = loc;
+			repaint();
+			return;
+		}
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
 	}
 }
