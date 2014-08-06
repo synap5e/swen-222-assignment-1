@@ -3,7 +3,7 @@ package cluedo.game.board;
 import java.awt.Point;
 import java.util.List;
 
-public class Room  extends Location{
+public class Room  extends Location implements Card{
 	private String name;
 	private List<Token> tokens;
 	
