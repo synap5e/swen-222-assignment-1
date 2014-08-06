@@ -4,7 +4,7 @@ import java.util.Set;
 
 public interface BoardView {
 
-	public Location getLocation(CharacterToken token);
+	public Location getLocation(Character token);
 
 	public Set<Room> getRooms();
 

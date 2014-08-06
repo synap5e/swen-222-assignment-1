@@ -5,19 +5,22 @@ import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Random;
 
+import cluedo.game.board.Accusation;
 import cluedo.game.board.Board;
-import cluedo.game.board.CharacterToken;
+import cluedo.game.board.Character;
+import cluedo.game.board.Hand;
 import cluedo.game.board.Location;
-import cluedo.game.cards.Accusation;
-import cluedo.game.cards.Dealer;
-import cluedo.game.cards.Hand;
 import cluedo.util.json.JsonObject;
 import cluedo.util.json.JsonParseException;
 import cluedo.util.json.MinimalJson;
 
 public class GameMaster {
+
+	public GameMaster(Board board) {
+		// TODO Auto-generated constructor stub
+	}
 	
-	private Accusation correctAccusation;
+	/*private Accusation correctAccusation;
 	private Board board;
 	private List<Player> players;
 	private int turn = 0;
@@ -49,7 +52,7 @@ public class GameMaster {
 	}
 	
 	public void startGame(){
-		while (true /* TODO: game not finished */){
+		while (true  TODO: game not finished ){
 			Player player = players.get(turn++);
 			
 			int roll = dice.nextInt(6)+1;
@@ -59,6 +62,6 @@ public class GameMaster {
 			//Location desired = player.getDestination(possibleLocations);
 		}
 	}
-	
+	*/
 
 }

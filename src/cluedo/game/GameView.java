@@ -3,13 +3,11 @@ package cluedo.game;
 import java.util.List;
 import java.util.Set;
 
-import cluedo.game.board.Board;
 import cluedo.game.board.BoardView;
-import cluedo.game.board.CharacterToken;
+import cluedo.game.board.Character;
 import cluedo.game.board.Location;
 import cluedo.game.board.Room;
 import cluedo.game.board.Tile;
-import cluedo.game.cards.CharacterCard;
 /**
  * 
  * @author Simon Pinfold
@@ -17,10 +15,10 @@ import cluedo.game.cards.CharacterCard;
  */
 public class GameView {
 
-	private CharacterToken playersToken;
+	private Character playersToken;
 	private BoardView board;
 
-	public GameView(BoardView board, CharacterToken playersToken){
+	public GameView(BoardView board, Character playersToken){
 		this.board = board;
 		this.playersToken = playersToken;
 	}
@@ -30,7 +28,7 @@ public class GameView {
 	 * 
 	 * @return a list of CharacterCards for each of the players
 	 */
-	public List<CharacterCard> getPlayerOrder(){
+	public List<Character> getPlayerOrder(){
 		// TODO
 		return null;
 	}

@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import cluedo.game.board.Location.Direction;
+import cluedo.util.json.JsonObject;
 
 public class Board {
 	private Set<Room> rooms;
@@ -51,7 +52,9 @@ public class Board {
 											  {0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0}};
 	private Location[][] board;
 	
-	public Board(){
+	public Board(JsonObject defs){
+		// TODO: read from defs
+		
 		rooms = new LinkedHashSet<Room>();
 		tiles = new LinkedHashSet<Tile>();
 		board = new Location[24][25];

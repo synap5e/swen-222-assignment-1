@@ -2,12 +2,12 @@ package cluedo.game;
 
 import java.util.List;
 
+import cluedo.game.board.Accusation;
+import cluedo.game.board.Card;
+import cluedo.game.board.Character;
+import cluedo.game.board.Hand;
 import cluedo.game.board.Location;
-import cluedo.game.cards.Accusation;
-import cluedo.game.cards.Card;
-import cluedo.game.cards.CharacterCard;
-import cluedo.game.cards.Hand;
-import cluedo.game.cards.Suggestion;
+import cluedo.game.board.Suggestion;
 /**
  * 
  * @author Simon Pinfold
@@ -23,7 +23,7 @@ public abstract class Player implements GameListener{
 		this.gameView = view;
 	}
 	
-	public abstract CharacterCard pickCharacter(List<CharacterCard> possibleCharacters);
+	public abstract Character pickCharacter(List<Character> possibleCharacters);
 
 	public abstract Location getDestination(List<Location> possibleLocations);
 
