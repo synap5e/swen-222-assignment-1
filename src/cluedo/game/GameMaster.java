@@ -10,14 +10,20 @@ import cluedo.game.board.Board;
 import cluedo.game.board.Character;
 import cluedo.game.board.Hand;
 import cluedo.game.board.Location;
+import cluedo.gui.CluedoFrame;
+import cluedo.gui.GUIHandle;
 import cluedo.util.json.JsonObject;
 import cluedo.util.json.JsonParseException;
 import cluedo.util.json.MinimalJson;
 
 public class GameMaster {
 
-	public GameMaster(Board board) {
+	public GameMaster(Board board, GUIHandle guiHandle) {
 		// TODO Auto-generated constructor stub
+	}
+
+	public void addGameListener(CluedoFrame frame) {
+		// TODO Auto-generated method stub
 	}
 	
 	/*private Accusation correctAccusation;

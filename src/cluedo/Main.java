@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import cluedo.game.GameMaster;
 import cluedo.game.board.Board;
 import cluedo.gui.CluedoFrame;
+import cluedo.gui.GUIHandle;
 import cluedo.util.json.JsonObject;
 import cluedo.util.json.JsonParseException;
 import cluedo.util.json.MinimalJson;
@@ -23,8 +24,9 @@ public class Main {
 			System.exit(-1);
 		}
 		Board board = new Board(defs);
-		GameMaster gm = new GameMaster(board);
 		CluedoFrame frame = new CluedoFrame(board);
+		GameMaster gm = new GameMaster(board, null);
+		gm.addGameListener(frame);
 	}
 
 }
