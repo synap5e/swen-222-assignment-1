@@ -1,6 +1,7 @@
 package cluedo.util.json;
 
 import java.util.Map;
+import java.util.Set;
 /**
  * 
  * @author Simon Pinfold
@@ -21,6 +22,10 @@ public class JsonObject implements JsonEntity {
 
 	public JsonEntity get(String string) {
 		return elems.get(string);
+	}
+
+	public Set<String> keys() {
+		return elems.keySet();
 	}
 
 

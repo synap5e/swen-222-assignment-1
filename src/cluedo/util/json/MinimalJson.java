@@ -17,8 +17,8 @@ import java.util.regex.Pattern;
 public class MinimalJson {
 
 	public static void main(String[] args) throws JsonParseException, FileNotFoundException{
-		System.out.println(MinimalJson.parseJson("{abc : [12, \"asdad\" , 3,4.8], a:3, c:[1,2], d:{a:2,b:{c:1}}, k:[], l:{}, m : null  ,\tn:[null,null,{a:null} ] }"));
-		System.out.println(MinimalJson.parseJson("{weapons : [\"1\"]}"));
+		System.out.println(MinimalJson.parseJson("{\"abc\" : [12, \"asdad\" , 3,4.8], \"a\":3, \"c\":[1,2], \"d\":{\"a\":2,\"b\":{\"c\":1}}, "
+											   + "\"k\":[], \"l\":{}, \"m\" : null  ,\t\"n\":[null,null,{\"a\":null} ] }"));
 		System.out.println(MinimalJson.parseJson(new File("./rules/cards.json")));
 	}
 	
@@ -53,17 +53,17 @@ public class MinimalJson {
 		throw new JsonParseException("Could not parse " + scan.next() + " as json entity");
 	}
 
-	private static JsonEntity parseNumber(Scanner scan) {
+	private static JsonNumber parseNumber(Scanner scan) {
 		return new JsonNumber(Double.parseDouble(scan.next()));
 	}
 
-	private static JsonEntity parseString(Scanner scan) throws JsonParseException {
+	private static JsonString parseString(Scanner scan) throws JsonParseException {
 		String s = scan.next("[^\"\\r\\n]*");
 		require("\"", scan);
 		return new JsonString(s);
 	}
 
-	private static JsonEntity parseList(Scanner scan) throws JsonParseException {
+	private static JsonList parseList(Scanner scan) throws JsonParseException {
 		List<JsonEntity> elems = new ArrayList<JsonEntity>();
 		if (!scan.hasNext("\\]")){
 			do {
@@ -78,7 +78,8 @@ public class MinimalJson {
 		Map<String, JsonEntity> elems = new HashMap<String, JsonEntity>();
 		if (!scan.hasNext("\\}")){
 			do {
-				String name = scan.next();
+				require("\"", scan);
+				String name = parseString(scan).value();
 				if (elems.containsKey(name)){
 					throw new JsonParseException("The object already contains key \"" + name + "\"");
 				}

@@ -17,4 +17,8 @@ public class JsonNumber implements JsonEntity {
 		return value + "";
 	}
 
+	public double value() {
+		return value;
+	}
+
 }
