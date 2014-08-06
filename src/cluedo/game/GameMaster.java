@@ -2,6 +2,7 @@ package cluedo.game;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -18,56 +19,50 @@ import cluedo.util.json.MinimalJson;
 
 public class GameMaster {
 
+	private ArrayList<Player> players;
+	private Accusation correctAccusation;
+	private Random random = new Random();
+	private int turn;
+
 	public GameMaster(Board board, GUIHandle guiHandle) {
-		// TODO Auto-generated constructor stub
+		turn = 0;
+		players = new ArrayList<Player>();
+		
+		Dealer dealer = new Dealer(board);
+		correctAccusation = dealer.createAccusation();
+		
+		List<Hand> hands = dealer.dealHands(guiHandle.getNumberOfPlayers());
+		List<Character> characters = new ArrayList<Character>(board.getCharacters());
+		
+		assert characters.size() <= hands.size();
+
+		while(!hands.isEmpty()){
+			/*players.add(new HumanPlayer(hands.remove(0), 
+							new GameView(board, guiHandle.chooseCharacter(characters)))
+						);
+			
+			players.add(new AIPlayer(hands.remove(0), 
+					new GameView(board, characters.remove(random.nextInt(characters.size()))));
+				);*/
+		}
 	}
 
 	public void addGameListener(CluedoFrame frame) {
 		// TODO Auto-generated method stub
 	}
 	
-	/*private Accusation correctAccusation;
-	private Board board;
-	private List<Player> players;
-	private int turn = 0;
-	private Random dice;
-	
-	public void createGame(){
-		// TODO: get from GUI
-		int numberOfPlayers = 5;
-		
-		this.dice = new Random();
-		
-		JsonObject defs = null;
-		try {
-			defs = MinimalJson.parseJson(new File("./rules/cards.json"));
-		} catch (FileNotFoundException | JsonParseException e) {
-			System.err.println("Could not load card definitions");
-			e.printStackTrace();
-			// TODO: GUI display?
-			System.exit(-1);
-		}
-		Dealer d = new Dealer(defs);
-		
-		this.correctAccusation = d.createAccusation();
-		List<Hand> hands = d.dealHands(numberOfPlayers);
-		
-		// TODO create players
-		//CharacterToken playersToken = null;
-		//players.add(new Player(hands.get(0), new GameView(board, playersToken)));
-	}
 	
 	public void startGame(){
-		while (true  TODO: game not finished ){
+		while (true /* TODO: game not finished*/ ){
 			Player player = players.get(turn++);
 			
-			int roll = dice.nextInt(6)+1;
+			int roll = random.nextInt(6)+1;
 			
 			// TODO
 			//List<Location> possibleLocations = board.getPossibleDestinations(roll);
 			//Location desired = player.getDestination(possibleLocations);
 		}
 	}
-	*/
+	
 
 }
