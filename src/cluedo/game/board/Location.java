@@ -10,22 +10,11 @@ import java.util.Set;
 public abstract class Location {
 	
 	public enum Direction {NORTH, SOUTH, EAST, WEST}
+
+	private HashMap<Location, Direction> neighbours;
 	
-	private int x;
-	private int y;
-	private boolean isRoom;
-	private Polygon shape;
-	private Map<Location, Direction> neighbours;
-	
-	public Location(int x, int y, boolean isRoom, Point... shape){
-		this.x = x;
-		this.y = y;
-		this.isRoom = isRoom;
+	public Location(){
 		neighbours = new HashMap<Location, Direction>();
-		this.shape = new Polygon();
-		for (Point pt : shape){
-			this.shape.addPoint(pt.x, pt.y);
-		}
 	}
 	
 	public void addNeighbour(Location neighbour, Direction dir){
@@ -38,26 +27,6 @@ public abstract class Location {
 	
 	public Direction neighboursDirection(Location loc){
 		return neighbours.get(loc);
-	}
-	
-	public int getX(){
-		return x;
-	}
-	
-	public int getY(){
-		return y;
-	}
-	
-	public Point toPoint(){
-		return new Point(x, y);
-	}
-
-	public boolean isRoom(){
-		return isRoom;
-	}
-	
-	public Polygon getShape(){
-		return shape;
 	}
 	
 	public abstract boolean hasVacancy();
