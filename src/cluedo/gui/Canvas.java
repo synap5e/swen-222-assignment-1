@@ -9,6 +9,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -75,22 +76,22 @@ public class Canvas extends JPanel {
 		    trans.concatenate(saveTransform);
 		    trans.translate(xOffset, yOffset);
 		    trans.scale(tileWidth, tileWidth);
-		    trans.translate(tile.getX(), tile.getY());
+		    trans.translate(tile.x, tile.y);
 		    g2d.setTransform(trans);
-		    g2d.fillPolygon(tile.getShape());
+		    g2d.fillPolygon(new Polygon(new int[]{0,1,1,0}, new int[]{0,0,1,1}, 4));
 		    g2d.setTransform(saveTransform);
 		    trans = new AffineTransform();
 		    trans.concatenate(saveTransform);
 		    trans.translate(xOffset, yOffset);
 		    g2d.setTransform(trans);
 		    g2d.setColor(Color.DARK_GRAY);
-		    g2d.drawPolygon(createBorderPolygon(tile.getShape(), tile.getX(), tile.getY()));
+		    g2d.drawPolygon(createBorderPolygon(new Polygon(new int[]{0,1,1,0}, new int[]{0,0,1,1}, 4), tile.x, tile.y));
 			//g2d.drawString("" + loc.getNeighbours().size(), (int) (loc.getShape().getBounds2D().getCenterX()+loc.getX())*tileWidth, (int) (loc.getShape().getBounds2D().getCenterY()+loc.getY())*tileWidth+20);
 		    g2d.setTransform(saveTransform);
 			
 		}
 		
-		g2d.setStroke(new BasicStroke(3));
+		/*g2d.setStroke(new BasicStroke(3));
 		for(Room room : board.getRooms()){
 			g2d.setColor(new Color(201,193,154));
 			AffineTransform trans = new AffineTransform();
@@ -132,10 +133,10 @@ public class Canvas extends JPanel {
 		    			g2d.drawLine((x+1)*tileWidth, (y)*tileWidth+3, (x+1)*tileWidth, (y+1)*tileWidth-3);
 		    		}
  		    	}
-		    }
+		    }*/
 			//g2d.drawString("" + loc.getNeighbours().size(), (int) (loc.getShape().getBounds2D().getCenterX()+loc.getX())*tileWidth, (int) (loc.getShape().getBounds2D().getCenterY()+loc.getY())*tileWidth+20);
-		    g2d.setTransform(saveTransform);
-		}
+		//    g2d.setTransform(saveTransform);
+		//}
 	}
 
 	private Polygon createBorderPolygon(Polygon p, int x, int y){
