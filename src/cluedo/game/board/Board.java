@@ -1,6 +1,7 @@
 package cluedo.game.board;
 
 import java.awt.Point;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -138,5 +139,20 @@ public class Board {
 	
 	public Set<Tile> getTiles(){
 		return Collections.<Tile>unmodifiableSet(tiles);
+	}
+
+	public Set<Character> getCharacters() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Set<Weapon> getWeapons() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Location getLocation(Character character) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
