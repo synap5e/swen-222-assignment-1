@@ -145,11 +145,11 @@ public class Board {
 	}
 	
 	
-	private int getWidth() {
+	public int getWidth() {
 		return board.length;
 	}
 	
-	private int getHeight() {
+	public int getHeight() {
 		return board[0].length;
 	}
 
