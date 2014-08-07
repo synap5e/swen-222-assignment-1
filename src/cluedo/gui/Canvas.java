@@ -84,7 +84,9 @@ public class Canvas extends JPanel implements MouseListener{
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 15));
 		AffineTransform saveTransform = g2d.getTransform();
+		applyOffset(g2d);
 		
+		//Draw locations
 		for (int x = 0; x < boardWidth; ++x){
 			for (int y = 0; y < boardHeight; ++y){
 				Location loc = board.getLocation(x, y);
@@ -97,8 +99,6 @@ public class Canvas extends JPanel implements MouseListener{
 				
 				if (loc == selected) g2d.setColor(Color.ORANGE);
 				
-				applyOffset(g2d);
-				
 				g2d.fillRect(x*tileWidth, y*tileWidth, tileWidth, tileWidth);
 				
 				if (loc instanceof Tile){
@@ -106,9 +106,41 @@ public class Canvas extends JPanel implements MouseListener{
 					g2d.drawRect(x*tileWidth, y*tileWidth, tileWidth, tileWidth);
 				}
 				
-				g2d.setTransform(saveTransform);
+				//TODO: Draw tokens in rooms
 			}
 		}
+		
+		//Draw walls
+		g2d.setStroke(new BasicStroke(WALL_THICKNESS));
+		g2d.setColor(WALL_COLOR);
+		for (int x = 0; x < boardWidth; ++x){
+			for (int y = 0; y < boardHeight; ++y){
+				Location loc = board.getLocation(x, y);
+				if (loc == null) continue;
+				
+				//if has west wall
+				Location west = board.getLocation(x-1, y);
+				if (west == null || !(loc.getNeighbours().contains(west) || loc == west)){
+					g2d.drawLine(x*tileWidth, y*tileWidth, x*tileWidth, (y+1)*tileWidth);
+				}
+				//if has east wall
+				Location east = board.getLocation(x+1, y);
+				if (east == null || !(loc.getNeighbours().contains(east) || loc == east)){
+					g2d.drawLine((x+1)*tileWidth, y*tileWidth, (x+1)*tileWidth, (y+1)*tileWidth);
+				}
+				//if has north wall
+				Location north = board.getLocation(x, y-1);
+				if (north == null || !(loc.getNeighbours().contains(north) || loc == north)){
+					g2d.drawLine(x*tileWidth, y*tileWidth, (x+1)*tileWidth, y*tileWidth);
+				}
+				//if has south wall
+				Location south = board.getLocation(x, y+1);
+				if (south == null || !(loc.getNeighbours().contains(south) || loc == south)){
+					g2d.drawLine(x*tileWidth, (y+1)*tileWidth, (x+1)*tileWidth, (y+1)*tileWidth);
+				}
+			}
+		}
+		g2d.setTransform(saveTransform);
 		
 		/*for(Tile tile : board.getTiles()){
 			g2d.setColor(TILE);
