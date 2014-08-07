@@ -9,8 +9,8 @@ package cluedo.game.board;
 public class Tile extends Location{
 
 	private Character occupient;
-	public final int x;
-	public final int y;
+	private final int x;
+	private  final int y;
 	
 	public Tile(int x, int y) {
 		this.x = x;
@@ -28,5 +28,12 @@ public class Tile extends Location{
 		
 	}
 	
-	// TODO occupient
+	public int getX() {
+		return x;
+	}
+	
+	public int getY() {
+		return y;
+	}
+	
 }
