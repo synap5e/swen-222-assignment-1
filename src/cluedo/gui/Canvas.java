@@ -13,12 +13,15 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+
 import javax.swing.JPanel;
+
 import cluedo.game.board.Board;
 import cluedo.game.board.Location;
 import cluedo.game.board.Room;
 import cluedo.game.board.Tile;
 import cluedo.game.board.Location.Direction;
+import cluedo.util.json.JsonObject;
 
 public class Canvas extends JPanel implements MouseListener{
 	
@@ -38,7 +41,7 @@ public class Canvas extends JPanel implements MouseListener{
 	
 	private Location selected;
 	
-	public Canvas(Board board){
+	public Canvas(Board board, JsonObject def){
 		this.board = board;
 		setBackground(BACKGROUND);
 		addMouseListener(this);
@@ -82,7 +85,7 @@ public class Canvas extends JPanel implements MouseListener{
 			applyTransform(tile.getX(), tile.getY(), tileWidth, g2d);
 		    
 		    //Draw tile
-		    g2d.fillPolygon(tile.getShape());
+		    //g2d.fillPolygon(tile.getShape());
 		    g2d.setTransform(saveTransform);
 		    
 		    //Apply only offset
@@ -102,10 +105,10 @@ public class Canvas extends JPanel implements MouseListener{
 			if (room == selected) g2d.setColor(Color.ORANGE);
 			
 			//Apply offset, scaling and translation for the room
-			applyTransform(room.getX(), room.getY(), tileWidth, g2d);
+			//applyTransform(room.getX(), room.getY(), tileWidth, g2d);
 			
 		    //Draw room
-		    g2d.fillPolygon(room.getShape());
+		    //g2d.fillPolygon(room.getShape());
 		    
 		    //Apply only offset
 		    g2d.setTransform(saveTransform);
@@ -117,10 +120,10 @@ public class Canvas extends JPanel implements MouseListener{
 		    
 		    //Draw the name
 		    Rectangle2D nameBounds = g2d.getFontMetrics().getStringBounds(room.getName(), g2d);
-		    g2d.drawString(room.getName(), 
+		    /*g2d.drawString(room.getName(), 
 		    		(int) ((room.getShape().getBounds2D().getCenterX()+room.getX())*tileWidth-nameBounds.getWidth()/2), 
 		    		(int) ((room.getShape().getBounds2D().getCenterY()+room.getY())*tileWidth+nameBounds.getHeight()/2));
-			
+			*/
 		    drawDoors(g2d, room);
 		    
 		    //Reset transform
@@ -139,7 +142,7 @@ public class Canvas extends JPanel implements MouseListener{
 	private void drawDoors(Graphics2D g, Room r){
 		 for (Location neigh : r.getNeighbours()){
 		    	g.setColor(TILE);
-		    	if (!neigh.isRoom()){
+		    	if (neigh instanceof Tile){
 		    		Tile tile = (Tile) neigh;
 		    		Direction dir = r.neighboursDirection(tile);
 		    		int x = tile.getX();
@@ -158,9 +161,8 @@ public class Canvas extends JPanel implements MouseListener{
 		    			g.drawLine((x+1)*tileWidth, (y)*tileWidth+WALL_THICKNESS, (x+1)*tileWidth, (y+1)*tileWidth-WALL_THICKNESS);
 		    		}
 		    	}
-		    }
 			//g2d.drawString("" + loc.getNeighbours().size(), (int) (loc.getShape().getBounds2D().getCenterX()+loc.getX())*tileWidth, (int) (loc.getShape().getBounds2D().getCenterY()+loc.getY())*tileWidth+20);
-		    g2d.setTransform(saveTransform);
+		    //g2d.setTransform(saveTransform);
 		}
 	}
 
@@ -171,14 +173,14 @@ public class Canvas extends JPanel implements MouseListener{
 	 * @return a border of the given location.
 	 */
 	private Polygon createBorderPolygon(Location loc){
-		Polygon p = loc.getShape();
+		/*Polygon p = loc.getShape();
 		int[] xs = new int[p.npoints];
 		int[] ys = new int[p.npoints];
 		for (int i = 0; i < p.npoints; ++i){
 			xs[i] = (p.xpoints[i]+loc.getX())*tileWidth;
 			ys[i] = (p.ypoints[i]+loc.getY())*tileWidth;
-		}
-		return new Polygon(xs, ys, p.npoints);
+		}*/
+		return new Polygon();//xs, ys, p.npoints);
 	}
 
 	@Override
@@ -198,13 +200,13 @@ public class Canvas extends JPanel implements MouseListener{
 		double x = ((double) (arg0.getX()-xOffset))/tileWidth;
 		double y = ((double) (arg0.getY()-yOffset))/tileWidth;
 		for (Room room : board.getRooms()){
-			double relX = x - room.getX();
+			/*double relX = x - room.getX();
 			double relY = y - room.getY();
 			if (room.getShape().contains(relX, relY)){
 				selected = room;
 				repaint();
 				return;
-			}
+			}*/
 		}
 		
 		Location loc = board.getLocation((int) x,(int) y);
