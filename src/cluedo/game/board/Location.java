@@ -30,4 +30,6 @@ public abstract class Location {
 	}
 	
 	public abstract boolean hasVacancy();
+
+	public abstract void addToken(Token token);
 }

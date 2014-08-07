@@ -104,16 +104,16 @@ public class Board {
 			}
 			++y;
 		}
-		for (int x = 0; x < 23; ++x){
-			for (y = 0; y < 25; ++y){
+		for (int x = 0; x < getWidth()-1; ++x){
+			for (y = 0; y < getHeight(); ++y){
 				if (board[x][y] instanceof Tile && board[x+1][y] instanceof Tile){
 					board[x][y].addNeighbour(board[x+1][y], Direction.EAST);
 					board[x+1][y].addNeighbour(board[x][y], Direction.WEST);
 				}
 			}
 		}
-		for (y = 0; y < 24; ++y){
-			for (int x = 0; x < 24; ++x){
+		for (y = 0; y < getHeight()-1; ++y){
+			for (int x = 0; x < getWidth(); ++x){
 				if (board[x][y] instanceof Tile && board[x][y+1] instanceof Tile){
 					board[x][y].addNeighbour(board[x][y+1], Direction.SOUTH);
 					board[x][y+1].addNeighbour(board[x][y], Direction.NORTH);
@@ -121,7 +121,7 @@ public class Board {
 			}
 		}
 	}
-	
+
 	public Set<Room> getRooms(){
 		return Collections.<Room>unmodifiableSet(rooms);
 	}
@@ -143,6 +143,18 @@ public class Board {
 		// TODO
 		return null;
 	}
+	
+	
+	private int getWidth() {
+		return board.length;
+	}
+	
+	private int getHeight() {
+		return board[0].length;
+	}
 
+	public Location getLocation(int x, int y){
+		if (x < 0 || x >= getWidth() || y < 0 || y >= getHeight()) return null;
+		return board[x][y];
 	}
 }
