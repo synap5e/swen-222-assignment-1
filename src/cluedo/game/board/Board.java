@@ -1,11 +1,14 @@
 package cluedo.game.board;
 
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import cluedo.game.board.Location.Direction;
@@ -22,42 +25,80 @@ import cluedo.util.json.JsonString;
  */
 public class Board {
 	private Set<Room> rooms;
+	
+	private Set<Character> characters;
+	private Set<Weapon> weapons;
+	
 	private Set<Tile> tiles;
 	
 	private Location[][] board;
 	
+	private Random random = new Random();
+	
 	public Board(JsonObject defs){
-		JsonObject roomsOb = ((JsonObject) defs.get("rooms"));
 		JsonList rows = (JsonList) defs.get("board");
 		
 		rooms = new LinkedHashSet<Room>();
+		characters = new LinkedHashSet<Character>();
+		weapons = new LinkedHashSet<Weapon>();
+		
 		tiles = new LinkedHashSet<Tile>();
 		board = new Location[((JsonList)rows.get(0)).size()][rows.size()];
 
-		Map<Double, Room> keys = new HashMap<Double, Room>();
+		JsonObject roomsDef = ((JsonObject) defs.get("rooms"));
+		JsonObject weaponsDef = (JsonObject) defs.get("weapons");
+		JsonObject characterDefs = (JsonObject) defs.get("characters");
 		
-		for (String name : roomsOb.keys()){
-			JsonObject roomOb = (JsonObject) roomsOb.get(name);
-			Double key = ((JsonNumber)roomOb.get("key")).value();
+		Map<Double, Room> roomKeys = new HashMap<Double, Room>();
+		for (String name : roomsDef.keys()){
+			JsonObject roomDef = (JsonObject) roomsDef.get(name);
+			Double key = ((JsonNumber)roomDef.get("key")).value();
 			Room room = new Room(name);
 			rooms.add(room);
-			keys.put(key, room);
+			roomKeys.put(key, room);
 		}
 		
+		Map<Double, Token> startLocations = new HashMap<Double, Token>();
+		for (String name : characterDefs.keys()){
+			JsonObject characterDef = ((JsonObject) characterDefs.get(name));
+			
+			Character c = new Character(name);
+			characters.add(c);
+			startLocations.put(((JsonNumber)characterDef.get("start")).value(), c);
+		}
 		
+		List<Double> roomKeyList = new ArrayList<Double>(roomKeys.keySet());
+		for (String name : weaponsDef.keys()){
+			JsonObject weaponDef = ((JsonObject) weaponsDef.get(name));
+			
+			Weapon w = new Weapon(name);
+			weapons.add(w);
+			startLocations.put(roomKeyList.get(random.nextInt(roomKeyList.size())), w);
+		}
+
+		createBoard(rows, roomsDef, roomKeys, startLocations);
+		
+	
+	}
+
+	private void createBoard(JsonList rows, JsonObject roomsDef, Map<Double, Room> roomKeys, Map<Double, Token> startLocations) {
 		int y = 0;
 		for (JsonEntity row : rows){
 			int x = 0;
 			for (JsonEntity tile : (JsonList) row){
 				double key = ((JsonNumber)tile).value();
 				if (key == 0){
-					// empty
-				} else if (keys.containsKey(key)){
-					board[x][y] = keys.get(key);
+					// wall
+				} else if (roomKeys.containsKey(key)){
+					board[x][y] = roomKeys.get(key);
 				} else {
 					Tile t = new Tile(x, y);
 					board[x][y] = t;
 					tiles.add(t);
+				}
+				
+				if (startLocations.containsKey(key)){
+					board[x][y].addToken(startLocations.get(key));
 				}
 				++x;
 			}
@@ -90,12 +131,12 @@ public class Board {
 	}
 
 	public Set<Character> getCharacters() {
-		// TODO Auto-generated method stub
-		return null;
+		return Collections.<Character>unmodifiableSet(characters);
 	}
 
 	public Set<Weapon> getWeapons() {
-		// TODO Auto-generated method stub
+		return Collections.<Weapon>unmodifiableSet(weapons);
+	}
 		return null;
 	}
 

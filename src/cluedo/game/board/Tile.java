@@ -21,6 +21,12 @@ public class Tile extends Location{
 	public boolean hasVacancy() {
 		return occupient == null;
 	}
+
+	@Override
+	public void addToken(Token token) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	// TODO occupient
 }

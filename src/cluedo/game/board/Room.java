@@ -26,5 +26,13 @@ public class Room  extends Location implements Card{
 	public String getName(){
 		return name;
 	}
+
+	@Override
+	public void addToken(Token token) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
 	
 }
