@@ -1,6 +1,10 @@
 package cluedo.game.board;
 
-
+/**
+ * 
+ * @author Simon Pinfold
+ *
+ */
 public class Suggestion {
 
 	protected Weapon weapon;
