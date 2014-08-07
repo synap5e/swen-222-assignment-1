@@ -137,11 +137,12 @@ public class Board {
 	public Set<Weapon> getWeapons() {
 		return Collections.<Weapon>unmodifiableSet(weapons);
 	}
+	
+	
+	public Location getLocationOf(Character character) {
+		// TODO
 		return null;
 	}
 
-	public Location getLocation(Character character) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }
