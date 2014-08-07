@@ -1,6 +1,10 @@
 package cluedo.game.board;
 
-
+/**
+ * 
+ * @author Simon Pinfold
+ *
+ */
 public class Accusation extends Suggestion {
 
 	private Room room;

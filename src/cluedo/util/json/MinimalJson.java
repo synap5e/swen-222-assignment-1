@@ -16,6 +16,8 @@ import java.util.regex.Pattern;
  */
 public class MinimalJson {
 
+	private static Pattern pat = Pattern.compile("[ \t\n\r]+|(?=[\"{}\\[\\],:])|(?<=[\"{}\\[\\],:])");
+
 	public static void main(String[] args) throws JsonParseException, FileNotFoundException{
 		System.out.println(MinimalJson.parseJson("{\"abc\" : [12, \"asdad\" , 3,4.8], \"a\":3, \"c\":[1,2], \"d\":{\"a\":2,\"b\":{\"c\":1}}, "
 											   + "\"k\":[], \"l\":{}, \"m\" : null  ,\t\"n\":[null,null,{\"a\":null} ] }"));
@@ -32,7 +34,7 @@ public class MinimalJson {
 	}
 	
 	static JsonObject parseJson(Scanner scan) throws JsonParseException{
-		scan.useDelimiter(Pattern.compile("[ \t\n\r]+|(?=[\"{}\\[\\],:])|(?<=[\"{}\\[\\],:])"));
+		scan.useDelimiter(pat);
 		require("\\{", scan);
 		return parseObject(scan);
 	}
@@ -44,7 +46,7 @@ public class MinimalJson {
 			return parseList(scan);
 		} else if (gobble("\"", scan)){
 			return parseString(scan);
-		} else if (scan.hasNext(Pattern.compile("-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?"))){
+		} else if (scan.hasNext(Pattern.compile("-?0*(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?"))){
 			return parseNumber(scan);
 		} else if (scan.hasNext("null")){
 			scan.next();
@@ -58,7 +60,9 @@ public class MinimalJson {
 	}
 
 	private static JsonString parseString(Scanner scan) throws JsonParseException {
-		String s = scan.next("[^\"\\r\\n]*");
+		scan.useDelimiter("[\"\\r\\n]");
+		String s = scan.next();
+		scan.useDelimiter(pat);
 		require("\"", scan);
 		return new JsonString(s);
 	}

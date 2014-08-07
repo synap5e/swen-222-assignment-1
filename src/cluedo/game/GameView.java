@@ -34,7 +34,7 @@ public class GameView {
 	}
 	
 	public Location getMyLocation(){
-		return board.getLocation(playersToken);
+		return board.getLocationOf(playersToken);
 	}
 	
 	public Set<Room> getRooms(){

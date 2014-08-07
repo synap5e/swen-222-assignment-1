@@ -159,6 +159,9 @@ public class Canvas extends JPanel implements MouseListener{
 		    		}
 		    	}
 		    }
+			//g2d.drawString("" + loc.getNeighbours().size(), (int) (loc.getShape().getBounds2D().getCenterX()+loc.getX())*tileWidth, (int) (loc.getShape().getBounds2D().getCenterY()+loc.getY())*tileWidth+20);
+		    g2d.setTransform(saveTransform);
+		}
 	}
 
 	/**

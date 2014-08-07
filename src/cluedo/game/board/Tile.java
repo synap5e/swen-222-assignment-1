@@ -1,17 +1,32 @@
 package cluedo.game.board;
 
-import java.awt.Point;
 
+/**
+ * 
+ * @author James Greenwood-Thessman, Simon Pinfold
+ *
+ */
 public class Tile extends Location{
 
 	private Character occupient;
+	public final int x;
+	public final int y;
 	
 	public Tile(int x, int y) {
-		super(x, y, false, new Point(0,0), new Point(1,0), new Point(1,1), new Point(0,1));
+		this.x = x;
+		this.y = y;
 	}
-
+	
 	@Override
 	public boolean hasVacancy() {
 		return occupient == null;
 	}
+
+	@Override
+	public void addToken(Token token) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	// TODO occupient
 }
