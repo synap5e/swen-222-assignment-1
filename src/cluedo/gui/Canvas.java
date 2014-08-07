@@ -21,6 +21,7 @@ import cluedo.game.board.Location;
 import cluedo.game.board.Room;
 import cluedo.game.board.Tile;
 import cluedo.game.board.Location.Direction;
+import cluedo.util.json.JsonList;
 import cluedo.util.json.JsonObject;
 
 public class Canvas extends JPanel implements MouseListener{
@@ -34,7 +35,10 @@ public class Canvas extends JPanel implements MouseListener{
 	private static final int WALL_THICKNESS = 3;
 	
 	
-	private Board board;
+	private final Board board;
+	private final int boardWidth;
+	private final int boardHeight;
+	
 	private int tileWidth = 20;
 	private int xOffset;
 	private int yOffset;
@@ -43,6 +47,10 @@ public class Canvas extends JPanel implements MouseListener{
 	
 	public Canvas(Board board, JsonObject def){
 		this.board = board;
+		JsonList rows = (JsonList) def.get("board");
+		boardWidth = ((JsonList)rows.get(0)).size();
+		boardHeight = rows.size();
+		
 		setBackground(BACKGROUND);
 		addMouseListener(this);
 		
@@ -77,7 +85,32 @@ public class Canvas extends JPanel implements MouseListener{
 		g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 15));
 		AffineTransform saveTransform = g2d.getTransform();
 		
-		for(Tile tile : board.getTiles()){
+		for (int x = 0; x < boardWidth; ++x){
+			for (int y = 0; y < boardHeight; ++y){
+				Location loc = board.getLocation(x, y);
+				if (loc == null) continue;
+				if (loc instanceof Tile){
+					g2d.setColor(TILE);
+				} else {
+					g2d.setColor(ROOM);
+				}
+				
+				if (loc == selected) g2d.setColor(Color.ORANGE);
+				
+				applyOffset(g2d);
+				
+				g2d.fillRect(x*tileWidth, y*tileWidth, tileWidth, tileWidth);
+				
+				if (loc instanceof Tile){
+					g2d.setColor(GRID_COLOR);
+					g2d.drawRect(x*tileWidth, y*tileWidth, tileWidth, tileWidth);
+				}
+				
+				g2d.setTransform(saveTransform);
+			}
+		}
+		
+		/*for(Tile tile : board.getTiles()){
 			g2d.setColor(TILE);
 			if (tile == selected) g2d.setColor(Color.ORANGE);
 			
@@ -123,19 +156,17 @@ public class Canvas extends JPanel implements MouseListener{
 		    /*g2d.drawString(room.getName(), 
 		    		(int) ((room.getShape().getBounds2D().getCenterX()+room.getX())*tileWidth-nameBounds.getWidth()/2), 
 		    		(int) ((room.getShape().getBounds2D().getCenterY()+room.getY())*tileWidth+nameBounds.getHeight()/2));
-			*/
+			*
 		    drawDoors(g2d, room);
 		    
 		    //Reset transform
 		    g2d.setTransform(saveTransform);
-		}
+		}*/
 	}
 	
-	private void applyTransform(double tranX, double tranY, double scale, Graphics2D g){
+	private void applyOffset(Graphics2D g){
 		AffineTransform trans = new AffineTransform(g.getTransform());
 		trans.translate(xOffset, yOffset);
-	    trans.scale(scale, scale);
-	    trans.translate(tranX, tranY);
 	    g.setTransform(trans);
 	}
 	
