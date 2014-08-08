@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class Tile extends Location{
 
-	private Character occupient;
+	private Character occupant;
 	private final int x;
 	private  final int y;
 	
@@ -22,7 +22,7 @@ public class Tile extends Location{
 	
 	@Override
 	public boolean hasVacancy() {
-		return occupient == null;
+		return occupant == null;
 	}
 	
 	public int getX() {
@@ -35,22 +35,23 @@ public class Tile extends Location{
 	
 	@Override
 	public void addToken(Token token) {
-		if (occupient != null && token instanceof Character){
-			occupient = (Character) token;
+		// TODO: if full error
+		if (token instanceof Character){
+			occupant = (Character) token;
 		}
 	}
 
 	@Override
 	public void removeToken(Token token) {
-		if (occupient == token){
-			occupient = null;
+		if (occupant == token){
+			occupant = null;
 		}
 	}
 
 	@Override
 	public List<Token> getTokens() {
 		List<Token> token = new ArrayList<Token>();
-		if (occupient != null) token.add(occupient);
+		if (occupant != null) token.add(occupant);
 		return token;
 	}
 	
