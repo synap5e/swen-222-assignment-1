@@ -24,7 +24,6 @@ import cluedo.game.board.Board;
 import cluedo.game.board.Location;
 import cluedo.game.board.Room;
 import cluedo.game.board.Tile;
-import cluedo.game.board.Location.Direction;
 import cluedo.util.json.JsonList;
 import cluedo.util.json.JsonObject;
 

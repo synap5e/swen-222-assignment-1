@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import cluedo.game.board.Location.Direction;
 import cluedo.util.json.JsonEntity;
 import cluedo.util.json.JsonList;
 import cluedo.util.json.JsonNumber;
@@ -48,14 +47,17 @@ public class Board {
 		JsonObject roomsDef = ((JsonObject) defs.get("rooms"));
 		JsonObject weaponsDef = (JsonObject) defs.get("weapons");
 		JsonObject characterDefs = (JsonObject) defs.get("characters");
-		
+		JsonList doorwayDefs = (JsonList) defs.get("doorways");
+
 		Map<Double, Room> roomKeys = new HashMap<Double, Room>();
+		Map<String, Room> roomNames = new HashMap<String, Room>();
 		for (String name : roomsDef.keys()){
 			JsonObject roomDef = (JsonObject) roomsDef.get(name);
 			Double key = ((JsonNumber)roomDef.get("key")).value();
 			Room room = new Room(name);
 			rooms.add(room);
 			roomKeys.put(key, room);
+			roomNames.put(name, room);
 		}
 		
 		Map<Double, Token> startLocations = new HashMap<Double, Token>();
@@ -76,12 +78,20 @@ public class Board {
 			startLocations.put(roomKeyList.get(random.nextInt(roomKeyList.size())), w);
 		}
 
-		createBoard(rows, roomsDef, roomKeys, startLocations);
-		
-	
+		Map<Double, Room> doorways = new HashMap<Double, Room>();
+		for (JsonEntity doorway : doorwayDefs){
+			JsonList doorwayDef = (JsonList) doorway;
+
+			Room room = roomNames.get(((JsonString)doorwayDef.get(1)).value());
+			doorways.put(((JsonNumber)doorwayDef.get(0)).value(), room);
+		}
+
+		createBoard(rows, roomsDef, roomKeys, startLocations, doorways);
+
 	}
 
-	private void createBoard(JsonList rows, JsonObject roomsDef, Map<Double, Room> roomKeys, Map<Double, Token> startLocations) {
+	private void createBoard(	JsonList rows, JsonObject roomsDef, Map<Double, Room> roomKeys,
+								Map<Double, Token> startLocations, Map<Double, Room> doorways) {
 		int y = 0;
 		for (JsonEntity row : rows){
 			int x = 0;
@@ -104,19 +114,35 @@ public class Board {
 			}
 			++y;
 		}
+
+		y = 0;
+		for (JsonEntity row : rows){
+			int x = 0;
+			for (JsonEntity tile : (JsonList) row){
+				double key = ((JsonNumber)tile).value();
+
+				if (doorways.containsKey(key)){
+					board[x][y].addNeighbour(doorways.get(key));
+					doorways.get(key).addNeighbour(board[x][y]);
+				}
+				++x;
+			}
+			++y;
+		}
+
 		for (int x = 0; x < getWidth()-1; ++x){
 			for (y = 0; y < getHeight(); ++y){
 				if (board[x][y] instanceof Tile && board[x+1][y] instanceof Tile){
-					board[x][y].addNeighbour(board[x+1][y], Direction.EAST);
-					board[x+1][y].addNeighbour(board[x][y], Direction.WEST);
+					board[x][y].addNeighbour(board[x+1][y]);
+					board[x+1][y].addNeighbour(board[x][y]);
 				}
 			}
 		}
 		for (y = 0; y < getHeight()-1; ++y){
 			for (int x = 0; x < getWidth(); ++x){
 				if (board[x][y] instanceof Tile && board[x][y+1] instanceof Tile){
-					board[x][y].addNeighbour(board[x][y+1], Direction.SOUTH);
-					board[x][y+1].addNeighbour(board[x][y], Direction.NORTH);
+					board[x][y].addNeighbour(board[x][y+1]);
+					board[x][y+1].addNeighbour(board[x][y]);
 				}
 			}
 		}
