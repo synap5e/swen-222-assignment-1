@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JPanel;
-
+import cluedo.game.board.Character;
 import cluedo.game.board.Board;
 import cluedo.game.board.Location;
 import cluedo.game.board.Room;
@@ -133,24 +133,30 @@ public class Canvas extends JPanel implements MouseListener{
 				
 				g2d.fillRect(x*tileWidth, y*tileWidth, tileWidth, tileWidth);
 				
-				//Draw the grid outline if the location is a tile
+				//Draw the grid outline if the location is a tile and any contained token
 				if (loc instanceof Tile){
 					g2d.setColor(GRID_COLOR);
 					g2d.drawRect(x*tileWidth, y*tileWidth, tileWidth, tileWidth);
+					
+					//TODO: set color to match token
+					if (loc.getTokens().size() > 0){
+						g2d.fillOval(x*tileWidth+3, y*tileWidth+3, tileWidth-5, tileWidth-5);
+					}
 				}
-				
-				//TODO: Draw tokens in rooms
 			}
 		}
 		
-		//Draw the room names
+		//Draw room contents
 		g2d.setColor(Color.BLACK);
 		for (Room room : board.getRooms()){
+			//Draw the room name
 			Rectangle2D nameBounds = g2d.getFontMetrics().getStringBounds(room.getName(), g2d);
 			Point2D center = roomCenter.get(room);
 			g2d.drawString(room.getName(), 
 			   		(int) (center.getX()*tileWidth-nameBounds.getWidth()/2), 
 			 		(int) (center.getY()*tileWidth+nameBounds.getHeight()/2));			
+			
+			//TODO: Draw tokens inside the room
 		}
 		
 		//Draw walls

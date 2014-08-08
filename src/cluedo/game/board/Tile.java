@@ -1,5 +1,8 @@
 package cluedo.game.board;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * 
@@ -21,12 +24,6 @@ public class Tile extends Location{
 	public boolean hasVacancy() {
 		return occupient == null;
 	}
-
-	@Override
-	public void addToken(Token token) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	public int getX() {
 		return x;
@@ -34,6 +31,27 @@ public class Tile extends Location{
 	
 	public int getY() {
 		return y;
+	}
+	
+	@Override
+	public void addToken(Token token) {
+		if (occupient != null && token instanceof Character){
+			occupient = (Character) token;
+		}
+	}
+
+	@Override
+	public void removeToken(Token token) {
+		if (occupient == token){
+			occupient = null;
+		}
+	}
+
+	@Override
+	public List<Token> getTokens() {
+		List<Token> token = new ArrayList<Token>();
+		if (occupient != null) token.add(occupient);
+		return token;
 	}
 	
 }

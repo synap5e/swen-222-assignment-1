@@ -1,10 +1,8 @@
 package cluedo.game.board;
 
-import java.awt.Point;
-import java.awt.Polygon;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 
 public abstract class Location {
@@ -32,4 +30,8 @@ public abstract class Location {
 	public abstract boolean hasVacancy();
 
 	public abstract void addToken(Token token);
+	
+	public abstract void removeToken(Token token);
+	
+	public abstract List<Token> getTokens();
 }
