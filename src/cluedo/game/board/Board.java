@@ -114,19 +114,35 @@ public class Board {
 			}
 			++y;
 		}
+
+		y = 0;
+		for (JsonEntity row : rows){
+			int x = 0;
+			for (JsonEntity tile : (JsonList) row){
+				double key = ((JsonNumber)tile).value();
+
+				if (doorways.containsKey(key)){
+					board[x][y].addNeighbour(doorways.get(key));
+					doorways.get(key).addNeighbour(board[x][y]);
+				}
+				++x;
+			}
+			++y;
+		}
+
 		for (int x = 0; x < getWidth()-1; ++x){
 			for (y = 0; y < getHeight(); ++y){
 				if (board[x][y] instanceof Tile && board[x+1][y] instanceof Tile){
-					board[x][y].addNeighbour(board[x+1][y], Direction.EAST);
-					board[x+1][y].addNeighbour(board[x][y], Direction.WEST);
+					board[x][y].addNeighbour(board[x+1][y]);
+					board[x+1][y].addNeighbour(board[x][y]);
 				}
 			}
 		}
 		for (y = 0; y < getHeight()-1; ++y){
 			for (int x = 0; x < getWidth(); ++x){
 				if (board[x][y] instanceof Tile && board[x][y+1] instanceof Tile){
-					board[x][y].addNeighbour(board[x][y+1], Direction.SOUTH);
-					board[x][y+1].addNeighbour(board[x][y], Direction.NORTH);
+					board[x][y].addNeighbour(board[x][y+1]);
+					board[x][y+1].addNeighbour(board[x][y]);
 				}
 			}
 		}
