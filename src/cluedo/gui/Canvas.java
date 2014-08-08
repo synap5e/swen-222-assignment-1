@@ -6,7 +6,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -17,23 +16,20 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.swing.JPanel;
-import cluedo.game.board.Character;
 import cluedo.game.board.Board;
 import cluedo.game.board.Location;
 import cluedo.game.board.Room;
 import cluedo.game.board.Tile;
-import cluedo.util.json.JsonList;
 import cluedo.util.json.JsonObject;
 
 public class Canvas extends JPanel implements MouseListener{
 	
-	private static final Color BACKGROUND = new Color(51,201,137);
-	private static final Color TILE = new Color(255,240,117);
-	private static final Color ROOM = new Color(201,193,154);
-	private static final Color WALL_COLOR = Color.BLACK;
-	private static final Color GRID_COLOR = Color.DARK_GRAY;
+	private static final Color BACKGROUND = new Color(145,204,176);
+	private static final Color TILE = new Color(238,177,70);
+	private static final Color ROOM = new Color(212,196,173);
+	private static final Color WALL_COLOR = new Color(130,23,11);//169,32,14);
+	private static final Color GRID_COLOR = Color.BLACK;
 	
 	private static final int WALL_THICKNESS = 3;
 	
