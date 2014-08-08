@@ -5,5 +5,5 @@ package cluedo.game.board;
  *
  */
 public interface Card {
-	
+	public String getName();
 }
