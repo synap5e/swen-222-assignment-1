@@ -12,12 +12,13 @@ import cluedo.game.board.Board;
 import cluedo.game.board.Character;
 import cluedo.game.board.Location;
 import cluedo.game.board.Suggestion;
+import cluedo.util.json.JsonObject;
 
 public class CluedoFrame extends JFrame implements GameListener {
 	
 	private JMenuBar menu;
 	
-	public CluedoFrame(Board board){
+	public CluedoFrame(Board board, JsonObject def){
 		setTitle("Cluedo");
 		setMinimumSize(new Dimension(480, 550));
 		
@@ -27,7 +28,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 		
 		setJMenuBar(menu);
 		
-		getContentPane().add(new Canvas(board));
+		getContentPane().add(new Canvas(board, def));
 		pack();
 		setVisible(true);
 	}

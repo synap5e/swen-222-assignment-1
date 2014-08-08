@@ -24,7 +24,7 @@ public class Main {
 			System.exit(-1);
 		}
 		Board board = new Board(defs);
-		CluedoFrame frame = new CluedoFrame(board);
+		CluedoFrame frame = new CluedoFrame(board, defs);
 		GameMaster gm = new GameMaster(board, null);
 		gm.addGameListener(frame);
 	}
