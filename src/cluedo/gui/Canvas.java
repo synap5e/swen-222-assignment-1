@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
@@ -14,9 +15,15 @@ import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+
 import cluedo.game.board.Board;
 import cluedo.game.board.Location;
 import cluedo.game.board.Room;
@@ -32,9 +39,14 @@ public class Canvas extends JPanel implements MouseListener{
 	private static final Color GRID_COLOR = Color.BLACK;
 	
 	private static final int WALL_THICKNESS = 3;
+	private static final int CARD_WIDTH = 100;
+	private static final int CARD_HEIGHT = 150;
 	
 	
 	private final Board board;
+	
+	private final Map<String, Image> cardImages;
+	private Image cardBack;
 	
 	private int tileWidth = 20;
 	private int xOffset;
@@ -70,6 +82,39 @@ public class Canvas extends JPanel implements MouseListener{
 			++maxY;
 			roomCorner.put(r, new Point(minX, minY));
 			roomCenter.put(r, new Point2D.Double((minX+maxX)/2, (minY+maxY)/2));
+		}
+		
+		cardImages = new HashMap<String, Image>();
+		try {
+			cardBack = ImageIO.read(new File("./images/card_back.png"));
+			
+			//Load weapon pictures
+			cardImages.put("Dagger", ImageIO.read(new File("./images/card_dagger.png")));
+			cardImages.put("Revolver", ImageIO.read(new File("./images/card_revolver.png")));
+			cardImages.put("Rope", ImageIO.read(new File("./images/card_rope.png")));
+			cardImages.put("Spanner", ImageIO.read(new File("./images/card_spanner.png")));
+			cardImages.put("Lead Piping", ImageIO.read(new File("./images/card_lead_piping.png")));
+			cardImages.put("Candlestick", ImageIO.read(new File("./images/card_candlestick.png")));
+			
+			//Load character pictures
+			cardImages.put("Colonel Mustard", ImageIO.read(new File("./images/card_colonel_mustard.png")));
+			cardImages.put("Miss Scarlett", ImageIO.read(new File("./images/card_miss_scarlett.png")));
+			cardImages.put("Mrs Peacock", ImageIO.read(new File("./images/card_mrs_peacock.png")));
+			cardImages.put("Mrs White", ImageIO.read(new File("./images/card_mrs_white.png")));
+			cardImages.put("Professor Plum", ImageIO.read(new File("./images/card_professor_plum.png")));
+			cardImages.put("Rev. Green", ImageIO.read(new File("./images/card_rev_green.png")));
+			
+			//Load room pictures
+			cardImages.put("Ballroom", ImageIO.read(new File("./images/card_ballroom.png")));
+			cardImages.put("Billiard Room", ImageIO.read(new File("./images/card_billiard_room.png")));
+			cardImages.put("Conservatory", ImageIO.read(new File("./images/card_conservatory.png")));
+			cardImages.put("Dining Room", ImageIO.read(new File("./images/card_dining_room.png")));
+			cardImages.put("Hall", ImageIO.read(new File("./images/card_hall.png")));
+			cardImages.put("Kitchen", ImageIO.read(new File("./images/card_kitchen.png")));
+			cardImages.put("Library", ImageIO.read(new File("./images/card_library.png")));
+			cardImages.put("Lounge", ImageIO.read(new File("./images/card_lounge.png")));
+			cardImages.put("Study", ImageIO.read(new File("./images/card_study.png")));
+		} catch (IOException e) {
 		}
 		
 		setBackground(BACKGROUND);
@@ -177,6 +222,18 @@ public class Canvas extends JPanel implements MouseListener{
 		}
 		//Return the transformation on the graphics back to what it was
 		g2d.setTransform(saveTransform);
+		
+		int x = CARD_WIDTH+2;
+		int y = 0;
+		g2d.drawImage(cardBack, 0, 0, CARD_WIDTH, CARD_HEIGHT, null);
+		for (Image img : cardImages.values()){
+			g2d.drawImage(img, x, y, CARD_WIDTH, CARD_HEIGHT, null);
+			x += CARD_WIDTH+2;
+			if (x > (CARD_WIDTH+2)*5){
+				x = 0;
+				y += CARD_HEIGHT+2;
+			}
+		}
 	}
 	
 	/**
