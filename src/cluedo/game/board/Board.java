@@ -96,9 +96,9 @@ public class Board {
 					board[x][y] = t;
 					tiles.add(t);
 				}
-				
+
 				if (startLocations.containsKey(key)){
-					board[x][y].addToken(startLocations.get(key));
+					board[x][y].addToken(startLocations.remove(key));
 				}
 				++x;
 			}
