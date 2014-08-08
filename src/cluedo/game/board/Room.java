@@ -1,6 +1,6 @@
 package cluedo.game.board;
 
-import java.awt.Point;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,9 +14,8 @@ public class Room  extends Location implements Card{
 	
 	public Room(String name){
 		this.name = name;
+		tokens = new ArrayList<Token>();
 	}
-	
-	// TODO tokens contained
 	
 	@Override
 	public boolean hasVacancy() {
@@ -29,8 +28,17 @@ public class Room  extends Location implements Card{
 
 	@Override
 	public void addToken(Token token) {
-		// TODO Auto-generated method stub
-		
+		tokens.add(token);
+	}
+	
+	@Override
+	public List<Token> getTokens(){
+		return new ArrayList<Token>(tokens);
+	}
+
+	@Override
+	public void removeToken(Token token) {
+		tokens.remove(token);
 	}
 	
 	

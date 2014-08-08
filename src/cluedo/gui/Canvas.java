@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
@@ -12,15 +13,17 @@ import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JPanel;
-
+import cluedo.game.board.Character;
 import cluedo.game.board.Board;
 import cluedo.game.board.Location;
 import cluedo.game.board.Room;
 import cluedo.game.board.Tile;
-import cluedo.game.board.Location.Direction;
 import cluedo.util.json.JsonList;
 import cluedo.util.json.JsonObject;
 
@@ -36,8 +39,6 @@ public class Canvas extends JPanel implements MouseListener{
 	
 	
 	private final Board board;
-	private final int boardWidth;
-	private final int boardHeight;
 	
 	private int tileWidth = 20;
 	private int xOffset;
@@ -45,11 +46,35 @@ public class Canvas extends JPanel implements MouseListener{
 	
 	private Location selected;
 	
-	public Canvas(Board board, JsonObject def){
-		this.board = board;
-		JsonList rows = (JsonList) def.get("board");
-		boardWidth = ((JsonList)rows.get(0)).size();
-		boardHeight = rows.size();
+	private Map<Room, Point2D> roomCorner;
+	private Map<Room, Point2D> roomCenter;
+	
+	public Canvas(Board brd, JsonObject def){
+		board = brd;
+		
+		//Find the corner and center of all the rooms
+		roomCorner = new HashMap<Room, Point2D>();
+		roomCenter = new HashMap<Room, Point2D>();
+		for (Room r : board.getRooms()){
+			int minX = board.getWidth();
+			int minY = board.getHeight();
+			int maxX = 0;
+			int maxY = 0;
+			for (int x = 0; x < board.getWidth(); ++x){
+				for (int y = 0; y < board.getHeight(); ++y){
+					if (board.getLocation(x, y) == r){
+						if (x < minX) minX = x;
+						if (x > maxX) maxX = x;
+						if (y < minY) minY = y;
+						if (y > maxY) maxY = y;
+					}
+				}
+			}
+			++maxX;
+			++maxY;
+			roomCorner.put(r, new Point(minX, minY));
+			roomCenter.put(r, new Point2D.Double((minX+maxX)/2, (minY+maxY)/2));
+		}
 		
 		setBackground(BACKGROUND);
 		addMouseListener(this);
@@ -62,7 +87,7 @@ public class Canvas extends JPanel implements MouseListener{
 			@Override
 			public void componentResized(ComponentEvent arg0) {
 				Canvas can = (Canvas) arg0.getSource();
-				tileWidth = (can.getWidth()/boardWidth < can.getHeight()/boardHeight) ? can.getWidth()/boardWidth : can.getHeight()/boardHeight;
+				tileWidth = (can.getWidth()/board.getWidth() < can.getHeight()/board.getHeight()) ? can.getWidth()/board.getWidth() : can.getHeight()/board.getHeight();
 				xOffset = (can.getWidth()-tileWidth*24)/2;
 				yOffset = (can.getHeight()-tileWidth*25)/2;
 				repaint();
@@ -92,8 +117,8 @@ public class Canvas extends JPanel implements MouseListener{
 	    g2d.setTransform(trans);
 		
 		//Draw locations
-		for (int x = 0; x < boardWidth; ++x){
-			for (int y = 0; y < boardHeight; ++y){
+		for (int x = 0; x < board.getWidth(); ++x){
+			for (int y = 0; y < board.getHeight(); ++y){
 				Location loc = board.getLocation(x, y);
 				if (loc == null) continue;
 				
@@ -107,20 +132,37 @@ public class Canvas extends JPanel implements MouseListener{
 				
 				g2d.fillRect(x*tileWidth, y*tileWidth, tileWidth, tileWidth);
 				
-				//Draw the grid outline if the location is a tile
+				//Draw the grid outline if the location is a tile and any contained token
 				if (loc instanceof Tile){
 					g2d.setColor(GRID_COLOR);
 					g2d.drawRect(x*tileWidth, y*tileWidth, tileWidth, tileWidth);
+					
+					//TODO: set color to match token
+					if (loc.getTokens().size() > 0){
+						g2d.fillOval(x*tileWidth+3, y*tileWidth+3, tileWidth-5, tileWidth-5);
+					}
 				}
-				
-				//TODO: Draw tokens in rooms
 			}
 		}
+		
+		//Draw room contents
+		g2d.setColor(Color.BLACK);
+		for (Room room : board.getRooms()){
+			//Draw the room name
+			Rectangle2D nameBounds = g2d.getFontMetrics().getStringBounds(room.getName(), g2d);
+			Point2D center = roomCenter.get(room);
+			g2d.drawString(room.getName(), 
+			   		(int) (center.getX()*tileWidth-nameBounds.getWidth()/2), 
+			 		(int) (center.getY()*tileWidth+nameBounds.getHeight()/2));			
+			
+			//TODO: Draw tokens inside the room
+		}
+		
 		//Draw walls
 		g2d.setStroke(new BasicStroke(WALL_THICKNESS));
 		g2d.setColor(WALL_COLOR);
-		for (int x = 0; x < boardWidth; ++x){
-			for (int y = 0; y < boardHeight; ++y){
+		for (int x = 0; x < board.getWidth(); ++x){
+			for (int y = 0; y < board.getHeight(); ++y){
 				Location loc = board.getLocation(x, y);
 				if (loc == null) continue;
 				
