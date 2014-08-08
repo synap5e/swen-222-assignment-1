@@ -7,6 +7,8 @@ import cluedo.game.board.Suggestion;
 
 public interface GameListener {
 	
+	public void onPlayerTurn(Character player);
+	
 	public void onPlayerMove(Character player, int roll, Location destination);
 	
 	public void onSuggestionUndisputed(Character suggester, Suggestion suggestion);
