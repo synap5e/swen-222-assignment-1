@@ -128,9 +128,10 @@ public class Canvas extends JPanel implements MouseListener{
 			@Override
 			public void componentResized(ComponentEvent arg0) {
 				Canvas can = (Canvas) arg0.getSource();
-				tileWidth = (can.getWidth()/board.getWidth() < can.getHeight()/board.getHeight()) ? can.getWidth()/board.getWidth() : can.getHeight()/board.getHeight();
+				int height = can.getHeight() - CARD_HEIGHT-5;
+				tileWidth = (can.getWidth()/board.getWidth() < height/board.getHeight()) ? can.getWidth()/board.getWidth() : height/board.getHeight();
 				xOffset = (can.getWidth()-tileWidth*24)/2;
-				yOffset = (can.getHeight()-tileWidth*25)/2;
+				yOffset = (height-tileWidth*25)/2;
 				repaint();
 			}
 			
@@ -220,20 +221,19 @@ public class Canvas extends JPanel implements MouseListener{
 				drawWall(g2d, loc, board.getLocation(x, y+1), x, y+1, 1, 0);
 			}
 		}
-		//Return the transformation on the graphics back to what it was
-		g2d.setTransform(saveTransform);
-		
-		int x = CARD_WIDTH+2;
-		int y = 0;
-		g2d.drawImage(cardBack, 0, 0, CARD_WIDTH, CARD_HEIGHT, null);
+	
+		//TODO: Draw actual hand
+		int x = 0;
 		for (Image img : cardImages.values()){
-			g2d.drawImage(img, x, y, CARD_WIDTH, CARD_HEIGHT, null);
+			g2d.drawImage(img, x, tileWidth*board.getHeight()+5, CARD_WIDTH, CARD_HEIGHT, null);
 			x += CARD_WIDTH+2;
-			if (x > (CARD_WIDTH+2)*5){
-				x = 0;
-				y += CARD_HEIGHT+2;
+			if (x > (CARD_WIDTH+2)*6){
+				break;
 			}
 		}
+		
+		//Return the transformation on the graphics back to what it was
+		g2d.setTransform(saveTransform);
 	}
 	
 	/**
