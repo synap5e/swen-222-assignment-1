@@ -73,16 +73,22 @@
 			}
 	},
 	"weapons"	: {
-			"rake" 		: {
+			"Candlestick" 		: {
 				
 			},	
-			"fire axe" 	: {
+			"Knife" 	: {
 
 			},
-			"flame thrower" : {
+			"Lead Piping" : {
 
 			},
-			"flare gun"	: {
+			"Revolver"	: {
+
+			},
+			"Rope"	: {
+
+			},
+			"Spanner"	: {
 
 			}
 	}
