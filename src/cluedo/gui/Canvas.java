@@ -29,6 +29,8 @@ import cluedo.game.board.Board;
 import cluedo.game.board.Location;
 import cluedo.game.board.Room;
 import cluedo.game.board.Tile;
+import cluedo.game.board.Token;
+import cluedo.game.board.Character;
 import cluedo.util.json.JsonObject;
 
 public class Canvas extends JPanel implements MouseListener{
@@ -197,20 +199,25 @@ public class Canvas extends JPanel implements MouseListener{
 		}
 		
 		//Draw room contents
-		g2d.setColor(Color.BLACK);
 		for (Room room : board.getRooms()){
 			//Draw the room name
+			g2d.setColor(Color.BLACK);
 			Rectangle2D nameBounds = g2d.getFontMetrics().getStringBounds(room.getName(), g2d);
 			Point2D center = roomCenter.get(room);
 			g2d.drawString(room.getName(), 
 			   		(int) (center.getX()*tileWidth-nameBounds.getWidth()/2), 
 			 		(int) (center.getY()*tileWidth-nameBounds.getHeight()/2));			
 			
-			//TODO: Draw tokens inside the room
+			//Draw the tokens inside the room
 			int startY = (int) (center.getY()*tileWidth+nameBounds.getHeight()/2);
-			int x = (int) center.getX()*tileWidth-(tileWidth*tokenImages.size())/2 ;
-			for (Image img : tokenImages.values()){
-				g2d.drawImage(img, x, startY, tileWidth, tileWidth, null);
+			int x = (int) center.getX()*tileWidth-(tileWidth*room.getTokens().size())/2 ;
+			for (Token token : room.getTokens()){
+				if (token instanceof Character){
+					//TODO: set color to match token
+					g2d.fillOval(x+3, startY+3, tileWidth-5, tileWidth-5);
+				} else {
+					g2d.drawImage(tokenImages.get(token.getName()), x, startY, tileWidth, tileWidth, null);
+				}
 				x += tileWidth;
 				
 			}
