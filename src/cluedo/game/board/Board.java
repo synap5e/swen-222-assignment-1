@@ -75,7 +75,7 @@ public class Board {
 			
 			Weapon w = new Weapon(name);
 			weapons.add(w);
-			startLocations.put(roomKeyList.get(random.nextInt(roomKeyList.size())), w);
+			startLocations.put(roomKeyList.remove(random.nextInt(roomKeyList.size())), w);
 		}
 
 		Map<Double, Room> doorways = new HashMap<Double, Room>();
