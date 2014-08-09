@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -42,10 +43,10 @@ public class Canvas extends JPanel implements MouseListener{
 	private static final int CARD_WIDTH = 100;
 	private static final int CARD_HEIGHT = 150;
 	
-	
 	private final Board board;
 	
 	private final Map<String, Image> cardImages;
+	private final Map<String, Image> tokenImages;
 	private Image cardBack;
 	
 	private int tileWidth = 20;
@@ -83,7 +84,7 @@ public class Canvas extends JPanel implements MouseListener{
 			roomCorner.put(r, new Point(minX, minY));
 			roomCenter.put(r, new Point2D.Double((minX+maxX)/2, (minY+maxY)/2));
 		}
-		
+		tokenImages = new HashMap<String, Image>();
 		cardImages = new HashMap<String, Image>();
 		try {
 			cardBack = ImageIO.read(new File("./images/card_back.png"));
@@ -114,6 +115,14 @@ public class Canvas extends JPanel implements MouseListener{
 			cardImages.put("Library", ImageIO.read(new File("./images/card_library.png")));
 			cardImages.put("Lounge", ImageIO.read(new File("./images/card_lounge.png")));
 			cardImages.put("Study", ImageIO.read(new File("./images/card_study.png")));
+		
+			//Load token images
+			tokenImages.put("Spanner", ImageIO.read(new File("./images/token_spanner.png")));
+			tokenImages.put("Lead Piping", ImageIO.read(new File("./images/token_lead_piping.png")));
+			tokenImages.put("Knife", ImageIO.read(new File("./images/token_knife.png")));
+			tokenImages.put("Candlestick", ImageIO.read(new File("./images/token_candlestick.png")));
+			tokenImages.put("Rope", ImageIO.read(new File("./images/token_rope.png")));
+			tokenImages.put("Revolver", ImageIO.read(new File("./images/token_revolver.png")));
 		} catch (IOException e) {
 		}
 		
@@ -195,9 +204,16 @@ public class Canvas extends JPanel implements MouseListener{
 			Point2D center = roomCenter.get(room);
 			g2d.drawString(room.getName(), 
 			   		(int) (center.getX()*tileWidth-nameBounds.getWidth()/2), 
-			 		(int) (center.getY()*tileWidth+nameBounds.getHeight()/2));			
+			 		(int) (center.getY()*tileWidth-nameBounds.getHeight()/2));			
 			
 			//TODO: Draw tokens inside the room
+			int startY = (int) (center.getY()*tileWidth+nameBounds.getHeight()/2);
+			int x = (int) center.getX()*tileWidth-(tileWidth*tokenImages.size())/2 ;
+			for (Image img : tokenImages.values()){
+				g2d.drawImage(img, x, startY, tileWidth, tileWidth, null);
+				x += tileWidth;
+				
+			}
 		}
 		
 		//Draw walls
