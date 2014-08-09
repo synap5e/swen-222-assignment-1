@@ -21,7 +21,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 	public CluedoFrame(Board board, JsonObject def){
 		setTitle("Cluedo");
 		setMinimumSize(new Dimension(600, 700));
-		
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		menu = new JMenuBar();
 		menu.add(new JMenuItem("File"));
 		menu.add(new JMenuItem("Game"));
