@@ -12,6 +12,7 @@ import cluedo.game.board.Board;
 import cluedo.game.board.Character;
 import cluedo.game.board.Location;
 import cluedo.game.board.Suggestion;
+import cluedo.game.board.Weapon;
 import cluedo.util.json.JsonObject;
 
 public class CluedoFrame extends JFrame implements GameListener {
@@ -34,12 +35,6 @@ public class CluedoFrame extends JFrame implements GameListener {
 	}
 
 	@Override
-	public void onPlayerMove(Character player, int roll, Location destination) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void onSuggestionUndisputed(Character suggester,	Suggestion suggestion) {
 		// TODO Auto-generated method stub
 		
@@ -59,6 +54,37 @@ public class CluedoFrame extends JFrame implements GameListener {
 
 	@Override
 	public void onPlayerTurn(Character player) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCharacterMove(Character player, int roll, Location destination) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCharacterJoinedGame(int playerNumber, Character character,
+			boolean humanPlayer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onTurnBegin(Character playersCharacter) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onWeaponMove(Weapon weapon, Location room) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCharacterMove(Character character, Location room) {
 		// TODO Auto-generated method stub
 		
 	}
