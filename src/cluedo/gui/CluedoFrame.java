@@ -35,19 +35,8 @@ public class CluedoFrame extends JFrame implements GameListener {
 	}
 
 	@Override
-	public void onSuggestionUndisputed(Character suggester,	Suggestion suggestion) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onSuggestionDisproved(Character suggester, Suggestion suggestion, Character disprover) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onAccusation(Character accuser, Accusation accusation, boolean correct) {
+	public void onCharacterJoinedGame(int playerNumber, Character character,
+			boolean humanPlayer) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -65,14 +54,27 @@ public class CluedoFrame extends JFrame implements GameListener {
 	}
 
 	@Override
-	public void onCharacterJoinedGame(int playerNumber, Character character,
-			boolean humanPlayer) {
+	public void onSuggestionUndisputed(Character suggester,
+			Suggestion suggestion) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onTurnBegin(Character playersCharacter) {
+	public void onSuggestionDisproved(Character suggester,
+			Suggestion suggestion, Character disprover) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAccusation(Character accuser, Accusation accusation,
+			boolean correct) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void onTurnBegin(String name, Character playersCharacter) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -88,4 +90,19 @@ public class CluedoFrame extends JFrame implements GameListener {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void onDiceRolled(int roll) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCharacterJoinedGame(String name, Character character,
+			Boolean humanPlayer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
 }

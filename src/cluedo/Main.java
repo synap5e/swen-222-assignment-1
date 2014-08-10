@@ -2,8 +2,14 @@ package cluedo;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
+import cluedo.game.GameListener;
 import cluedo.game.GameMaster;
+import cluedo.game.Player;
 import cluedo.game.board.Board;
 import cluedo.gui.CluedoFrame;
 import cluedo.gui.GUIHandle;
@@ -27,6 +33,9 @@ public class Main {
 		CluedoFrame frame = new CluedoFrame(board, defs);
 		GameMaster gm = new GameMaster(board, null);
 		gm.addGameListener(frame);
+		
+		gm.createGame();
+		gm.startGame();
 	}
 
 }

@@ -23,25 +23,27 @@ import cluedo.util.json.JsonString;
  *
  */
 public class Board {
-	private Set<Room> rooms;
-	
-	private Set<Character> characters;
-	private Set<Weapon> weapons;
-	
-	private Set<Tile> tiles;
+	private List<Room> rooms;
+	private List<Tile> tiles;
 	
 	private Location[][] board;
+
+	private List<Character> characters;
+	private List<Weapon> weapons;
+	
+	private Map<Token, Location> tokenLocations;
 	
 	private Random random = new Random();
 	
 	public Board(JsonObject defs){
 		JsonList rows = (JsonList) defs.get("board");
 		
-		rooms = new LinkedHashSet<Room>();
-		characters = new LinkedHashSet<Character>();
-		weapons = new LinkedHashSet<Weapon>();
+		rooms = new ArrayList<Room>();
+		characters = new ArrayList<Character>();
+		weapons = new ArrayList<Weapon>();
+		tokenLocations = new HashMap<Token, Location>();
 		
-		tiles = new LinkedHashSet<Tile>();
+		tiles = new ArrayList<Tile>();
 		board = new Location[((JsonList)rows.get(0)).size()][rows.size()];
 
 		JsonObject roomsDef = ((JsonObject) defs.get("rooms"));
@@ -108,7 +110,9 @@ public class Board {
 				}
 
 				if (startLocations.containsKey(key)){
-					board[x][y].addToken(startLocations.remove(key));
+					Token tok = startLocations.remove(key);
+					board[x][y].addToken(tok);
+					tokenLocations.put(tok, board[x][y]);
 				}
 				++x;
 			}
@@ -148,26 +152,20 @@ public class Board {
 		}
 	}
 
-	public Set<Room> getRooms(){
-		return Collections.<Room>unmodifiableSet(rooms);
+	public ArrayList<Room> getRooms(){
+		return new ArrayList<Room>(rooms);
 	}
 	
-	public Set<Tile> getTiles(){
-		return Collections.<Tile>unmodifiableSet(tiles);
+	public ArrayList<Tile> getTiles(){
+		return new ArrayList<Tile>(tiles);
 	}
 
-	public Set<Character> getCharacters() {
-		return Collections.<Character>unmodifiableSet(characters);
+	public ArrayList<Character> getCharacters() {
+		return new ArrayList<Character>(characters);
 	}
 
-	public Set<Weapon> getWeapons() {
-		return Collections.<Weapon>unmodifiableSet(weapons);
-	}
-	
-	
-	public Location getLocationOf(Character character) {
-		// TODO
-		return null;
+	public ArrayList<Weapon> getWeapons() {
+		return new ArrayList<Weapon>(weapons);
 	}
 	
 	
@@ -182,5 +180,37 @@ public class Board {
 	public Location getLocation(int x, int y){
 		if (x < 0 || x >= getWidth() || y < 0 || y >= getHeight()) return null;
 		return board[x][y];
+	}
+	
+	
+	public List<Location> getPossibleDestinations(Location start, int allowedMoves) {
+		List<Location> allowed = new ArrayList<Location>();
+		addPossibleDestinations(start, allowed, allowedMoves);
+		return allowed;
+	}
+	
+	private void addPossibleDestinations(Location location, List<Location> allowed,	int allowedMoves) {
+		if (allowedMoves == 0 || allowed.contains(location)) return;
+		if (location.hasVacancy()) allowed.add(location);
+		for (Location n : location.getNeighbours()){
+			addPossibleDestinations(n, allowed, allowedMoves-1);
+		}
+	}
+
+	public Location getLocationOf(Token t) {
+		return tokenLocations.get(t);
+	}
+
+	public void moveCharacter(Character playersCharacter, Location dest) {
+		Location start = tokenLocations.get(playersCharacter);
+		start.removeToken(playersCharacter);
+		
+		dest.addToken(playersCharacter);
+		tokenLocations.put(playersCharacter, dest);
+	}
+
+	public void moveWeapon(Weapon weapon, Location room) {
+		// TODO Auto-generated method stub
+		
 	}
 }

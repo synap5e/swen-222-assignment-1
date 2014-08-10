@@ -17,5 +17,12 @@ public class Accusation extends Suggestion {
 	public Room getRoom() {
 		return room;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || !obj.getClass().equals(this.getClass())) return false;
+		Accusation other = (Accusation)obj;
+		return this.weapon == other.weapon && this.character == other.character && this.room == other.room;
+	}
 
 }

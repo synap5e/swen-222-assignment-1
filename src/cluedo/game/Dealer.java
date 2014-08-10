@@ -55,7 +55,7 @@ public class Dealer {
 		
 		int i=0;
 		while(!deck.isEmpty()){
-			hands.get(i++ % numberOfPlayers).addCard(deck.remove(deck.size()));
+			hands.get(i++ % numberOfPlayers).addCard(deck.remove(random.nextInt(deck.size())));
 		}
 		
 		return hands;
