@@ -13,6 +13,7 @@ import cluedo.game.Player;
 import cluedo.game.board.Board;
 import cluedo.gui.CluedoFrame;
 import cluedo.gui.GUIHandle;
+import cluedo.gui.GUIHandleImpl;
 import cluedo.util.json.JsonObject;
 import cluedo.util.json.JsonParseException;
 import cluedo.util.json.MinimalJson;
@@ -31,7 +32,7 @@ public class Main {
 		}
 		Board board = new Board(defs);
 		CluedoFrame frame = new CluedoFrame(board, defs);
-		GameMaster gm = new GameMaster(board, null);
+		GameMaster gm = new GameMaster(board, new GUIHandleImpl());
 		gm.addGameListener(frame);
 		
 		gm.createGame();
