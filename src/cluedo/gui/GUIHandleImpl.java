@@ -36,11 +36,15 @@ public class GUIHandleImpl implements GUIHandle {
 
 	private boolean wait = false;
 	private int numberOfPlayers;
+	private CluedoFrame frame;
+	
+	public GUIHandleImpl(CluedoFrame frame){
+		this.frame = frame;
+	}
 	
 	@Override
 	public int getNumberOfPlayers(int min, int max) {
-		JDialog dialog = new JDialog();
-
+		JDialog dialog = new JDialog(frame);
 		SpinnerNumberModel numberOfPlayersModel = new SpinnerNumberModel(min, min, max, 1);
 		JSpinner spinner = new JSpinner(numberOfPlayersModel);
 		
@@ -75,7 +79,7 @@ public class GUIHandleImpl implements GUIHandle {
 
 	@Override
 	public List<String> getHumanNames() {
-		JDialog dialog = new JDialog();
+		JDialog dialog = new JDialog(frame);
 
 		dialog.setLayout(new GridLayout(numberOfPlayers+1, 2));
 		
@@ -137,7 +141,7 @@ public class GUIHandleImpl implements GUIHandle {
 	@Override
 	public Character chooseCharacter(String playerName,
 			List<Character> characters, List<Character> availableCharacters) {
-		JDialog dialog = new JDialog();
+		JDialog dialog = new JDialog(frame);
 
 		dialog.setLayout(new GridLayout(characters.size()+2, 1));
 		
@@ -175,13 +179,16 @@ public class GUIHandleImpl implements GUIHandle {
 			} catch (InterruptedException e1) {
 			}
 		}
+		dialog.dispose();
 		String name = group.getSelection().getActionCommand();
 		for (Character ch : availableCharacters){
 			if (ch.getName().equals(name)){
+				
 				return ch;
 			}
 		}
-		throw new RuntimeException("Simon says java says lolol");
+		assert false: "Code should not be reached";
+		return null;
 	}
 
 	@Override

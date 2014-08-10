@@ -32,7 +32,7 @@ public class Main {
 		}
 		Board board = new Board(defs);
 		CluedoFrame frame = new CluedoFrame(board, defs);
-		GameMaster gm = new GameMaster(board, new GUIHandleImpl());
+		GameMaster gm = new GameMaster(board, new GUIHandleImpl(frame));
 		gm.addGameListener(frame);
 		
 		gm.createGame();
