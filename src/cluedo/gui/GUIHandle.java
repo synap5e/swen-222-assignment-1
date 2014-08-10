@@ -10,6 +10,11 @@ import cluedo.game.board.Room;
 import cluedo.game.board.Suggestion;
 import cluedo.game.board.Weapon;
 
+/**
+ * 
+ * @author Simon Pinfold
+ *
+ */
 public interface GUIHandle {
 
 	public int getNumberOfPlayers(int min, int max);

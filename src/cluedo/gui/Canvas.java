@@ -36,6 +36,11 @@ import cluedo.game.board.Character;
 import cluedo.game.board.Weapon;
 import cluedo.util.json.JsonObject;
 
+/**
+ * 
+ * @author James Greenwood-Thessman
+ *
+ */
 public class Canvas extends JPanel implements MouseListener{
 	
 	private static final Color BACKGROUND = new Color(145,204,176);

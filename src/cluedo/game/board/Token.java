@@ -1,6 +1,10 @@
 package cluedo.game.board;
 
-
+/**
+ * 
+ * @author James Greenwood-Thessman
+ *
+ */
 public class Token implements Card{
 
 	protected String name;

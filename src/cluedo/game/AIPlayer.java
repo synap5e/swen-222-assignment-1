@@ -10,6 +10,11 @@ import cluedo.game.board.Location;
 import cluedo.game.board.Suggestion;
 import cluedo.game.board.Weapon;
 
+/**
+ * 
+ * @author Simon Pinfold
+ *
+ */
 public class AIPlayer extends Player implements GameListener{
 
 	private GameView gameView;

@@ -11,6 +11,11 @@ import cluedo.game.board.Suggestion;
 import cluedo.game.board.Weapon;
 import cluedo.gui.GUIHandle;
 
+/**
+ * 
+ * @author Simon Pinfold
+ *
+ */
 public class HumanPlayer extends Player {
 
 	private GUIHandle guiHandle;

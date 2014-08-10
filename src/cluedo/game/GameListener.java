@@ -6,6 +6,11 @@ import cluedo.game.board.Location;
 import cluedo.game.board.Suggestion;
 import cluedo.game.board.Weapon;
 
+/**
+ * 
+ * @author Simon Pinfold
+ *
+ */
 public interface GameListener {
 	
 	/** Used to announce what characters are in play, and their location

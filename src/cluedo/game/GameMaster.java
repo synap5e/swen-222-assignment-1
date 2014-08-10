@@ -17,6 +17,11 @@ import cluedo.game.board.Room;
 import cluedo.game.board.Suggestion;
 import cluedo.gui.GUIHandle;
 
+/**
+ * 
+ * @author Simon Pinfold
+ *
+ */
 public class GameMaster {
 
 	private List<Player> players;

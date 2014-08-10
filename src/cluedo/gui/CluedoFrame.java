@@ -15,6 +15,11 @@ import cluedo.game.board.Suggestion;
 import cluedo.game.board.Weapon;
 import cluedo.util.json.JsonObject;
 
+/**
+ * 
+ * @author James Greenwood-Thessman, Simon Pinfold
+ *
+ */
 public class CluedoFrame extends JFrame implements GameListener {
 	
 	private JMenuBar menu;
