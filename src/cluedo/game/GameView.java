@@ -1,5 +1,6 @@
 package cluedo.game;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -17,31 +18,27 @@ public class GameView {
 
 	private Character playersToken;
 	private Board board;
+	private GameMaster gameMaster;
 
-	public GameView(Board board, Character playersToken){
+	public GameView(Board board, Character playersToken, GameMaster gameMaster){
 		this.board = board;
 		this.playersToken = playersToken;
+		this.gameMaster = gameMaster;
 	}
 	
-	/** Gets a list of CharacterCards in the order that they will play, starting to the left of
-	 * this player and going clockwise up to the player to our right
-	 * 
-	 * @return a list of CharacterCards for each of the players
-	 */
-	public List<Character> getPlayerOrder(){
-		// TODO getPlayerOrder
-		return null;
+	public List<Character> getPlayersClockwiseOfMe(){
+		return gameMaster.getCharactersClockwiseOf(playersToken);
 	}
 	
 	public Location getMyLocation(){
 		return board.getLocationOf(playersToken);
 	}
 	
-	public Set<Room> getRooms(){
+	public ArrayList<Room> getRooms(){
 		return board.getRooms();
 	}
 	
-	public Set<Tile> getTiles(){
+	public ArrayList<Tile> getTiles(){
 		return board.getTiles();
 	}
 	

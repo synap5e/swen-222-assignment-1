@@ -20,8 +20,7 @@ public class Hand {
 	}
 
 	public boolean hasCard(Card c) {
-		// TODO Auto-generated method stub
-		return false;
+		return cards.contains(c);
 	}
 
 
