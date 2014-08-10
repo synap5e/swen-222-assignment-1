@@ -21,7 +21,7 @@ public interface GUIHandle {
 	
 	public List<String> getHumanNames();
 	
-	public Character chooseCharacter(String playerName, List<Character> characters);
+	public Character chooseCharacter(String playerName, List<Character> characters, List<Character> availableCharacters);
 	
 	
 	

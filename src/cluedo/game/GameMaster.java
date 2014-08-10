@@ -76,7 +76,7 @@ public class GameMaster {
 			Player player;
 			if (playerIsHuman){
 				String name = humanNames.remove(0);
-				character = guiHandle.chooseCharacter(name, pickableCharacters);
+				character = guiHandle.chooseCharacter(name, board.getCharacters(), pickableCharacters);
 				player = new HumanPlayer(name, hands.remove(0), guiHandle);
 			} else {
 				character = pickableCharacters.get(random.nextInt(pickableCharacters.size()));

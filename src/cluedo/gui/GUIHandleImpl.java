@@ -7,10 +7,12 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerModel;
@@ -25,6 +27,11 @@ import cluedo.game.board.Location;
 import cluedo.game.board.Room;
 import cluedo.game.board.Weapon;
 
+/**
+ * 
+ * @author James Greenwood-Thessman
+ *
+ */
 public class GUIHandleImpl implements GUIHandle {
 
 	private boolean wait = false;
@@ -121,7 +128,6 @@ public class GUIHandleImpl implements GUIHandle {
 		for (int i = 0; i < numberOfPlayers; ++i){
 			if (!ais.get(i).isSelected()){
 				playerNames.add(names.get(i).getText());
-				System.out.println(names.get(i).getText());
 			}
 		}
 
@@ -130,9 +136,52 @@ public class GUIHandleImpl implements GUIHandle {
 
 	@Override
 	public Character chooseCharacter(String playerName,
-			List<Character> characters) {
-		// TODO Auto-generated method stub
-		return null;
+			List<Character> characters, List<Character> availableCharacters) {
+		JDialog dialog = new JDialog();
+
+		dialog.setLayout(new GridLayout(characters.size()+2, 1));
+		
+		dialog.add(new JLabel(playerName + ", who would you like to be?"));
+		
+		
+		
+		ButtonGroup group = new ButtonGroup();
+		for (Character ch : characters){
+			JRadioButton rb = new JRadioButton(ch.getName());
+		    rb.setActionCommand(ch.getName());
+		    rb.setEnabled(availableCharacters.contains(ch));
+		    dialog.add(rb);
+		    group.add(rb);
+		}
+		
+		
+		wait = true;
+		
+		JButton submit = new JButton("Done");
+		submit.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				wait = false;
+			}
+		});
+		
+		dialog.add(submit);
+		dialog.setVisible(true);
+		
+		while (wait){
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e1) {
+			}
+		}
+		String name = group.getSelection().getActionCommand();
+		for (Character ch : availableCharacters){
+			if (ch.getName().equals(name)){
+				return ch;
+			}
+		}
+		throw new RuntimeException("Simon says java says lolol");
 	}
 
 	@Override
