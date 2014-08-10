@@ -7,16 +7,16 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import cluedo.game.GameListener;
-import cluedo.game.GameMaster;
-import cluedo.game.Player;
-import cluedo.game.board.Board;
-import cluedo.gui.CluedoFrame;
-import cluedo.gui.GUIHandle;
-import cluedo.gui.GUIHandleImpl;
-import cluedo.util.json.JsonObject;
-import cluedo.util.json.JsonParseException;
-import cluedo.util.json.MinimalJson;
+import util.json.JsonObject;
+import util.json.JsonParseException;
+import util.json.MinimalJson;
+import cluedo.controller.GameInput;
+import cluedo.controller.GameListener;
+import cluedo.controller.GameMaster;
+import cluedo.controller.Player;
+import cluedo.model.Board;
+import cluedo.view.CluedoFrame;
+import cluedo.view.GUIGameInput;
 
 public class Main {
 
@@ -32,7 +32,7 @@ public class Main {
 		}
 		Board board = new Board(defs);
 		CluedoFrame frame = new CluedoFrame(board, defs);
-		GameMaster gm = new GameMaster(board, new GUIHandleImpl(frame));
+		GameMaster gm = new GameMaster(board, new GUIGameInput(frame));
 		gm.addGameListener(frame);
 		
 		gm.createGame();
