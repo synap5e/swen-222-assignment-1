@@ -18,6 +18,7 @@ import cluedo.util.json.JsonObject;
 public class CluedoFrame extends JFrame implements GameListener {
 	
 	private JMenuBar menu;
+	private Canvas canvas;
 	
 	public CluedoFrame(Board board, JsonObject def){
 		setTitle("Cluedo");
@@ -29,85 +30,54 @@ public class CluedoFrame extends JFrame implements GameListener {
 		
 		setJMenuBar(menu);
 		
-		getContentPane().add(new Canvas(board, def));
+		this.canvas = new Canvas(board, def);
+		getContentPane().add(canvas);
 		pack();
 		setVisible(true);
 	}
 
 	@Override
-	public void onCharacterJoinedGame(int playerNumber, Character character,
-			boolean humanPlayer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onPlayerTurn(Character player) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onCharacterMove(Character player, int roll, Location destination) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onSuggestionUndisputed(Character suggester,
-			Suggestion suggestion) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onSuggestionDisproved(Character suggester,
-			Suggestion suggestion, Character disprover) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onAccusation(Character accuser, Accusation accusation,
-			boolean correct) {
-		// TODO Auto-generated method stub
-		
+	public void onCharacterJoinedGame(String playerName, Character character, boolean humanPlayer) {
+		canvas.onCharacterJoinedGame(playerName, character, humanPlayer);
 	}
 
 	public void onTurnBegin(String name, Character playersCharacter) {
-		// TODO Auto-generated method stub
-		
+		canvas.onTurnBegin(name, playersCharacter);
+	}
+	
+	@Override
+	public void onDiceRolled(int roll) {
+		canvas.onDiceRolled(roll);
+	}
+
+	@Override
+	public void onCharacterMove(Character character, Location destination) {
+		canvas.onCharacterMove(character, destination);
+	}
+
+	@Override
+	public void onSuggestionUndisputed(Character suggester,	Suggestion suggestion) {
+		canvas.onSuggestionUndisputed(suggester, suggestion);
+	}
+
+	@Override
+	public void onSuggestionDisproved(Character suggester, Suggestion suggestion, Character disprover) {
+		canvas.onSuggestionDisproved(suggester, suggestion, disprover);
+	}
+
+	@Override
+	public void onAccusation(Character accuser, Accusation accusation, boolean correct) {
+		canvas.onAccusation(accuser, accusation, correct);
 	}
 
 	@Override
 	public void onWeaponMove(Weapon weapon, Location room) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onCharacterMove(Character character, Location room) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onDiceRolled(int roll) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onCharacterJoinedGame(String name, Character character,
-			Boolean humanPlayer) {
-		// TODO Auto-generated method stub
-		
+		canvas.onWeaponMove(weapon, room);
 	}
 
 	@Override
 	public void onGameWon(String name, Character playersCharacter) {
-		// TODO Auto-generated method stub
-		
+		canvas.onGameWon(name, playersCharacter);
 	}
 
 
