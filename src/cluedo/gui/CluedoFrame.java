@@ -104,5 +104,11 @@ public class CluedoFrame extends JFrame implements GameListener {
 		
 	}
 
+	@Override
+	public void onGameWon(String name, Character playersCharacter) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }

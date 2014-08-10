@@ -43,4 +43,7 @@ public interface GameListener {
 
 	public void onCharacterJoinedGame(String name, Character character, Boolean humanPlayer);
 
+
+	public void onGameWon(String name, Character playersCharacter);
+
 }

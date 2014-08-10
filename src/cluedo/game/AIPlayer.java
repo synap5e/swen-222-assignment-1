@@ -137,4 +137,10 @@ public class AIPlayer extends Player implements GameListener{
 		
 	}
 
+	@Override
+	public void onGameWon(String name, Character playersCharacter) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

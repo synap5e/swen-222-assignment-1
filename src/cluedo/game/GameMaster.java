@@ -173,6 +173,13 @@ public class GameMaster {
 				for (GameListener listener : listeners){
 					listener.onAccusation(playersCharacter, accusation, correct);
 				}
+				
+				if (correct){
+					for (GameListener listener : listeners){
+						listener.onGameWon(player.getName(), playersCharacter);
+					}
+				}
+				
 			}
 		}
 	}
