@@ -193,13 +193,23 @@ public class GUIHandleImpl implements GUIHandle {
 
 	@Override
 	public void startTurn(Hand h) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public Location getDestination(List<Location> possibleLocations) {
-		// TODO Auto-generated method stub
+		wait = true;
+		frame.getCanvas().unselectLocation();
+		frame.getCanvas().setPossibleLocations(possibleLocations);
+		frame.getCanvas().repaint();
+		while (wait){
+			try {
+				Thread.sleep(20);
+				if (possibleLocations.contains(frame.getCanvas().getSelectedLocation())){
+					return frame.getCanvas().getSelectedLocation();
+				}
+			} catch (InterruptedException e1) {
+			}
+		}
 		return null;
 	}
 

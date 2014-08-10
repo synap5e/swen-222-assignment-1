@@ -40,6 +40,10 @@ public class CluedoFrame extends JFrame implements GameListener {
 		pack();
 		setVisible(true);
 	}
+	
+	public Canvas getCanvas(){
+		return canvas;
+	}
 
 	@Override
 	public void onCharacterJoinedGame(String playerName, Character character, boolean humanPlayer) {

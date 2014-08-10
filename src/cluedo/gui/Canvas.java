@@ -19,7 +19,9 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
@@ -65,11 +67,14 @@ public class Canvas extends JPanel implements MouseListener{
 	
 	private Location selected;
 	
+	private List<Location> endLocations;
+	
 	private Map<Room, Point2D> roomCorner;
 	private Map<Room, Point2D> roomCenter;
 	
 	public Canvas(Board brd, JsonObject def){
 		board = brd;
+		endLocations = Collections.emptyList();
 		
 		//Find the corner and center of all the rooms
 		roomCorner = new HashMap<Room, Point2D>();
@@ -189,6 +194,7 @@ public class Canvas extends JPanel implements MouseListener{
 				} else {
 					g2d.setColor(ROOM);
 				}
+				if (endLocations.contains(loc)) g2d.setColor(Color.BLUE);
 				if (loc == selected) g2d.setColor(Color.ORANGE);
 				
 				g2d.fillRect(x*tileWidth, y*tileWidth, tileWidth, tileWidth);
@@ -283,6 +289,22 @@ public class Canvas extends JPanel implements MouseListener{
 		}
 	}
 	
+	public Location getSelectedLocation(){
+		return selected;
+	}
+	
+	public void unselectLocation(){
+		selected = null;
+	}
+	
+	public void setPossibleLocations(List<Location> locations){
+		if (locations != null){
+			endLocations = locations;
+		} else {
+			endLocations = Collections.emptyList();
+		}
+		
+	}
 	
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
