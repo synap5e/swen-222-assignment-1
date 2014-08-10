@@ -185,15 +185,17 @@ public class Board {
 	
 	public List<Location> getPossibleDestinations(Location start, int allowedMoves) {
 		List<Location> allowed = new ArrayList<Location>();
-		addPossibleDestinations(start, allowed, allowedMoves);
+		addPossibleDestinations(start, allowed, allowedMoves, true);
+		allowed.remove(start);
 		return allowed;
 	}
 	
-	private void addPossibleDestinations(Location location, List<Location> allowed,	int allowedMoves) {
-		if (allowedMoves == 0 || allowed.contains(location)) return;
+	private void addPossibleDestinations(Location location, List<Location> allowed,	int allowedMoves, boolean isStart) {
+		if (allowedMoves < 0 || allowed.contains(location)) return;
 		if (location.hasVacancy()) allowed.add(location);
+		if (!isStart && location instanceof Room) return;
 		for (Location n : location.getNeighbours()){
-			addPossibleDestinations(n, allowed, allowedMoves-1);
+			addPossibleDestinations(n, allowed, allowedMoves-1, false);
 		}
 	}
 
