@@ -9,8 +9,8 @@ import java.util.Random;
 
 import cluedo.controller.interaction.GameInput;
 import cluedo.controller.interaction.GameListener;
-import cluedo.controller.interaction.GameStateFacade;
 import cluedo.controller.player.AIPlayer;
+import cluedo.controller.player.GameStateFacade;
 import cluedo.controller.player.HumanPlayer;
 import cluedo.controller.player.Player;
 import cluedo.model.Board;

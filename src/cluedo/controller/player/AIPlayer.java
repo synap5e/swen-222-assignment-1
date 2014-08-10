@@ -3,7 +3,6 @@ package cluedo.controller.player;
 import java.util.List;
 
 import cluedo.controller.interaction.GameListener;
-import cluedo.controller.interaction.GameStateFacade;
 import cluedo.model.Location;
 import cluedo.model.card.Card;
 import cluedo.model.card.Character;

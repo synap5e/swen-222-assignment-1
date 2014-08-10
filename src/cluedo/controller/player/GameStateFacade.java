@@ -1,4 +1,4 @@
-package cluedo.controller.interaction;
+package cluedo.controller.player;
 
 import java.util.ArrayList;
 import java.util.List;
