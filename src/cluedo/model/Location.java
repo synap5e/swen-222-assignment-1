@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import cluedo.model.card.Token;
+
 public abstract class Location {
 
 	private List<Location> neighbours;

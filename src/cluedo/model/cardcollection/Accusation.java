@@ -1,4 +1,8 @@
-package cluedo.model;
+package cluedo.model.cardcollection;
+
+import cluedo.model.card.Character;
+import cluedo.model.card.Room;
+import cluedo.model.card.Weapon;
 
 /**
  * 

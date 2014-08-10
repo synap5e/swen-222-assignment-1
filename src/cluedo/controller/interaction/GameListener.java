@@ -1,10 +1,10 @@
-package cluedo.controller;
+package cluedo.controller.interaction;
 
-import cluedo.model.Accusation;
-import cluedo.model.Character;
 import cluedo.model.Location;
-import cluedo.model.Suggestion;
-import cluedo.model.Weapon;
+import cluedo.model.card.Character;
+import cluedo.model.card.Weapon;
+import cluedo.model.cardcollection.Accusation;
+import cluedo.model.cardcollection.Suggestion;
 
 /**
  * 

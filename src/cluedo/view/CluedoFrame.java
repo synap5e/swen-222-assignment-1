@@ -7,13 +7,13 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 import util.json.JsonObject;
-import cluedo.controller.GameListener;
-import cluedo.model.Accusation;
+import cluedo.controller.interaction.GameListener;
 import cluedo.model.Board;
-import cluedo.model.Character;
 import cluedo.model.Location;
-import cluedo.model.Suggestion;
-import cluedo.model.Weapon;
+import cluedo.model.card.Character;
+import cluedo.model.card.Weapon;
+import cluedo.model.cardcollection.Accusation;
+import cluedo.model.cardcollection.Suggestion;
 
 /**
  * 

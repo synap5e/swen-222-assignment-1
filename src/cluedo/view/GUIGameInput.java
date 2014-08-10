@@ -20,13 +20,13 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import cluedo.controller.GameInput;
-import cluedo.model.Card;
-import cluedo.model.Character;
-import cluedo.model.Hand;
+import cluedo.controller.interaction.GameInput;
 import cluedo.model.Location;
-import cluedo.model.Room;
-import cluedo.model.Weapon;
+import cluedo.model.card.Card;
+import cluedo.model.card.Character;
+import cluedo.model.card.Room;
+import cluedo.model.card.Weapon;
+import cluedo.model.cardcollection.Hand;
 
 /**
  * 

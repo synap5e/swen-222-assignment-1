@@ -7,14 +7,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import cluedo.model.Accusation;
+import cluedo.controller.interaction.GameInput;
+import cluedo.controller.interaction.GameListener;
+import cluedo.controller.interaction.GameStateFacade;
+import cluedo.controller.player.AIPlayer;
+import cluedo.controller.player.HumanPlayer;
+import cluedo.controller.player.Player;
 import cluedo.model.Board;
-import cluedo.model.Card;
-import cluedo.model.Character;
-import cluedo.model.Hand;
 import cluedo.model.Location;
-import cluedo.model.Room;
-import cluedo.model.Suggestion;
+import cluedo.model.card.Card;
+import cluedo.model.card.Character;
+import cluedo.model.card.Room;
+import cluedo.model.cardcollection.Accusation;
+import cluedo.model.cardcollection.Hand;
+import cluedo.model.cardcollection.Suggestion;
 
 /**
  * 
@@ -79,7 +85,7 @@ public class GameMaster {
 				player = new HumanPlayer(name, hands.remove(0), input);
 			} else {
 				character = pickableCharacters.get(random.nextInt(pickableCharacters.size()));
-				AIPlayer rp = new AIPlayer(hands.remove(0), new GameView(board, character, this));
+				AIPlayer rp = new AIPlayer(hands.remove(0), new GameStateFacade(board, character, this));
 				listeners.add(rp);
 				player = rp;
 			}

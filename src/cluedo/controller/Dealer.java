@@ -9,13 +9,13 @@ import util.json.JsonEntity;
 import util.json.JsonList;
 import util.json.JsonObject;
 import util.json.JsonString;
-import cluedo.model.Accusation;
 import cluedo.model.Board;
-import cluedo.model.Card;
-import cluedo.model.Character;
-import cluedo.model.Hand;
-import cluedo.model.Room;
-import cluedo.model.Weapon;
+import cluedo.model.card.Card;
+import cluedo.model.card.Character;
+import cluedo.model.card.Room;
+import cluedo.model.card.Weapon;
+import cluedo.model.cardcollection.Accusation;
+import cluedo.model.cardcollection.Hand;
 /**
  * 
  * @author Simon Pinfold

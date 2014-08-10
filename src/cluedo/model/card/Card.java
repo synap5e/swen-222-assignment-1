@@ -1,4 +1,4 @@
-package cluedo.model;
+package cluedo.model.card;
 /**
  * 
  * @author Simon Pinfold

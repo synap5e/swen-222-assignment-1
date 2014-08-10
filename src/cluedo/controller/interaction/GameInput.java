@@ -1,14 +1,14 @@
-package cluedo.controller;
+package cluedo.controller.interaction;
 
 import java.util.List;
 
-import cluedo.model.Card;
-import cluedo.model.Character;
-import cluedo.model.Hand;
 import cluedo.model.Location;
-import cluedo.model.Room;
-import cluedo.model.Suggestion;
-import cluedo.model.Weapon;
+import cluedo.model.card.Card;
+import cluedo.model.card.Character;
+import cluedo.model.card.Room;
+import cluedo.model.card.Weapon;
+import cluedo.model.cardcollection.Hand;
+import cluedo.model.cardcollection.Suggestion;
 
 /** THIS IS BLOCKING!!!!!1111ONE
  * 

@@ -3,6 +3,9 @@ package cluedo.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import cluedo.model.card.Character;
+import cluedo.model.card.Token;
+
 
 /**
  * 

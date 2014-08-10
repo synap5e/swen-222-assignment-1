@@ -1,4 +1,5 @@
-package cluedo.model;
+package cluedo.model.card;
+
 
 /**
  * 

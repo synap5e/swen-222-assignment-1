@@ -11,6 +11,10 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import cluedo.model.card.Character;
+import cluedo.model.card.Room;
+import cluedo.model.card.Token;
+import cluedo.model.card.Weapon;
 import util.json.JsonEntity;
 import util.json.JsonList;
 import util.json.JsonNumber;

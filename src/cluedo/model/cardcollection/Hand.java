@@ -1,7 +1,9 @@
-package cluedo.model;
+package cluedo.model.cardcollection;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import cluedo.model.card.Card;
 /**
  * 
  * @author Simon Pinfold

@@ -28,15 +28,15 @@ import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 import util.json.JsonObject;
-import cluedo.model.Accusation;
 import cluedo.model.Board;
-import cluedo.model.Character;
 import cluedo.model.Location;
-import cluedo.model.Room;
-import cluedo.model.Suggestion;
 import cluedo.model.Tile;
-import cluedo.model.Token;
-import cluedo.model.Weapon;
+import cluedo.model.card.Character;
+import cluedo.model.card.Room;
+import cluedo.model.card.Token;
+import cluedo.model.card.Weapon;
+import cluedo.model.cardcollection.Accusation;
+import cluedo.model.cardcollection.Suggestion;
 
 /**
  * 

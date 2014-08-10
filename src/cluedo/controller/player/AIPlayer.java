@@ -1,14 +1,16 @@
-package cluedo.controller;
+package cluedo.controller.player;
 
 import java.util.List;
 
-import cluedo.model.Accusation;
-import cluedo.model.Card;
-import cluedo.model.Character;
-import cluedo.model.Hand;
+import cluedo.controller.interaction.GameListener;
+import cluedo.controller.interaction.GameStateFacade;
 import cluedo.model.Location;
-import cluedo.model.Suggestion;
-import cluedo.model.Weapon;
+import cluedo.model.card.Card;
+import cluedo.model.card.Character;
+import cluedo.model.card.Weapon;
+import cluedo.model.cardcollection.Accusation;
+import cluedo.model.cardcollection.Hand;
+import cluedo.model.cardcollection.Suggestion;
 
 /**
  * 
@@ -17,9 +19,9 @@ import cluedo.model.Weapon;
  */
 public class AIPlayer extends Player implements GameListener{
 
-	private GameView gameView;
+	private GameStateFacade gameView;
 
-	public AIPlayer(Hand h, GameView gameView) {
+	public AIPlayer(Hand h, GameStateFacade gameView) {
 		super("HAL9000", h);
 		this.gameView = gameView;
 	}
