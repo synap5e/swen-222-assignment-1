@@ -121,7 +121,7 @@ public class GameMaster {
 			board.moveCharacter(playersCharacter, destination);
 			
 			for (GameListener listener : listeners){
-				listener.onCharacterMove(playersCharacter, roll, destination);
+				listener.onCharacterMove(playersCharacter, destination);
 			}
 			
 			if(board.getLocationOf(playersCharacter) instanceof Room && player.hasSuggestion()){

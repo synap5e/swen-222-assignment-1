@@ -25,12 +25,15 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+import cluedo.game.board.Accusation;
 import cluedo.game.board.Board;
 import cluedo.game.board.Location;
 import cluedo.game.board.Room;
+import cluedo.game.board.Suggestion;
 import cluedo.game.board.Tile;
 import cluedo.game.board.Token;
 import cluedo.game.board.Character;
+import cluedo.game.board.Weapon;
 import cluedo.util.json.JsonObject;
 
 public class Canvas extends JPanel implements MouseListener{
@@ -274,7 +277,8 @@ public class Canvas extends JPanel implements MouseListener{
 			g.drawLine(x*tileWidth, y*tileWidth, (x+width)*tileWidth, (y+height)*tileWidth);
 		}
 	}
-
+	
+	
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 	}
@@ -303,4 +307,55 @@ public class Canvas extends JPanel implements MouseListener{
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
 	}
+
+
+	public void onCharacterMove(Character character, Location destination) {
+		this.repaint();
+	}
+	
+	public void onWeaponMove(Weapon weapon, Location room) {
+		this.repaint();
+	}
+	
+	
+
+	public void onCharacterJoinedGame(String playerName, Character character, boolean humanPlayer) {
+		System.out.printf("%s (%s) joind the game as %s\n", playerName, character.getName(), humanPlayer ? "human" : "AI");
+	}
+
+
+	public void onTurnBegin(String name, Character playersCharacter) {
+		System.out.printf("Its %s's (%s) turn\n", name, playersCharacter);
+	}
+
+
+	public void onDiceRolled(int roll) {
+		System.out.printf("A %d was rolled\n", roll);
+	}
+
+
+	public void onSuggestionUndisputed(Character suggester,	Suggestion suggestion) {
+		System.out.printf("%s suggested that %s killed Dr Black with a %s and no-one could disprove that\n", 
+				suggester.getName(), suggestion.getCharacter().getName(), suggestion.getWeapon().getName());
+	}
+
+
+	public void onSuggestionDisproved(Character suggester, Suggestion suggestion, Character disprover) {
+		System.out.printf("%s suggested that %s killed Dr Black with a %s but %s proved that could not be\n", 
+				suggester.getName(), suggestion.getCharacter().getName(), suggestion.getWeapon().getName(), disprover.getName());
+	}
+
+
+	public void onAccusation(Character accussuer, Accusation accusation, boolean correct) {
+		System.out.printf(	"%s accused %s of killing Dr Black in the %s with a %s\n" +
+							(correct ? "This was magically verified as true" : "They were wrong and got killed") + "\n",
+							accussuer.getName(), accusation.getCharacter().getName(), accusation.getRoom().getName(), accusation.getWeapon().getName());
+	}
+
+	public void onGameWon(String name, Character playersCharacter) {
+		System.out.printf("%s (%s) won the game!\n", name, playersCharacter.getName());
+	}
+
+
+	
 }
