@@ -20,13 +20,14 @@ public class AIPlayer extends Player implements GameListener{
 	}
 
 	@Override
-	public void onPlayerTurn(Character player) {
+	public void onCharacterJoinedGame(String playerName, Character character,
+			boolean humanPlayer) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onCharacterMove(Character player, int roll, Location destination) {
+	public void onTurnBegin(String name, Character playersCharacter) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -39,7 +40,8 @@ public class AIPlayer extends Player implements GameListener{
 	}
 
 	@Override
-	public void onSuggestionDisproved(Character suggester, Suggestion suggestion, Character disprover) {
+	public void onSuggestionDisproved(Character suggester,
+			Suggestion suggestion, Character disprover) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -52,13 +54,6 @@ public class AIPlayer extends Player implements GameListener{
 	}
 
 	@Override
-	public void onCharacterJoinedGame(int playerNumber, Character character,
-			boolean humanPlayer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void onWeaponMove(Weapon weapon, Location room) {
 		// TODO Auto-generated method stub
 		
@@ -66,6 +61,18 @@ public class AIPlayer extends Player implements GameListener{
 
 	@Override
 	public void onCharacterMove(Character character, Location room) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDiceRolled(int roll) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onGameWon(String name, Character playersCharacter) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -101,19 +108,15 @@ public class AIPlayer extends Player implements GameListener{
 	}
 
 	@Override
-	protected Card selectDisprovingCardToShow(Character character, List<Card> possibleShow) {
+	protected Card selectDisprovingCardToShow(Character character,
+			List<Card> possibleShow) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void suggestionDisproved(Suggestion suggestion, Character character,	Card disprovingCard) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onDiceRolled(int roll) {
+	public void suggestionDisproved(Suggestion suggestion, Character character,
+			Card disprovingCard) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -124,23 +127,5 @@ public class AIPlayer extends Player implements GameListener{
 		
 	}
 
-	@Override
-	public void onTurnBegin(String name, Character playersCharacter) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onCharacterJoinedGame(String name, Character character,
-			Boolean humanPlayer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onGameWon(String name, Character playersCharacter) {
-		// TODO Auto-generated method stub
-		
-	}
-
+	
 }
