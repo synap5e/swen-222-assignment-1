@@ -18,6 +18,7 @@ import util.json.JsonParseException;
 import util.json.JsonStreamReader;
 import util.json.MinimalJson;
 import cluedo.controller.GameMaster;
+import cluedo.controller.GameSlave;
 import cluedo.controller.interaction.GameInput;
 import cluedo.controller.interaction.GameListener;
 import cluedo.controller.player.Player;
@@ -51,11 +52,15 @@ public class Main {
 		JsonStreamReader reader = new JsonStreamReader(connection.getInputStream());
 	
 		JsonObject defs = reader.next();
-		System.out.println(defs);
+		Board board = new Board(defs);
+		CluedoFrame frame = new CluedoFrame(board, defs);
 		
-		for (JsonObject o : reader){
-			System.out.println(o);
-		}
+		GameSlave gs = new GameSlave(board, new GUIGameInput(frame));
+		gs.addGameListener(frame);
+		
+		gs.startGame(reader, connection.getOutputStream());
+		
+		connection.close();
 	}
 
 	private static void startServerGame(JsonObject defs) throws IOException {

@@ -11,7 +11,7 @@ import java.util.Random;
 import util.json.JsonObject;
 import cluedo.controller.interaction.GameInput;
 import cluedo.controller.interaction.GameListener;
-import cluedo.controller.network.NetworkGameChannel;
+import cluedo.controller.network.ServerGameChannel;
 import cluedo.controller.network.NetworkPlayerHandler;
 import cluedo.controller.player.AIPlayer;
 import cluedo.controller.player.GameStateFacade;
@@ -79,8 +79,18 @@ public class GameMaster {
 		assert humanNames.size() + networkPlayers <= numberOfPlayers;
 		
 		NetworkPlayerHandler networkPlayerHandler = null;
+		List<ServerGameChannel> networkChannels = new ArrayList<ServerGameChannel>();
 		if (networkPlayers > 0){
-			networkPlayerHandler = new NetworkPlayerHandler("0.0.0.0", 5362, defs);
+			networkPlayerHandler = new NetworkPlayerHandler("0.0.0.0", 5362, defs, board);
+			for (int i=0;i<networkPlayers;i++){
+				for (GameListener listener : listeners){
+					listener.waitingForNetworkPlayers(networkPlayers-i);
+				}
+				
+				networkChannels.add(networkPlayerHandler.getRemoteInput(30));
+				// TODO handle timeout
+				
+			}
 		}
 		
 		for (int i=0;i<humanNames.size();i++) playerTypes.add(PlayerType.LocalHuman);
@@ -88,12 +98,16 @@ public class GameMaster {
 		while (playerTypes.size() < numberOfPlayers) playerTypes.add(PlayerType.LocalAI);
 		
 		
+		// shuffle so that the starting order is random
 		Collections.shuffle(humanNames);
 		Collections.shuffle(playerTypes);
 		
+		// don't favour the first connected network players
+		Collections.shuffle(networkChannels);
+		
 		// create the players
-		for (int playerNumber=1;playerNumber<=numberOfPlayers;playerNumber++){
-			PlayerType playerType = playerTypes.get(playerNumber-1);
+		for (int playerNumber=0;playerNumber<numberOfPlayers;playerNumber++){
+			PlayerType playerType = playerTypes.get(playerNumber);
 			Character character;
 			Player player;
 			if (playerType == PlayerType.LocalHuman){
@@ -101,8 +115,7 @@ public class GameMaster {
 				character = input.chooseCharacter(name, board.getCharacters(), pickableCharacters);
 				player = new HumanPlayer(name, hands.remove(0), input);
 			} else if (playerType == PlayerType.RemoteHuman){
-				NetworkGameChannel remoteChannel = networkPlayerHandler.getRemoteInput(30);
-				// TODO handle timeout
+				ServerGameChannel remoteChannel = networkChannels.remove(0);
 				
 				listeners.add(remoteChannel);
 				String name = remoteChannel.getSingleName();
@@ -121,8 +134,13 @@ public class GameMaster {
 			playingAs.put(player, character);
 			pickableCharacters.remove(character);
 			
+		}
+		
+		// announce to all listeners who is playing the game. This is done after the players are 
+		// created so all the AI players also get informed.
+		for (int playerNumber=0;playerNumber<numberOfPlayers;playerNumber++){
 			for (GameListener listener : listeners){
-				listener.onCharacterJoinedGame(players.get(playerNumber-1).getName(), playingAs.get(players.get(playerNumber-1)), playerTypes.get(playerNumber-1));
+				listener.onCharacterJoinedGame(players.get(playerNumber).getName(), playingAs.get(players.get(playerNumber)), playerTypes.get(playerNumber));
 			}
 		}
 		
@@ -153,6 +171,7 @@ public class GameMaster {
 			Location destination = player.getDestination(possibleLocations);
 			
 			// TODO, what if not in passed in list - should we complain here always, or only in assert mode
+			// TODO this needs to kick the player - otherwise a remote user could cheat
 			assert possibleLocations.contains(destination);
 			
 			board.moveCharacter(playersCharacter, destination);

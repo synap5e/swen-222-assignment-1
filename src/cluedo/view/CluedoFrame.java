@@ -90,5 +90,11 @@ public class CluedoFrame extends JFrame implements GameListener {
 		canvas.onGameWon(name, playersCharacter);
 	}
 
+	@Override
+	public void waitingForNetworkPlayers(int i) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }
