@@ -273,7 +273,7 @@ public class GUIGameInput implements GameInput {
 	@Override
 	public String getSingleName() {
 		// TODO Auto-generated method stub
-		return null;
+		return JOptionPane.showInputDialog("Name?");
 	}
 
 }
