@@ -75,8 +75,8 @@ public class Canvas extends JPanel implements MouseListener{
 	private Map<Room, Point2D> roomCorner;
 	private Map<Room, Point2D> roomCenter;
 	
-	public Canvas(CluedoFrame frame, Board brd, JsonObject def){
-		this.frame = frame;
+	public Canvas(CluedoFrame fram, Board brd, JsonObject def){
+		frame = fram;
 		board = brd;
 		endLocations = Collections.emptyList();
 		
@@ -160,7 +160,7 @@ public class Canvas extends JPanel implements MouseListener{
 				tileWidth = (can.getWidth()/board.getWidth() < height/board.getHeight()) ? can.getWidth()/board.getWidth() : height/board.getHeight();
 				xOffset = (can.getWidth()-tileWidth*24)/2;
 				yOffset = (height-tileWidth*25)/2;
-				repaint();
+				frame.repaint();
 			}
 			
 			@Override

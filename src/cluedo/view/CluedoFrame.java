@@ -115,10 +115,12 @@ public class CluedoFrame extends JFrame implements GameListener {
 		suggestion.setVisible(visible);
 		accusation.setVisible(visible);
 		endTurn.setVisible(visible);
+		repaint();
 	}
 	
 	public void displayRollDice(boolean visible){
 		rollDice.setVisible(visible);
+		repaint();
 	}
 	
 	public boolean addFrameListener(FrameListener listener){

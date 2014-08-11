@@ -37,6 +37,9 @@ public class GUIGameInput implements GameInput, FrameListener{
 	private boolean wait = false;
 	
 	private boolean waitForDiceRoll = false;
+	private boolean endingTurn = false;
+	private boolean accusing = false;
+	private boolean suggesting = false;
 	private int numberOfPlayers;
 	private CluedoFrame frame;
 	
@@ -202,6 +205,7 @@ public class GUIGameInput implements GameInput, FrameListener{
 
 	@Override
 	public void startTurn(Hand h) {
+		frame.displayRollDice(true);
 		waitForDiceRoll = true; 
 		while (waitForDiceRoll){
 			try {
@@ -209,6 +213,9 @@ public class GUIGameInput implements GameInput, FrameListener{
 			} catch (InterruptedException e1) {
 			}
 		}
+		suggesting = false;
+		accusing = false;
+		endingTurn = false;
 	}
 
 	@Override
@@ -233,8 +240,28 @@ public class GUIGameInput implements GameInput, FrameListener{
 
 	@Override
 	public boolean hasSuggestion() {
+		while (!(endingTurn || suggesting || accusing)){
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e1) {
+			}
+		}
+		return suggesting;
+	}
+	
+	@Override
+	public boolean hasAccusation() {
 		// TODO Auto-generated method stub
-		return false;
+		//false  - end turn
+		//ture - accuse
+		while (!(endingTurn || accusing)){
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e1) {
+			}
+		}
+		frame.displayTurnButtons(false);
+		return accusing;
 	}
 
 	@Override
@@ -247,12 +274,6 @@ public class GUIGameInput implements GameInput, FrameListener{
 	public Character pickCharacter() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public boolean hasAccusation() {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	@Override
@@ -289,7 +310,6 @@ public class GUIGameInput implements GameInput, FrameListener{
 
 	@Override
 	public void onLocationSelect(Location loc) {
-		// TODO Auto-generated method stub
 		selectedLocation = loc;
 	}
 
@@ -329,20 +349,21 @@ public class GUIGameInput implements GameInput, FrameListener{
 	public void onSuggest() {
 		// TODO Auto-generated method stub
 		System.out.println("Start Suggestion");
+		suggesting = true;
 	}
 
 	@Override
 	public void onAccuse() {
 		// TODO Auto-generated method stub
 		System.out.println("Start Accusation");
+		accusing = true;
 	}
 
 	@Override
 	public void onEndTurn() {
 		// TODO Auto-generated method stub
 		System.out.println("End turn");
-		frame.displayTurnButtons(false);
-		frame.displayRollDice(true);
+		endingTurn = true;
 	}
 
 }
