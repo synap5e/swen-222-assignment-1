@@ -1,46 +1,29 @@
 package util.json;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
+import java.util.Scanner;
 
-public class JsonStreamReader implements Iterable<JsonObject>{
+public class JsonStreamReader{
 
-	private Iterator<JsonObject> it;
+	private Scanner scan;
 
 	public JsonStreamReader(final InputStream inputStream) {
-		this.it = new Iterator<JsonObject>() {
-			
-			@Override
-			public boolean hasNext() {
-				return true;
-			}
-
-			@Override
-			public JsonObject next() {
-				try {
-					return MinimalJson.parseJson(inputStream);
-				} catch (JsonParseException e) {
-					e.printStackTrace();
-					throw new RuntimeException(e);
-				}
-			}
-
-			@Override
-			public void remove() {
-				throw new UnsupportedOperationException();
-			}
-			
-		};
+		this.scan = new Scanner(inputStream);
+		MinimalJson.initialise(scan);
 	}
 	
 	public JsonObject next(){
-		return it.next();
+		try {
+			return MinimalJson.parseJson(scan, true);
+		} catch (JsonParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
-	@Override
-	public Iterator<JsonObject> iterator() {
-		return it;
-	}
 
 	
 
