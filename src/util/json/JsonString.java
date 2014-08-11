@@ -8,8 +8,9 @@ public class JsonString implements JsonEntity {
 
 	private String value;
 
-	public JsonString(String next) {
-		this.value = next;
+	public JsonString(String value) {
+		assert value != null;
+		this.value = value;
 	}
 
 	@Override

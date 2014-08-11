@@ -18,6 +18,8 @@ import cluedo.model.cardcollection.Suggestion;
  */
 public abstract class Player{
 
+	public enum PlayerType { LocalHuman, RemoteHuman, LocalAI };
+	
 	protected Hand hand;
 	private String name;
 

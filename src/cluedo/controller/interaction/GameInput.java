@@ -21,15 +21,15 @@ public interface GameInput {
 	
 	public List<String> getHumanNames();
 	
-	public Character chooseCharacter(String playerName, List<Character> characters, List<Character> availableCharacters);
+	public Character chooseCharacter(String playerName, List<Character> allCharacters, List<Character> availableCharacters);
 	
 	
 	
 	/** NOTE: returning rolls the dice - return after the user has selected to roll the dice
 	 * 
-	 * @param h
+	 * @param hand
 	 */
-	public void startTurn(Hand h);
+	public void startTurn(Hand hand);
 	
 	
 	public Location getDestination(List<Location> possibleLocations);
@@ -62,6 +62,14 @@ public interface GameInput {
 	 * @param disprovingCard the card they disproved your suggestion with
 	 */
 	public void suggestionDisproved(Character characterDisproved, Card disprovingCard);
+
+	public int getNetworkPlayerCount();
+
+	/** Used for network play
+	 * 
+	 * @return
+	 */
+	public String getSingleName();
 
 
 }

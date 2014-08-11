@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import cluedo.model.card.Card;
 import cluedo.model.card.Character;
 import cluedo.model.card.Room;
 import cluedo.model.card.Token;
@@ -39,6 +40,8 @@ public class Board {
 	
 	private Random random = new Random();
 	
+	private Map<String, Card> cardsByName;
+	
 	public Board(JsonObject defs){
 		JsonList rows = (JsonList) defs.get("board");
 		
@@ -46,6 +49,7 @@ public class Board {
 		characters = new ArrayList<Character>();
 		weapons = new ArrayList<Weapon>();
 		tokenLocations = new HashMap<Token, Location>();
+		cardsByName = new HashMap<String, Card>();
 		
 		tiles = new ArrayList<Tile>();
 		board = new Location[((JsonList)rows.get(0)).size()][rows.size()];
@@ -64,6 +68,7 @@ public class Board {
 			rooms.add(room);
 			roomKeys.put(key, room);
 			roomNames.put(name, room);
+			cardsByName.put(name, room);
 		}
 		
 		Map<Double, Token> startLocations = new HashMap<Double, Token>();
@@ -73,6 +78,7 @@ public class Board {
 			Character c = new Character(name);
 			characters.add(c);
 			startLocations.put(((JsonNumber)characterDef.get("start")).value(), c);
+			cardsByName.put(name, c);
 		}
 		
 		List<Double> roomKeyList = new ArrayList<Double>(roomKeys.keySet());
@@ -82,6 +88,7 @@ public class Board {
 			Weapon w = new Weapon(name);
 			weapons.add(w);
 			startLocations.put(roomKeyList.remove(random.nextInt(roomKeyList.size())), w);
+			cardsByName.put(name, w);
 		}
 
 		Map<Double, Room> doorways = new HashMap<Double, Room>();
@@ -215,8 +222,13 @@ public class Board {
 		tokenLocations.put(playersCharacter, dest);
 	}
 
-	public void moveWeapon(Weapon weapon, Location room) {
+	public void moveWeapon(Weapon weapon, Location location) {
 		// TODO Auto-generated method stub
 		
 	}
+
+	public Card getCard(String name) {
+		return cardsByName.get(name);
+	}
+
 }

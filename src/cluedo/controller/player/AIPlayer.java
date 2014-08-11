@@ -27,7 +27,7 @@ public class AIPlayer extends Player implements GameListener{
 
 	@Override
 	public void onCharacterJoinedGame(String playerName, Character character,
-			boolean humanPlayer) {
+			PlayerType type) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -129,6 +129,12 @@ public class AIPlayer extends Player implements GameListener{
 
 	@Override
 	public void waitForDiceRollOK() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void waitingForNetworkPlayers(int i) {
 		// TODO Auto-generated method stub
 		
 	}

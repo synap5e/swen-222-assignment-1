@@ -1,5 +1,6 @@
 package cluedo.controller.interaction;
 
+import cluedo.controller.player.Player.PlayerType;
 import cluedo.model.Location;
 import cluedo.model.card.Character;
 import cluedo.model.card.Weapon;
@@ -19,7 +20,7 @@ public interface GameListener {
 	 * @param character the character being played as for this player number
 	 * @param humanPlayer if this is a human player
 	 */
-	public void onCharacterJoinedGame(String playerName, Character character, boolean humanPlayer);
+	public void onCharacterJoinedGame(String playerName, Character character, PlayerType playerType);
 	
 	public void onTurnBegin(String name, Character playersCharacter);
 
@@ -32,18 +33,25 @@ public interface GameListener {
 	public void onAccusation(Character accuser, Accusation accusation, boolean correct);
 
 	
-	public void onWeaponMove(Weapon weapon, Location room);
+	public void onWeaponMove(Weapon weapon, Location newLocation);
 
 	/** Called when a character is moved to a room because they were suggested as murder in that room
 	 * 
 	 * @param character
-	 * @param room
+	 * @param newLocation
 	 */
-	public void onCharacterMove(Character character, Location room);
+	public void onCharacterMove(Character character, Location newLocation);
 
 	public void onDiceRolled(int roll);
 
 
 	public void onGameWon(String name, Character playersCharacter);
+
+	/** Called to inform how many network players are still being waited for.
+	 * Will be called each time this changes, but not on 0
+	 * 
+	 * @param i
+	 */
+	public void waitingForNetworkPlayers(int i);
 
 }
