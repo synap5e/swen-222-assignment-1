@@ -206,6 +206,7 @@ public class GUIGameInput implements GameInput {
 			try {
 				Thread.sleep(20);
 				if (possibleLocations.contains(frame.getCanvas().getSelectedLocation())){
+					frame.getCanvas().setPossibleLocations(null);
 					return frame.getCanvas().getSelectedLocation();
 				}
 			} catch (InterruptedException e1) {
