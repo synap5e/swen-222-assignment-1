@@ -27,7 +27,7 @@ public class AIPlayer extends Player implements GameListener{
 
 	@Override
 	public void onCharacterJoinedGame(String playerName, Character character,
-			boolean humanPlayer) {
+			PlayerType type) {
 		// TODO Auto-generated method stub
 		
 	}

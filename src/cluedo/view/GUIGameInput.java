@@ -12,6 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
@@ -135,6 +136,10 @@ public class GUIGameInput implements GameInput {
 				playerNames.add(names.get(i).getText());
 			}
 		}
+		
+		//FIXME
+		int num = Integer.parseInt(JOptionPane.showInputDialog(frame, "Number of network players?"));
+		for (int i=0;i<num;i++) playerNames.remove(playerNames.size()-1);
 
 		return playerNames;
 	}
@@ -256,6 +261,18 @@ public class GUIGameInput implements GameInput {
 			Card disprovingCard) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public int getNetworkPlayerCount() {
+		// TODO
+		return Integer.parseInt(JOptionPane.showInputDialog(frame, "Number of network players?"));
+	}
+
+	@Override
+	public String getSingleName() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

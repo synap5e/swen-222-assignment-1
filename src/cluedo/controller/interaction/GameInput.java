@@ -63,5 +63,13 @@ public interface GameInput {
 	 */
 	public void suggestionDisproved(Character characterDisproved, Card disprovingCard);
 
+	public int getNetworkPlayerCount();
+
+	/** Used for network play
+	 * 
+	 * @return
+	 */
+	public String getSingleName();
+
 
 }

@@ -2,6 +2,8 @@ package util.json;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +33,10 @@ public class MinimalJson {
 	
 	public static JsonObject parseJson(File f) throws JsonParseException, FileNotFoundException{
 		return parseJson(new Scanner(f));
+	}
+	
+	public static JsonObject parseJson(InputStream stream) throws JsonParseException {
+		return parseJson(new Scanner(stream));
 	}
 	
 	static JsonObject parseJson(Scanner scan) throws JsonParseException{

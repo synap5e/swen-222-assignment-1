@@ -1,6 +1,8 @@
 package util.json;
 
+import java.io.OutputStream;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 /**
  * 
@@ -17,7 +19,16 @@ public class JsonObject implements JsonEntity {
 
 	@Override
 	public String toString() {
-		return elems.toString();
+		StringBuilder sb = new StringBuilder(" ");
+		for (Entry<String, JsonEntity> es : elems.entrySet()){
+			sb.append("\"");
+			sb.append(es.getKey());
+			sb.append("\"");
+			sb.append(" : ");
+			sb.append(es.getValue());
+			sb.append(",");
+		}
+		return "{" + sb.substring(0, sb.length()-1) + "}";
 	}
 
 	public JsonEntity get(String string) {
@@ -27,7 +38,5 @@ public class JsonObject implements JsonEntity {
 	public Set<String> keys() {
 		return elems.keySet();
 	}
-
-
 
 }

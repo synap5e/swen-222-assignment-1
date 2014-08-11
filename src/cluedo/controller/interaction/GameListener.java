@@ -1,5 +1,6 @@
 package cluedo.controller.interaction;
 
+import cluedo.controller.player.Player.PlayerType;
 import cluedo.model.Location;
 import cluedo.model.card.Character;
 import cluedo.model.card.Weapon;
@@ -19,7 +20,7 @@ public interface GameListener {
 	 * @param character the character being played as for this player number
 	 * @param humanPlayer if this is a human player
 	 */
-	public void onCharacterJoinedGame(String playerName, Character character, boolean humanPlayer);
+	public void onCharacterJoinedGame(String playerName, Character character, PlayerType playerType);
 	
 	public void onTurnBegin(String name, Character playersCharacter);
 

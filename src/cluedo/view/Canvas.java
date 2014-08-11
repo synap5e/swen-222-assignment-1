@@ -28,6 +28,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 import util.json.JsonObject;
+import cluedo.controller.player.Player.PlayerType;
 import cluedo.model.Board;
 import cluedo.model.Location;
 import cluedo.model.Tile;
@@ -346,8 +347,8 @@ public class Canvas extends JPanel implements MouseListener{
 	
 	
 
-	public void onCharacterJoinedGame(String playerName, Character character, boolean humanPlayer) {
-		System.out.printf("%s (%s) joind the game as %s\n", playerName, character.getName(), humanPlayer ? "human" : "AI");
+	public void onCharacterJoinedGame(String playerName, Character character, PlayerType type) {
+		System.out.printf("%s (%s) joind the game as %s\n", playerName, character.getName(), type == PlayerType.LocalHuman? "human" : "AI");
 	}
 
 

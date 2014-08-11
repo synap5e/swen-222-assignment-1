@@ -8,6 +8,7 @@ import javax.swing.JMenuItem;
 
 import util.json.JsonObject;
 import cluedo.controller.interaction.GameListener;
+import cluedo.controller.player.Player.PlayerType;
 import cluedo.model.Board;
 import cluedo.model.Location;
 import cluedo.model.card.Character;
@@ -46,8 +47,8 @@ public class CluedoFrame extends JFrame implements GameListener {
 	}
 
 	@Override
-	public void onCharacterJoinedGame(String playerName, Character character, boolean humanPlayer) {
-		canvas.onCharacterJoinedGame(playerName, character, humanPlayer);
+	public void onCharacterJoinedGame(String playerName, Character character, PlayerType type) {
+		canvas.onCharacterJoinedGame(playerName, character, type);
 	}
 
 	public void onTurnBegin(String name, Character playersCharacter) {

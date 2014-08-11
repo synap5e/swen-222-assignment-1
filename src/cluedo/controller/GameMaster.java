@@ -1,5 +1,6 @@
 package cluedo.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -7,12 +8,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import util.json.JsonObject;
 import cluedo.controller.interaction.GameInput;
 import cluedo.controller.interaction.GameListener;
+import cluedo.controller.network.NetworkGameChannel;
+import cluedo.controller.network.NetworkPlayerHandler;
 import cluedo.controller.player.AIPlayer;
 import cluedo.controller.player.GameStateFacade;
 import cluedo.controller.player.HumanPlayer;
 import cluedo.controller.player.Player;
+import cluedo.controller.player.Player.PlayerType;
 import cluedo.model.Board;
 import cluedo.model.Location;
 import cluedo.model.card.Card;
@@ -38,10 +43,12 @@ public class GameMaster {
 	private int turn;
 	private Board board;
 	private GameInput input;
+	private JsonObject defs;
 
-	public GameMaster(Board board, GameInput input) {
+	public GameMaster(Board board, JsonObject defs, GameInput input) {
 		this.board = board;
 		this.input = input;
+		this.defs = defs;
 		listeners = new ArrayList<GameListener>();
 	}
 	
@@ -49,7 +56,7 @@ public class GameMaster {
 		listeners.add(listener);
 	}
 	
-	public void createGame(){
+	public void createGame() throws IOException{
 		turn = 0;
 		players = new ArrayList<Player>();
 		playingAs = new HashMap<Player, Character>();
@@ -60,29 +67,50 @@ public class GameMaster {
 		List<Character> pickableCharacters = new ArrayList<Character>(board.getCharacters());
 		
 		int numberOfPlayers = input.getNumberOfPlayers(2, pickableCharacters.size());
+		assert numberOfPlayers <= pickableCharacters.size();
 		List<Hand> hands = dealer.dealHands(numberOfPlayers);
 		
 		// This array is used to shuffle the order of players
 		// This can be extended if we get more that just human and computer players
-		ArrayList<Boolean> humans = new ArrayList<Boolean>();
+		ArrayList<Player.PlayerType> playerTypes = new ArrayList<Player.PlayerType>();
 		
 		List<String> humanNames = input.getHumanNames();
-		assert humanNames.size() < numberOfPlayers;
+		int networkPlayers = input.getNetworkPlayerCount();
+		assert humanNames.size() + networkPlayers <= numberOfPlayers;
 		
-		for (int i=0;i<numberOfPlayers-humanNames.size();i++) humans.add(false);
-		for (int i=0;i<humanNames.size();i++) humans.add(true);
+		NetworkPlayerHandler networkPlayerHandler = null;
+		if (networkPlayers > 0){
+			networkPlayerHandler = new NetworkPlayerHandler("0.0.0.0", 5362, defs);
+		}
+		
+		for (int i=0;i<humanNames.size();i++) playerTypes.add(PlayerType.LocalHuman);
+		for (int i=0;i<networkPlayers;i++) playerTypes.add(PlayerType.RemoteHuman);
+		while (playerTypes.size() < numberOfPlayers) playerTypes.add(PlayerType.LocalAI);
+		
+		
 		Collections.shuffle(humanNames);
-		Collections.shuffle(humans);
+		Collections.shuffle(playerTypes);
 		
 		// create the players
 		for (int playerNumber=1;playerNumber<=numberOfPlayers;playerNumber++){
-			boolean playerIsHuman = humans.get(playerNumber-1);
+			PlayerType playerType = playerTypes.get(playerNumber-1);
 			Character character;
 			Player player;
-			if (playerIsHuman){
+			if (playerType == PlayerType.LocalHuman){
 				String name = humanNames.remove(0);
 				character = input.chooseCharacter(name, board.getCharacters(), pickableCharacters);
 				player = new HumanPlayer(name, hands.remove(0), input);
+			} else if (playerType == PlayerType.RemoteHuman){
+				NetworkGameChannel remoteChannel = networkPlayerHandler.getRemoteInput(30);
+				// TODO handle timeout
+				
+				listeners.add(remoteChannel);
+				String name = remoteChannel.getSingleName();
+				character = remoteChannel.chooseCharacter(name, board.getCharacters(), pickableCharacters);
+				
+				Hand hand = hands.remove(0);
+				player = new HumanPlayer(name, hand, remoteChannel);
+				remoteChannel.sendHand(hand);
 			} else {
 				character = pickableCharacters.get(random.nextInt(pickableCharacters.size()));
 				AIPlayer rp = new AIPlayer(hands.remove(0), new GameStateFacade(board, character, this));
@@ -92,15 +120,12 @@ public class GameMaster {
 			players.add(player);
 			playingAs.put(player, character);
 			pickableCharacters.remove(character);
-		}
-		
-		// announce to all listeners who is playing the game. This is done after the players are 
-		// created so all the AI players also get informed.
-		for (int playerNumber=1;playerNumber<=numberOfPlayers;playerNumber++){
+			
 			for (GameListener listener : listeners){
-				listener.onCharacterJoinedGame(players.get(playerNumber-1).getName(), playingAs.get(players.get(playerNumber-1)), humans.get(playerNumber-1));
+				listener.onCharacterJoinedGame(players.get(playerNumber-1).getName(), playingAs.get(players.get(playerNumber-1)), playerTypes.get(playerNumber-1));
 			}
 		}
+		
 	}
 
 	public void startGame(){
