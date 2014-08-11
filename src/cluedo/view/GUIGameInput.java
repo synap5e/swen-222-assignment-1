@@ -16,16 +16,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
-import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import cluedo.controller.interaction.GameInput;
 import cluedo.model.Location;
 import cluedo.model.card.Card;
 import cluedo.model.card.Character;
 import cluedo.model.card.Room;
+import cluedo.model.card.Token;
 import cluedo.model.card.Weapon;
 import cluedo.model.cardcollection.Hand;
 
@@ -34,14 +32,19 @@ import cluedo.model.cardcollection.Hand;
  * @author James Greenwood-Thessman
  *
  */
-public class GUIGameInput implements GameInput {
+public class GUIGameInput implements GameInput, FrameListener{
 
 	private boolean wait = false;
+	
+	private boolean waitForDiceRoll = false;
 	private int numberOfPlayers;
 	private CluedoFrame frame;
 	
+	private Location selectedLocation = null;
+	
 	public GUIGameInput(CluedoFrame frame){
 		this.frame = frame;
+		frame.addFrameListener(this);
 	}
 	
 	@Override
@@ -199,6 +202,13 @@ public class GUIGameInput implements GameInput {
 
 	@Override
 	public void startTurn(Hand h) {
+		waitForDiceRoll = true; 
+		while (waitForDiceRoll){
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e1) {
+			}
+		}
 	}
 
 	@Override
@@ -207,12 +217,13 @@ public class GUIGameInput implements GameInput {
 		frame.getCanvas().unselectLocation();
 		frame.getCanvas().setPossibleLocations(possibleLocations);
 		frame.getCanvas().repaint();
+		selectedLocation = null;
 		while (wait){
 			try {
 				Thread.sleep(20);
-				if (possibleLocations.contains(frame.getCanvas().getSelectedLocation())){
+				if (possibleLocations.contains(selectedLocation)){
 					frame.getCanvas().setPossibleLocations(null);
-					return frame.getCanvas().getSelectedLocation();
+					return selectedLocation;
 				}
 			} catch (InterruptedException e1) {
 			}
@@ -274,6 +285,64 @@ public class GUIGameInput implements GameInput {
 	public String getSingleName() {
 		// TODO Auto-generated method stub
 		return JOptionPane.showInputDialog("Name?");
+	}
+
+	@Override
+	public void onLocationSelect(Location loc) {
+		// TODO Auto-generated method stub
+		selectedLocation = loc;
+	}
+
+	@Override
+	public void onTokenSelect(Token token) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onNumberOfPlayers(int num) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPlayerSelection(List<String> names, int numberAI,
+			int numberNetwork) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSinglePlayerName(String name) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onRollDice() {
+		waitForDiceRoll = false;
+		frame.displayTurnButtons(true);
+		frame.displayRollDice(false);
+	}
+
+	@Override
+	public void onSuggest() {
+		// TODO Auto-generated method stub
+		System.out.println("Start Suggestion");
+	}
+
+	@Override
+	public void onAccuse() {
+		// TODO Auto-generated method stub
+		System.out.println("Start Accusation");
+	}
+
+	@Override
+	public void onEndTurn() {
+		// TODO Auto-generated method stub
+		System.out.println("End turn");
+		frame.displayTurnButtons(false);
+		frame.displayRollDice(true);
 	}
 
 }

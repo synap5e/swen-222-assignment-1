@@ -62,6 +62,8 @@ public class Canvas extends JPanel implements MouseListener{
 	private final Map<String, Image> tokenImages;
 	private Image cardBack;
 	
+	private CluedoFrame frame;
+	
 	private int tileWidth = 20;
 	private int xOffset;
 	private int yOffset;
@@ -73,7 +75,8 @@ public class Canvas extends JPanel implements MouseListener{
 	private Map<Room, Point2D> roomCorner;
 	private Map<Room, Point2D> roomCenter;
 	
-	public Canvas(Board brd, JsonObject def){
+	public Canvas(CluedoFrame frame, Board brd, JsonObject def){
+		this.frame = frame;
 		board = brd;
 		endLocations = Collections.emptyList();
 		
@@ -290,10 +293,6 @@ public class Canvas extends JPanel implements MouseListener{
 		}
 	}
 	
-	public Location getSelectedLocation(){
-		return selected;
-	}
-	
 	public void unselectLocation(){
 		selected = null;
 	}
@@ -327,7 +326,9 @@ public class Canvas extends JPanel implements MouseListener{
 		Location loc = board.getLocation((int) x,(int) y);
 		if (loc != null){
 			selected = loc;
-			getParent().repaint();
+			
+			frame.repaint();
+			frame.onLocationSelect(loc);
 			return;
 		}
 	}
@@ -338,11 +339,11 @@ public class Canvas extends JPanel implements MouseListener{
 
 
 	public void onCharacterMove(Character character, Location destination) {
-		this.repaint();
+		frame.repaint();
 	}
 	
 	public void onWeaponMove(Weapon weapon, Location room) {
-		this.repaint();
+		frame.repaint();
 	}
 	
 	
