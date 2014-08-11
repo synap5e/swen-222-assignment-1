@@ -121,6 +121,8 @@ public class GameMaster {
 				listener.onDiceRolled(roll);
 			}
 			
+			// TODO accusation can go here too
+			
 			List<Location> possibleLocations = board.getPossibleDestinations(board.getLocationOf(playersCharacter), roll);
 			
 			Location destination = player.getDestination(possibleLocations);
