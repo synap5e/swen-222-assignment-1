@@ -9,7 +9,6 @@ import java.net.SocketAddress;
 import java.net.UnknownHostException;
 import java.util.List;
 
-import sun.org.mozilla.javascript.json.JsonParser;
 import util.json.JsonObject;
 import cluedo.controller.interaction.GameInput;
 import cluedo.controller.interaction.GameListener;
