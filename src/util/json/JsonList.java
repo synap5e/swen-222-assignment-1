@@ -1,5 +1,6 @@
 package util.json;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -18,6 +19,10 @@ public class JsonList implements JsonEntity, Iterable<JsonEntity>{
 		this.elems = elems;
 	}
 
+	public JsonList() {
+		this.elems = new ArrayList<JsonEntity>();
+	}
+
 	@Override
 	public String toString() {
 		return elems.toString();
@@ -34,6 +39,14 @@ public class JsonList implements JsonEntity, Iterable<JsonEntity>{
 
 	public int size() {
 		return elems.size();
+	}
+
+	public void append(JsonEntity e) {
+		this.elems.add(e);
+	}
+
+	public void append(int i) {
+		append(new JsonNumber(i));
 	}
 
 }

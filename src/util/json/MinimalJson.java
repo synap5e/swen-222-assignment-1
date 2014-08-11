@@ -28,19 +28,19 @@ public class MinimalJson {
 	
 	public static JsonObject parseJson(String s) throws JsonParseException{
 		Scanner scan = new Scanner(s);
-		return parseJson(scan);
+		return parseJson(scan, false);
 	}
 	
 	public static JsonObject parseJson(File f) throws JsonParseException, FileNotFoundException{
-		return parseJson(new Scanner(f));
+		return parseJson(new Scanner(f), false);
 	}
 	
-	public static JsonObject parseJson(InputStream stream) throws JsonParseException {
-		return parseJson(new Scanner(stream));
-	}
-	
-	static JsonObject parseJson(Scanner scan) throws JsonParseException{
+	public static void initialise(Scanner scan) {
 		scan.useDelimiter(pat);
+	}
+	
+	public static JsonObject parseJson(Scanner scan, boolean initialised) throws JsonParseException{
+		if (!initialised) initialise(scan);
 		require("\\{", scan);
 		return parseObject(scan);
 	}
@@ -54,6 +54,8 @@ public class MinimalJson {
 			return parseString(scan);
 		} else if (scan.hasNext(Pattern.compile("-?0*(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?"))){
 			return parseNumber(scan);
+		} else if (scan.hasNext("true") || scan.hasNext("false")){
+			return new JsonBoolean(scan.next());
 		} else if (scan.hasNext("null")){
 			scan.next();
 			return null;

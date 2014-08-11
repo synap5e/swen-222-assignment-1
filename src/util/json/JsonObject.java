@@ -1,6 +1,7 @@
 package util.json;
 
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -15,6 +16,10 @@ public class JsonObject implements JsonEntity {
 
 	public JsonObject(Map<String, JsonEntity> elems) {
 		this.elems = elems;
+	}
+
+	public JsonObject() {
+		this.elems = new HashMap<String, JsonEntity>();
 	}
 
 	@Override
@@ -37,6 +42,18 @@ public class JsonObject implements JsonEntity {
 
 	public Set<String> keys() {
 		return elems.keySet();
+	}
+
+	public void put(String key, JsonEntity value) {
+		this.elems.put(key, value);
+	}
+
+	public boolean containsKey(String key) {
+		return this.elems.containsKey(key);
+	}
+
+	public void put(String key, String value) {
+		put(key, new JsonString(value));
 	}
 
 }
