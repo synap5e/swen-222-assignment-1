@@ -179,9 +179,7 @@ public class GameSlave {
 			
 					
 		default:
-			System.err.println("Game Slave could not answer pull for \"" + methodName + "\"");
-			return new JsonObject();
-			//throw new RuntimeException("Game Slave could not answer pull for \"" + methodName + "\"");
+			throw new RuntimeException("Game Slave could not answer pull for \"" + methodName + "\"");
 		}
 	}
 
