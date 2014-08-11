@@ -16,6 +16,11 @@ import cluedo.model.card.Room;
 import cluedo.model.card.Weapon;
 import cluedo.model.cardcollection.Hand;
 
+/**
+ * 
+ * @author Simon Pinfold
+ *
+ */
 public class JsonToModel {
 	
 	private Board board;

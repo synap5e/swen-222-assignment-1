@@ -18,6 +18,11 @@ import cluedo.model.cardcollection.Accusation;
 import cluedo.model.cardcollection.Hand;
 import cluedo.model.cardcollection.Suggestion;
 
+/**
+ * 
+ * @author Simon Pinfold
+ *
+ */
 public class ModelToJson {
 
 	public static JsonEntity locationToJson(Location location) {
