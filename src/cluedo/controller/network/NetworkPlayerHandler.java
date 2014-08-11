@@ -14,28 +14,35 @@ import util.json.JsonObject;
 import cluedo.controller.interaction.GameInput;
 import cluedo.controller.interaction.GameListener;
 import cluedo.controller.player.Player.PlayerType;
+import cluedo.model.Board;
 import cluedo.model.Location;
 import cluedo.model.card.Character;
 import cluedo.model.card.Weapon;
 import cluedo.model.cardcollection.Accusation;
 import cluedo.model.cardcollection.Suggestion;
 
+/**
+ * 
+ * @author Simon Pinfold
+ *
+ */
 public class NetworkPlayerHandler {
 
 	private ServerSocket socket;
-	private List<OutputStream> clients;
 	private JsonObject defs;
+	private Board board;
 
-	public NetworkPlayerHandler(String bind, int port, JsonObject defs) throws IOException {
+	public NetworkPlayerHandler(String bind, int port, JsonObject defs, Board board) throws IOException {
 		this.socket = new ServerSocket(port, 50, InetAddress.getByName(bind));
 		this.defs = defs;
+		this.board = board;
 	}
 
-	public NetworkGameChannel getRemoteInput(int timeout) throws IOException {
+	public ServerGameChannel getRemoteInput(int timeout) throws IOException {
 		Socket con = socket.accept();
 		OutputStream os = con.getOutputStream();
 		os.write(defs.toString().getBytes());
-		return new NetworkGameChannel(os, con.getInputStream());
+		return new ServerGameChannel(os, con.getInputStream(), board);
 	}
 
 }

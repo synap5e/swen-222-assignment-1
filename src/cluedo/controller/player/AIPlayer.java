@@ -133,5 +133,11 @@ public class AIPlayer extends Player implements GameListener{
 		
 	}
 
+	@Override
+	public void waitingForNetworkPlayers(int i) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 }

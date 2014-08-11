@@ -33,18 +33,25 @@ public interface GameListener {
 	public void onAccusation(Character accuser, Accusation accusation, boolean correct);
 
 	
-	public void onWeaponMove(Weapon weapon, Location room);
+	public void onWeaponMove(Weapon weapon, Location newLocation);
 
 	/** Called when a character is moved to a room because they were suggested as murder in that room
 	 * 
 	 * @param character
-	 * @param room
+	 * @param newLocation
 	 */
-	public void onCharacterMove(Character character, Location room);
+	public void onCharacterMove(Character character, Location newLocation);
 
 	public void onDiceRolled(int roll);
 
 
 	public void onGameWon(String name, Character playersCharacter);
+
+	/** Called to inform how many network players are still being waited for.
+	 * Will be called each time this changes, but not on 0
+	 * 
+	 * @param i
+	 */
+	public void waitingForNetworkPlayers(int i);
 
 }
