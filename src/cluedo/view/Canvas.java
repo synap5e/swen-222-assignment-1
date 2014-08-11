@@ -325,10 +325,17 @@ public class Canvas extends JPanel implements MouseListener{
 		
 		Location loc = board.getLocation((int) x,(int) y);
 		if (loc != null){
-			selected = loc;
+			if (loc.getTokens().size() > 0 && loc instanceof Tile){
+				Token t = loc.getTokens().get(0);
+				frame.onTokenSelect(t);
+			} else if (loc.getTokens().size() > 0){ //must be a room
+				//find token
+			} else {
+				selected = loc;
+				frame.onLocationSelect(loc);
+			}
 			
 			frame.repaint();
-			frame.onLocationSelect(loc);
 			return;
 		}
 	}
