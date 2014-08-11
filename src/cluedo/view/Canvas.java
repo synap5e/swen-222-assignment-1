@@ -327,7 +327,7 @@ public class Canvas extends JPanel implements MouseListener{
 		Location loc = board.getLocation((int) x,(int) y);
 		if (loc != null){
 			selected = loc;
-			repaint();
+			getParent().repaint();
 			return;
 		}
 	}
