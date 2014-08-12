@@ -245,6 +245,9 @@ public class GUIGameInput implements GameInput, FrameListener{
 		}
 		frame.getCanvas().unselectLocation();
 		frame.getCanvas().setPossibleLocations(null);
+		if (selectedLocation instanceof Room){
+			frame.displaySuggestion(true);
+		}
 		return selectedLocation;
 	}
 
@@ -257,6 +260,7 @@ public class GUIGameInput implements GameInput, FrameListener{
 			} catch (InterruptedException e1) {
 			}
 		}
+		frame.displaySuggestion(false);
 		return suggesting;
 	}
 	
