@@ -59,6 +59,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 		Container pane = getContentPane();
 		pane.setLayout(new GridBagLayout());
 		GridBagConstraints con = createConstraints();
+
 		this.canvas = new Canvas(this, board, def);
 		
 		//Add Gap
@@ -106,6 +107,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 		
 		setConstraints(con, 0, 0, 2, true, true);
 		con.gridheight = 5;
+		
 		con.insets = new Insets(0,0,0,0);
 		pane.add(canvas, con);
 		setVisible(true);
@@ -137,18 +139,6 @@ public class CluedoFrame extends JFrame implements GameListener {
 		for (FrameListener l : listeners){
 			l.onTokenSelect(token);
 		}
-	}
-	
-	/**
-	 * Create the constraints with a predefined insets and set to fill both directions.
-	 * 
-	 * @return The created constraints
-	 */
-	private GridBagConstraints createConstraints(){
-		GridBagConstraints con = new GridBagConstraints();
-		con.insets = new Insets(1, 2, 2, 1);
-		con.fill = GridBagConstraints.BOTH;
-		return con;
 	}
 	
 	/**
@@ -191,6 +181,18 @@ public class CluedoFrame extends JFrame implements GameListener {
 		con.insets = new Insets(1, 20, 2, 1);
 		con.weightx = (expandX) ? 1 : 0;
 		con.weighty = (expandY) ? 1 : 0;
+	}
+	
+	/**
+	 * Create the constraints with a predefined insets and set to fill both directions.
+	 * 
+	 * @return The created constraints
+	 */
+	private GridBagConstraints createConstraints(){
+		GridBagConstraints con = new GridBagConstraints();
+		con.insets = new Insets(1, 2, 2, 1);
+		con.fill = GridBagConstraints.BOTH;
+		return con;
 	}
 	
 	public Canvas getCanvas(){
