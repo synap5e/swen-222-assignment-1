@@ -282,6 +282,7 @@ public class GUIGameInput implements GameInput, FrameListener{
 	@Override
 	public Weapon pickWeapon() {
 		frame.getCanvas().setCurrentAction("Pick the Weapon");
+		frame.getCanvas().focusWeapons(true);
 		selectedToken = null;
 
 		while (selectedToken == null || selectedToken instanceof Character){
@@ -290,7 +291,7 @@ public class GUIGameInput implements GameInput, FrameListener{
 			} catch (InterruptedException e1) {
 			}
 		}
-		System.out.println("Weapon Picked");
+		frame.getCanvas().focusWeapons(false);
 		return (Weapon) selectedToken;
 	}
 
@@ -298,12 +299,14 @@ public class GUIGameInput implements GameInput, FrameListener{
 	public Character pickCharacter() {
 		selectedToken = null;
 		frame.getCanvas().setCurrentAction("Pick the Murderer");
+		frame.getCanvas().focusCharacters(true);
 		while (selectedToken == null || selectedToken instanceof Weapon){
 			try {
 				Thread.sleep(20);
 			} catch (InterruptedException e1) {
 			}
 		}
+		frame.getCanvas().focusCharacters(false);
 		return (Character) selectedToken;
 	}
 
@@ -313,12 +316,14 @@ public class GUIGameInput implements GameInput, FrameListener{
 		frame.getCanvas().repaint();
 		selectedLocation = null;
 		frame.getCanvas().setCurrentAction("Pick the Room");
+		frame.getCanvas().focusRooms(true);
 		while (selectedLocation == null || selectedLocation instanceof Tile){
 			try {
 				Thread.sleep(20);
 			} catch (InterruptedException e1) {
 			}
 		}
+		frame.getCanvas().focusRooms(false);
 		return (Room) selectedLocation;
 	}
 

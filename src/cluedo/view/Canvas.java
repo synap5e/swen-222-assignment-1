@@ -85,6 +85,10 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	
 	private Character currentPlayer;
 	
+	private boolean focusCharacters = false;
+	private boolean focusWeapons = false;
+	private boolean focusRooms = false;
+	
 	public Canvas(CluedoFrame fram, Board brd, JsonObject def){
 		frame = fram;
 		board = brd;
@@ -216,7 +220,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 				if (loc instanceof Tile){
 					g2d.setColor(TILE);
 				} else {
-					g2d.setColor(ROOM);
+					g2d.setColor((focusRooms) ? SELECTION_COLOR: ROOM);
 				}
 				if (endLocations.contains(loc)) g2d.setColor(SELECTION_COLOR);
 				if (loc == selected) g2d.setColor(Color.ORANGE);
@@ -234,6 +238,10 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 						g2d.fillOval(x*tileWidth+3, y*tileWidth+3, tileWidth-5, tileWidth-5);
 						if (loc.getTokens().get(0) == currentPlayer){
 							g2d.setColor(Color.BLACK);
+							g2d.drawOval(x*tileWidth+3, y*tileWidth+3, tileWidth-5, tileWidth-5);
+						}
+						if (focusCharacters){
+							g2d.setColor(SELECTION_COLOR);
 							g2d.drawOval(x*tileWidth+3, y*tileWidth+3, tileWidth-5, tileWidth-5);
 						}
 					}
@@ -257,9 +265,18 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			for (Token token : room.getTokens()){
 				if (token instanceof Character){
 					//TODO: set color to match token
+					g2d.setColor(Color.WHITE);
 					g2d.fillOval(x+3, startY+3, tileWidth-5, tileWidth-5);
+					if (focusCharacters){
+						g2d.setColor(SELECTION_COLOR);
+						g2d.drawOval(x+3, startY+3, tileWidth-5, tileWidth-5);
+					}
 				} else {
 					g2d.drawImage(tokenImages.get(token.getName()), x, startY, tileWidth, tileWidth, null);
+					if (focusWeapons){
+						g2d.setColor(SELECTION_COLOR);
+						g2d.drawRect(x, startY, tileWidth, tileWidth);
+					}
 				}
 				x += tileWidth;
 				
@@ -332,6 +349,18 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		} else {
 			endLocations = Collections.emptyList();
 		}
+	}
+	
+	public void focusRooms(boolean focus){
+		focusRooms = focus;
+	}
+	
+	public void focusCharacters(boolean focus){
+		focusCharacters = focus;
+	}
+	
+	public void focusWeapons(boolean focus){
+		focusWeapons = focus;
 	}
 	
 	public void setCurrentAction(String act){
