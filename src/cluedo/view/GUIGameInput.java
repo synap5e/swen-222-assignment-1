@@ -216,6 +216,7 @@ public class GUIGameInput implements GameInput, FrameListener{
 
 	@Override
 	public void startTurn(Hand h) {
+		frame.getCanvas().setCurrentAction("Roll the Dice");
 		frame.displayRollDice(true);
 		waitForDiceRoll = true; 
 		while (waitForDiceRoll){
@@ -236,7 +237,7 @@ public class GUIGameInput implements GameInput, FrameListener{
 		frame.getCanvas().setPossibleLocations(possibleLocations);
 		frame.getCanvas().repaint();
 		selectedLocation = null;
-		System.out.println("Trying to select");
+		frame.getCanvas().setCurrentAction("Choose Move");
 		while (selectedLocation == null || !possibleLocations.contains(selectedLocation)){
 			try {
 				Thread.sleep(20);
@@ -246,14 +247,16 @@ public class GUIGameInput implements GameInput, FrameListener{
 		frame.getCanvas().unselectLocation();
 		frame.getCanvas().setPossibleLocations(null);
 		if (selectedLocation instanceof Room){
+			frame.getCanvas().setCurrentAction("Make a Suggestion?");
 			frame.displaySuggestion(true);
+		} else {
+			frame.getCanvas().setCurrentAction("Make an Accusation?");
 		}
 		return selectedLocation;
 	}
 
 	@Override
 	public boolean hasSuggestion() {
-		System.out.println("Suggesting?");
 		while (!(endingTurn || suggesting || accusing)){
 			try {
 				Thread.sleep(20);
@@ -266,10 +269,6 @@ public class GUIGameInput implements GameInput, FrameListener{
 	
 	@Override
 	public boolean hasAccusation() {
-		// TODO Auto-generated method stub
-		//false  - end turn
-		//ture - accuse
-		System.out.println("Accusing?");
 		while (!(endingTurn || accusing)){
 			try {
 				Thread.sleep(20);
@@ -282,7 +281,7 @@ public class GUIGameInput implements GameInput, FrameListener{
 
 	@Override
 	public Weapon pickWeapon() {
-		System.out.println("Pick weapon");
+		frame.getCanvas().setCurrentAction("Pick the Weapon");
 		selectedToken = null;
 
 		while (selectedToken == null || selectedToken instanceof Character){
@@ -298,7 +297,7 @@ public class GUIGameInput implements GameInput, FrameListener{
 	@Override
 	public Character pickCharacter() {
 		selectedToken = null;
-		System.out.println("Pick character");
+		frame.getCanvas().setCurrentAction("Pick the Murderer");
 		while (selectedToken == null || selectedToken instanceof Weapon){
 			try {
 				Thread.sleep(20);
@@ -313,6 +312,7 @@ public class GUIGameInput implements GameInput, FrameListener{
 		frame.getCanvas().unselectLocation();
 		frame.getCanvas().repaint();
 		selectedLocation = null;
+		frame.getCanvas().setCurrentAction("Pick the Room");
 		while (selectedLocation == null || selectedLocation instanceof Tile){
 			try {
 				Thread.sleep(20);
@@ -332,6 +332,7 @@ public class GUIGameInput implements GameInput, FrameListener{
 	@Override
 	public void suggestionDisproved(Character characterDisproved,
 			Card disprovingCard) {
+		frame.getCanvas().setCurrentAction("Suggestion Disproved");
 		// TODO Auto-generated method stub
 		
 	}
@@ -350,7 +351,6 @@ public class GUIGameInput implements GameInput, FrameListener{
 
 	@Override
 	public void onLocationSelect(Location loc) {
-		System.out.println("Location selected");
 		selectedLocation = loc;
 	}
 
@@ -387,22 +387,16 @@ public class GUIGameInput implements GameInput, FrameListener{
 
 	@Override
 	public void onSuggest() {
-		// TODO Auto-generated method stub
-		System.out.println("Start Suggestion");
 		suggesting = true;
 	}
 
 	@Override
 	public void onAccuse() {
-		// TODO Auto-generated method stub
-		System.out.println("Start Accusation");
 		accusing = true;
 	}
 
 	@Override
 	public void onEndTurn() {
-		// TODO Auto-generated method stub
-		System.out.println("End turn");
 		endingTurn = true;
 	}
 

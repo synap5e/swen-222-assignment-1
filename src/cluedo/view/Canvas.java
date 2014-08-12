@@ -57,12 +57,16 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	private static final int CARD_WIDTH = 100;
 	private static final int CARD_HEIGHT = 150;
 	
+	private static final int TITLE_HEIGHT = 40;
+	private static final int TITLE_WIDTH = 400;
+	
 	private final Board board;
 	
 	private final Map<String, Image> cardImages;
 	private final Map<String, Image> tokenImages;
 	private Image cardBack;
 	
+	private String action = "Game Setup";
 	private CluedoFrame frame;
 	
 	private Card hover;
@@ -159,7 +163,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			@Override
 			public void componentResized(ComponentEvent arg0) {
 				Canvas can = (Canvas) arg0.getSource();
-				int height = can.getHeight() - CARD_HEIGHT-5;
+				int height = can.getHeight() - CARD_HEIGHT-5-TITLE_HEIGHT-10;
 				tileWidth = (can.getWidth()/board.getWidth() < height/board.getHeight()) ? can.getWidth()/board.getWidth() : height/board.getHeight();
 				xOffset = (can.getWidth()-tileWidth*24)/2;
 				yOffset = (height-tileWidth*25)/2;
@@ -181,13 +185,23 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		//Setup the Graphics2D 
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 15));
+		g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, TITLE_HEIGHT-5));
 		
 		//Remember the current transform and then apply the offset to the graphics
 		AffineTransform saveTransform = g2d.getTransform();
 		AffineTransform trans = new AffineTransform(saveTransform);
-		trans.translate(xOffset, yOffset);
+		trans.translate(xOffset, yOffset+TITLE_HEIGHT+10);
 	    g2d.setTransform(trans);
+	    
+	    g2d.setColor(ROOM);
+	    g2d.fillRect((board.getWidth()*tileWidth-TITLE_WIDTH)/2, -5-TITLE_HEIGHT, TITLE_WIDTH, TITLE_HEIGHT);
+		
+	    g2d.setColor(Color.BLACK);
+		Rectangle2D actionBounds = g2d.getFontMetrics().getStringBounds(action, g2d);
+		g2d.drawString(action, 
+		   		(int) ((board.getWidth()*tileWidth-actionBounds.getWidth())/2), 
+		 		(int) (5-TITLE_HEIGHT+actionBounds.getHeight()/2));	
+		g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 15));
 		
 		//Draw locations
 		for (int x = 0; x < board.getWidth(); ++x){
@@ -310,7 +324,11 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		} else {
 			endLocations = Collections.emptyList();
 		}
-		
+	}
+	
+	public void setCurrentAction(String act){
+		action = act;
+		frame.repaint();
 	}
 	
 	@Override
@@ -328,7 +346,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	@Override
 	public void mousePressed(MouseEvent arg0) {
 		double x = ((double) (arg0.getX()-xOffset))/tileWidth;
-		double y = ((double) (arg0.getY()-yOffset))/tileWidth;
+		double y = ((double) (arg0.getY()-yOffset-TITLE_HEIGHT-10))/tileWidth;
 		
 		Location loc = board.getLocation((int) x,(int) y);
 		if (loc != null){
@@ -429,7 +447,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
 		double x = ((double) (arg0.getX()-xOffset))/tileWidth;
-		double y = ((double) (arg0.getY()-yOffset))/tileWidth;
+		double y = ((double) (arg0.getY()-yOffset-TITLE_HEIGHT-10))/tileWidth;
 		
 		Location loc = board.getLocation((int) x,(int) y);
 		if (loc != null){
