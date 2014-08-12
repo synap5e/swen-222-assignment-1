@@ -335,6 +335,9 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			if (loc instanceof Tile){
 				if (loc.getTokens().size() > 0){
 					frame.onTokenSelect(loc.getTokens().get(0));
+				} else {
+					selected = loc;
+					frame.onLocationSelect(loc);
 				}
 			} else { //must be a room
 				//find token

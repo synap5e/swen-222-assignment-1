@@ -5,6 +5,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.ButtonGroup;
@@ -20,6 +21,7 @@ import javax.swing.SpinnerNumberModel;
 
 import cluedo.controller.interaction.GameInput;
 import cluedo.model.Location;
+import cluedo.model.Tile;
 import cluedo.model.card.Card;
 import cluedo.model.card.Character;
 import cluedo.model.card.Room;
@@ -44,6 +46,7 @@ public class GUIGameInput implements GameInput, FrameListener{
 	private CluedoFrame frame;
 	
 	private Location selectedLocation = null;
+	private Token selectedToken = null;
 	
 	public GUIGameInput(CluedoFrame frame){
 		this.frame = frame;
@@ -72,6 +75,9 @@ public class GUIGameInput implements GameInput, FrameListener{
 		
 		dialog.add(submit, BorderLayout.SOUTH);
 		dialog.setVisible(true);
+		
+		//TODO: Remove
+		wait = false;
 		
 		while (wait){
 			try {
@@ -127,6 +133,8 @@ public class GUIGameInput implements GameInput, FrameListener{
 		dialog.add(submit);
 		dialog.setVisible(true);
 		
+		//TODO: Remove
+		wait = false;
 		while (wait){
 			try {
 				Thread.sleep(20);
@@ -147,7 +155,10 @@ public class GUIGameInput implements GameInput, FrameListener{
 		int num = Integer.parseInt(JOptionPane.showInputDialog(frame, "Number of network players?"));
 		for (int i=0;i<num;i++) playerNames.remove(playerNames.size()-1);
 
-		return playerNames;
+		//TODO: return to previous
+		List<String> temp = new ArrayList<String>();
+		Collections.addAll(temp, "James", "Simon");
+		return temp;//playerNames;
 	}
 
 	@Override
@@ -166,10 +177,10 @@ public class GUIGameInput implements GameInput, FrameListener{
 			JRadioButton rb = new JRadioButton(ch.getName());
 		    rb.setActionCommand(ch.getName());
 		    rb.setEnabled(availableCharacters.contains(ch));
+		    rb.setSelected(availableCharacters.contains(ch));
 		    dialog.add(rb);
 		    group.add(rb);
 		}
-		
 		
 		wait = true;
 		
@@ -225,21 +236,21 @@ public class GUIGameInput implements GameInput, FrameListener{
 		frame.getCanvas().setPossibleLocations(possibleLocations);
 		frame.getCanvas().repaint();
 		selectedLocation = null;
-		while (wait){
+		System.out.println("Trying to select");
+		while (selectedLocation == null || !possibleLocations.contains(selectedLocation)){
 			try {
 				Thread.sleep(20);
-				if (possibleLocations.contains(selectedLocation)){
-					frame.getCanvas().setPossibleLocations(null);
-					return selectedLocation;
-				}
 			} catch (InterruptedException e1) {
 			}
 		}
-		return null;
+		frame.getCanvas().unselectLocation();
+		frame.getCanvas().setPossibleLocations(null);
+		return selectedLocation;
 	}
 
 	@Override
 	public boolean hasSuggestion() {
+		System.out.println("Suggesting?");
 		while (!(endingTurn || suggesting || accusing)){
 			try {
 				Thread.sleep(20);
@@ -254,6 +265,7 @@ public class GUIGameInput implements GameInput, FrameListener{
 		// TODO Auto-generated method stub
 		//false  - end turn
 		//ture - accuse
+		System.out.println("Accusing?");
 		while (!(endingTurn || accusing)){
 			try {
 				Thread.sleep(20);
@@ -266,20 +278,44 @@ public class GUIGameInput implements GameInput, FrameListener{
 
 	@Override
 	public Weapon pickWeapon() {
-		// TODO Auto-generated method stub
-		return null;
+		System.out.println("Pick weapon");
+		selectedToken = null;
+
+		while (selectedToken == null || selectedToken instanceof Character){
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e1) {
+			}
+		}
+		System.out.println("Weapon Picked");
+		return (Weapon) selectedToken;
 	}
 
 	@Override
 	public Character pickCharacter() {
-		// TODO Auto-generated method stub
-		return null;
+		selectedToken = null;
+		System.out.println("Pick character");
+		while (selectedToken == null || selectedToken instanceof Weapon){
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e1) {
+			}
+		}
+		return (Character) selectedToken;
 	}
 
 	@Override
 	public Room pickRoom() {
-		// TODO Auto-generated method stub
-		return null;
+		frame.getCanvas().unselectLocation();
+		frame.getCanvas().repaint();
+		selectedLocation = null;
+		while (selectedLocation == null || selectedLocation instanceof Tile){
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e1) {
+			}
+		}
+		return (Room) selectedLocation;
 	}
 
 	@Override
@@ -310,13 +346,13 @@ public class GUIGameInput implements GameInput, FrameListener{
 
 	@Override
 	public void onLocationSelect(Location loc) {
+		System.out.println("Location selected");
 		selectedLocation = loc;
 	}
 
 	@Override
 	public void onTokenSelect(Token token) {
-		// TODO Auto-generated method stub
-		System.out.println("Token selected");
+		selectedToken = token;
 	}
 
 	@Override
