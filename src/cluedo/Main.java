@@ -29,7 +29,7 @@ import cluedo.view.GUIGameInput;
 public class Main {
 
 	public static void main(String[] args) throws IOException {
-		if (JOptionPane.NO_OPTION == JOptionPane.showConfirmDialog(null, "Run as client?", "", JOptionPane.YES_NO_OPTION)){
+		if (JOptionPane.NO_OPTION == JOptionPane.showConfirmDialog(null, "Run as client game?", "", JOptionPane.YES_NO_OPTION)){
 			JsonObject defs = null;
 			try {
 				defs = MinimalJson.parseJson(new File("./rules/cards.json"));
