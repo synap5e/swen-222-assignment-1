@@ -52,6 +52,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	private static final Color ROOM = new Color(212,196,173);
 	private static final Color WALL_COLOR = new Color(130,23,11);//169,32,14);
 	private static final Color GRID_COLOR = Color.BLACK;
+	private static final Color SELECTION_COLOR = new Color(68, 158, 255);
 	
 	private static final int WALL_THICKNESS = 3;
 	private static final int CARD_WIDTH = 100;
@@ -81,6 +82,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	
 	private Map<Room, Point2D> roomCorner;
 	private Map<Room, Point2D> roomCenter;
+	
+	private Character currentPlayer;
 	
 	public Canvas(CluedoFrame fram, Board brd, JsonObject def){
 		frame = fram;
@@ -215,7 +218,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 				} else {
 					g2d.setColor(ROOM);
 				}
-				if (endLocations.contains(loc)) g2d.setColor(Color.BLUE);
+				if (endLocations.contains(loc)) g2d.setColor(SELECTION_COLOR);
 				if (loc == selected) g2d.setColor(Color.ORANGE);
 				
 				g2d.fillRect(x*tileWidth, y*tileWidth, tileWidth, tileWidth);
@@ -226,8 +229,13 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 					g2d.drawRect(x*tileWidth, y*tileWidth, tileWidth, tileWidth);
 					
 					//TODO: set color to match token
+					g2d.setColor(Color.WHITE);
 					if (loc.getTokens().size() > 0){
 						g2d.fillOval(x*tileWidth+3, y*tileWidth+3, tileWidth-5, tileWidth-5);
+						if (loc.getTokens().get(0) == currentPlayer){
+							g2d.setColor(Color.BLACK);
+							g2d.drawOval(x*tileWidth+3, y*tileWidth+3, tileWidth-5, tileWidth-5);
+						}
 					}
 				}
 			}
@@ -405,6 +413,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
 
 	public void onTurnBegin(String name, Character playersCharacter) {
+		currentPlayer = playersCharacter;
 		System.out.printf("Its %s's (%s) turn\n", name, playersCharacter);
 	}
 
