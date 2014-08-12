@@ -13,10 +13,10 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -32,6 +32,7 @@ import cluedo.controller.player.Player.PlayerType;
 import cluedo.model.Board;
 import cluedo.model.Location;
 import cluedo.model.Tile;
+import cluedo.model.card.Card;
 import cluedo.model.card.Character;
 import cluedo.model.card.Room;
 import cluedo.model.card.Token;
@@ -44,7 +45,7 @@ import cluedo.model.cardcollection.Suggestion;
  * @author James Greenwood-Thessman
  *
  */
-public class Canvas extends JPanel implements MouseListener{
+public class Canvas extends JPanel implements MouseListener, MouseMotionListener{
 	
 	private static final Color BACKGROUND = new Color(145,204,176);
 	private static final Color TILE = new Color(238,177,70);
@@ -62,6 +63,10 @@ public class Canvas extends JPanel implements MouseListener{
 	private final Map<String, Image> tokenImages;
 	private Image cardBack;
 	
+	private CluedoFrame frame;
+	
+	private Card hover;
+	
 	private int tileWidth = 20;
 	private int xOffset;
 	private int yOffset;
@@ -73,7 +78,8 @@ public class Canvas extends JPanel implements MouseListener{
 	private Map<Room, Point2D> roomCorner;
 	private Map<Room, Point2D> roomCenter;
 	
-	public Canvas(Board brd, JsonObject def){
+	public Canvas(CluedoFrame fram, Board brd, JsonObject def){
+		frame = fram;
 		board = brd;
 		endLocations = Collections.emptyList();
 		
@@ -135,7 +141,7 @@ public class Canvas extends JPanel implements MouseListener{
 			//Load token images
 			tokenImages.put("Spanner", ImageIO.read(new File("./images/token_spanner.png")));
 			tokenImages.put("Lead Piping", ImageIO.read(new File("./images/token_lead_piping.png")));
-			tokenImages.put("Knife", ImageIO.read(new File("./images/token_knife.png")));
+			tokenImages.put("Dagger", ImageIO.read(new File("./images/token_knife.png")));
 			tokenImages.put("Candlestick", ImageIO.read(new File("./images/token_candlestick.png")));
 			tokenImages.put("Rope", ImageIO.read(new File("./images/token_rope.png")));
 			tokenImages.put("Revolver", ImageIO.read(new File("./images/token_revolver.png")));
@@ -144,7 +150,7 @@ public class Canvas extends JPanel implements MouseListener{
 		
 		setBackground(BACKGROUND);
 		addMouseListener(this);
-		
+		addMouseMotionListener(this);
 		addComponentListener(new ComponentListener() {
 			
 			@Override
@@ -157,7 +163,7 @@ public class Canvas extends JPanel implements MouseListener{
 				tileWidth = (can.getWidth()/board.getWidth() < height/board.getHeight()) ? can.getWidth()/board.getWidth() : height/board.getHeight();
 				xOffset = (can.getWidth()-tileWidth*24)/2;
 				yOffset = (height-tileWidth*25)/2;
-				repaint();
+				frame.repaint();
 			}
 			
 			@Override
@@ -224,7 +230,7 @@ public class Canvas extends JPanel implements MouseListener{
 			 		(int) (center.getY()*tileWidth-nameBounds.getHeight()/2));			
 			
 			//Draw the tokens inside the room
-			int startY = (int) (center.getY()*tileWidth+nameBounds.getHeight()/2);
+			int startY = (int) (center.getY()*tileWidth+10);
 			int x = (int) center.getX()*tileWidth-(tileWidth*room.getTokens().size())/2 ;
 			for (Token token : room.getTokens()){
 				if (token instanceof Character){
@@ -272,6 +278,10 @@ public class Canvas extends JPanel implements MouseListener{
 		
 		//Return the transformation on the graphics back to what it was
 		g2d.setTransform(saveTransform);
+		
+		if (hover != null){
+			g2d.drawImage(cardImages.get(hover.getName()), 0, 0, CARD_WIDTH, CARD_HEIGHT, null);
+		}
 	}
 	
 	/**
@@ -288,10 +298,6 @@ public class Canvas extends JPanel implements MouseListener{
 		if (neighbour == null || !(loc.getNeighbours().contains(neighbour) || loc == neighbour)){
 			g.drawLine(x*tileWidth, y*tileWidth, (x+width)*tileWidth, (y+height)*tileWidth);
 		}
-	}
-	
-	public Location getSelectedLocation(){
-		return selected;
 	}
 	
 	public void unselectLocation(){
@@ -326,8 +332,33 @@ public class Canvas extends JPanel implements MouseListener{
 		
 		Location loc = board.getLocation((int) x,(int) y);
 		if (loc != null){
-			selected = loc;
-			repaint();
+			if (loc instanceof Tile){
+				if (loc.getTokens().size() > 0){
+					frame.onTokenSelect(loc.getTokens().get(0));
+				}
+			} else { //must be a room
+				//find token
+				Token t = null;
+				if (loc.getTokens().size() > 0){
+					double xc = roomCenter.get(loc).getX();
+					double yc = roomCenter.get(loc).getY() - 10d/tileWidth+1;
+					xc = xc-(loc.getTokens().size())/2d ;
+					for (Token token : loc.getTokens()){
+						if (x > xc && x < xc+1 && y > yc && y < yc+1){
+							t = token;
+						}
+						++xc;
+					}
+				}
+				if (t == null){
+					selected = loc;
+					frame.onLocationSelect(loc);
+				} else {
+					frame.onTokenSelect(t);
+				}
+			} 
+			frame.repaint();
+
 			return;
 		}
 	}
@@ -338,11 +369,11 @@ public class Canvas extends JPanel implements MouseListener{
 
 
 	public void onCharacterMove(Character character, Location destination) {
-		this.repaint();
+		frame.repaint();
 	}
 	
 	public void onWeaponMove(Weapon weapon, Location room) {
-		this.repaint();
+		frame.repaint();
 	}
 	
 	
@@ -385,5 +416,44 @@ public class Canvas extends JPanel implements MouseListener{
 	}
 
 
-	
+	@Override
+	public void mouseDragged(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void mouseMoved(MouseEvent arg0) {
+		double x = ((double) (arg0.getX()-xOffset))/tileWidth;
+		double y = ((double) (arg0.getY()-yOffset))/tileWidth;
+		
+		Location loc = board.getLocation((int) x,(int) y);
+		if (loc != null){
+			if (loc instanceof Tile){
+				if (loc.getTokens().size() > 0){
+					hover = loc.getTokens().get(0);
+				} else {
+					hover = null;
+				}
+			} else { //must be a room
+				hover = (Room) loc;
+				if (loc.getTokens().size() > 0){
+					double xc = roomCenter.get(loc).getX();
+					double yc = roomCenter.get(loc).getY() - 10d/tileWidth+1;
+					xc = xc-(loc.getTokens().size())/2d ;
+					for (Token token : loc.getTokens()){
+						if (x > xc && x < xc+1 && y > yc && y < yc+1){
+							hover = token;
+						}
+						++xc;
+					}
+				}
+			}
+		} else {
+			hover = null;
+		}
+		
+		frame.repaint();
+	}
 }

@@ -31,7 +31,7 @@
 			"Kitchen" : {
 				"key"	: 12
 			},
-			"Ball Room" : {
+			"Ballroom" : {
 				"key"	: 13
 			},
 			"Conservatory" : {
@@ -40,7 +40,7 @@
 			"Dining Room" : {
 				"key"	: 15
 			},
-			"Billard Room" : {
+			"Billiard Room" : {
 				"key"	: 16
 			},
 			"Library" : {
@@ -58,10 +58,10 @@
 	},
 	"doorways" : [
 			[92, "Kitchen"],
-			[93, "Ball Room"],
+			[93, "Ballroom"],
 			[94, "Conservatory"],
 			[95, "Dining Room"],
-			[96, "Billard Room"],
+			[96, "Billiard Room"],
 			[97, "Library"],
 			[98, "Lounge"],
 			[99, "Hall"],
@@ -81,7 +81,7 @@
 			"Candlestick" 		: {
 				
 			},	
-			"Knife" 	: {
+			"Dagger" 	: {
 
 			},
 			"Lead Piping" : {

@@ -16,16 +16,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
-import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import cluedo.controller.interaction.GameInput;
 import cluedo.model.Location;
 import cluedo.model.card.Card;
 import cluedo.model.card.Character;
 import cluedo.model.card.Room;
+import cluedo.model.card.Token;
 import cluedo.model.card.Weapon;
 import cluedo.model.cardcollection.Hand;
 
@@ -34,14 +32,22 @@ import cluedo.model.cardcollection.Hand;
  * @author James Greenwood-Thessman
  *
  */
-public class GUIGameInput implements GameInput {
+public class GUIGameInput implements GameInput, FrameListener{
 
 	private boolean wait = false;
+	
+	private boolean waitForDiceRoll = false;
+	private boolean endingTurn = false;
+	private boolean accusing = false;
+	private boolean suggesting = false;
 	private int numberOfPlayers;
 	private CluedoFrame frame;
 	
+	private Location selectedLocation = null;
+	
 	public GUIGameInput(CluedoFrame frame){
 		this.frame = frame;
+		frame.addFrameListener(this);
 	}
 	
 	@Override
@@ -199,6 +205,17 @@ public class GUIGameInput implements GameInput {
 
 	@Override
 	public void startTurn(Hand h) {
+		frame.displayRollDice(true);
+		waitForDiceRoll = true; 
+		while (waitForDiceRoll){
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e1) {
+			}
+		}
+		suggesting = false;
+		accusing = false;
+		endingTurn = false;
 	}
 
 	@Override
@@ -207,12 +224,13 @@ public class GUIGameInput implements GameInput {
 		frame.getCanvas().unselectLocation();
 		frame.getCanvas().setPossibleLocations(possibleLocations);
 		frame.getCanvas().repaint();
+		selectedLocation = null;
 		while (wait){
 			try {
 				Thread.sleep(20);
-				if (possibleLocations.contains(frame.getCanvas().getSelectedLocation())){
+				if (possibleLocations.contains(selectedLocation)){
 					frame.getCanvas().setPossibleLocations(null);
-					return frame.getCanvas().getSelectedLocation();
+					return selectedLocation;
 				}
 			} catch (InterruptedException e1) {
 			}
@@ -222,8 +240,28 @@ public class GUIGameInput implements GameInput {
 
 	@Override
 	public boolean hasSuggestion() {
+		while (!(endingTurn || suggesting || accusing)){
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e1) {
+			}
+		}
+		return suggesting;
+	}
+	
+	@Override
+	public boolean hasAccusation() {
 		// TODO Auto-generated method stub
-		return false;
+		//false  - end turn
+		//ture - accuse
+		while (!(endingTurn || accusing)){
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e1) {
+			}
+		}
+		frame.displayTurnButtons(false);
+		return accusing;
 	}
 
 	@Override
@@ -236,12 +274,6 @@ public class GUIGameInput implements GameInput {
 	public Character pickCharacter() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public boolean hasAccusation() {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	@Override
@@ -274,6 +306,64 @@ public class GUIGameInput implements GameInput {
 	public String getSingleName() {
 		// TODO Auto-generated method stub
 		return JOptionPane.showInputDialog("Name?");
+	}
+
+	@Override
+	public void onLocationSelect(Location loc) {
+		selectedLocation = loc;
+	}
+
+	@Override
+	public void onTokenSelect(Token token) {
+		// TODO Auto-generated method stub
+		System.out.println("Token selected");
+	}
+
+	@Override
+	public void onNumberOfPlayers(int num) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPlayerSelection(List<String> names, int numberAI,
+			int numberNetwork) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSinglePlayerName(String name) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onRollDice() {
+		waitForDiceRoll = false;
+		frame.displayTurnButtons(true);
+		frame.displayRollDice(false);
+	}
+
+	@Override
+	public void onSuggest() {
+		// TODO Auto-generated method stub
+		System.out.println("Start Suggestion");
+		suggesting = true;
+	}
+
+	@Override
+	public void onAccuse() {
+		// TODO Auto-generated method stub
+		System.out.println("Start Accusation");
+		accusing = true;
+	}
+
+	@Override
+	public void onEndTurn() {
+		// TODO Auto-generated method stub
+		System.out.println("End turn");
+		endingTurn = true;
 	}
 
 }
