@@ -316,7 +316,7 @@ public class GUIGameInput implements GameInput, FrameListener{
 	@Override
 	public void onTokenSelect(Token token) {
 		// TODO Auto-generated method stub
-		
+		System.out.println("Token selected");
 	}
 
 	@Override
