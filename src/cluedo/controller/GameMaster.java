@@ -93,9 +93,10 @@ public class GameMaster {
 					listener.waitingForNetworkPlayers(networkPlayers-i);
 				}
 
-				networkChannels.add(networkPlayerHandler.getRemoteInput(30));
-				// TODO handle timeout
-
+				ServerGameChannel chanel = networkPlayerHandler.getRemoteInput(30);
+				networkChannels.add(chanel);
+				listeners.add(chanel);
+				
 			}
 		}
 
@@ -123,7 +124,6 @@ public class GameMaster {
 			} else if (playerType == PlayerType.RemoteHuman){
 				ServerGameChannel remoteChannel = networkChannels.remove(0);
 
-				listeners.add(remoteChannel);
 				String name = remoteChannel.getSingleName();
 				character = remoteChannel.chooseCharacter(name, board.getCharacters(), pickableCharacters);
 
