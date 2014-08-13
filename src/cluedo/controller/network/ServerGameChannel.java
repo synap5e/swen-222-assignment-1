@@ -183,6 +183,8 @@ public class ServerGameChannel implements GameInput, GameListener {
 					parameter("characterDisproved", ModelToJson.cardToJson(characterDisproved)).
 					parameter("disprovingCard", ModelToJson.cardToJson(disprovingCard)).
 			build());
+		
+		inObs.next();
 	}
 
 	@Override
