@@ -38,6 +38,7 @@ import cluedo.model.card.Room;
 import cluedo.model.card.Token;
 import cluedo.model.card.Weapon;
 import cluedo.model.cardcollection.Accusation;
+import cluedo.model.cardcollection.Hand;
 import cluedo.model.cardcollection.Suggestion;
 
 /**
@@ -61,6 +62,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	private static final int TITLE_HEIGHT = 40;
 	private static final int TITLE_WIDTH = 400;
 	
+	private static final int SIDE_GAP = 50;
+	
 	private final Board board;
 	
 	private final Map<String, Image> cardImages;
@@ -77,7 +80,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	private int yOffset;
 	
 	private Location selected;
-	
+	private Hand currentHand;
 	private List<Location> endLocations;
 	
 	private Map<Room, Point2D> roomCorner;
@@ -305,18 +308,25 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			}
 		}
 	
-		//TODO: Draw actual hand
-		int x = 0;
-		for (Image img : cardImages.values()){
-			g2d.drawImage(img, x, tileWidth*board.getHeight()+5, CARD_WIDTH, CARD_HEIGHT, null);
-			x += CARD_WIDTH+2;
-			if (x > (CARD_WIDTH+2)*6){
-				break;
-			}
-		}
-		
 		//Return the transformation on the graphics back to what it was
 		g2d.setTransform(saveTransform);
+		
+		//Draw the hand
+		if (currentHand != null) {
+			int size = 0;
+			for (Card card : currentHand) ++size;
+			int x = (board.getWidth()*tileWidth-CARD_WIDTH*size)/2+xOffset;
+			int step = CARD_WIDTH+2;
+			
+			if (x < SIDE_GAP){
+				x = SIDE_GAP;
+				step = (this.getWidth()-SIDE_GAP)/size;
+			}
+			for (Card card : currentHand){
+				g2d.drawImage(cardImages.get(card.getName()), x, tileWidth*board.getHeight()+5+yOffset+TITLE_HEIGHT+10, CARD_WIDTH, CARD_HEIGHT, null);
+				x += step;
+			}
+		}
 		
 		if (hover != null){
 			g2d.drawImage(cardImages.get(hover.getName()), 0, 0, CARD_WIDTH, CARD_HEIGHT, null);
@@ -337,6 +347,10 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		if (neighbour == null || !(loc.getNeighbours().contains(neighbour) || loc == neighbour)){
 			g.drawLine(x*tileWidth, y*tileWidth, (x+width)*tileWidth, (y+height)*tileWidth);
 		}
+	}
+	
+	public void setCurrentHand(Hand hand){
+		currentHand = hand;
 	}
 	
 	public void unselectLocation(){

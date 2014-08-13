@@ -218,6 +218,7 @@ public class GUIGameInput implements GameInput, FrameListener{
 	public void startTurn(Hand h) {
 		frame.getCanvas().setCurrentAction("Roll the Dice");
 		frame.displayRollDice(true);
+		frame.getCanvas().setCurrentHand(h);
 		waitForDiceRoll = true; 
 		while (waitForDiceRoll){
 			try {
