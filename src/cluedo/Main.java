@@ -65,7 +65,8 @@ public class Main {
 		JsonStreamReader reader = new JsonStreamReader(connection.getInputStream());
 	
 		JsonObject defs = reader.next();
-		Board board = new Board(defs);
+		JsonObject weaponLocations = reader.next();
+		Board board = new Board(defs, weaponLocations);
 		CluedoFrame frame = new CluedoFrame(board, defs);
 		
 		GameSlave gs = new GameSlave(board, new GUIGameInput(frame, gc));

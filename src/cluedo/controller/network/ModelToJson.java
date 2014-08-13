@@ -82,4 +82,12 @@ public class ModelToJson {
 		return r;
 	}
 
+	public static JsonEntity weaponLocationsToJson(Board board) {
+		JsonObject jo = new JsonObject();
+		for (Weapon w : board.getWeapons()){
+			jo.put(w.getName(), ((Room) board.getLocationOf(w)).getName());
+		}
+		return jo;
+	}
+
 }

@@ -41,6 +41,7 @@ public class NetworkPlayerHandler {
 		Socket con = socket.accept();
 		OutputStream os = con.getOutputStream();
 		os.write(defs.toString().getBytes());
+		os.write(ModelToJson.weaponLocationsToJson(board).toString().getBytes());
 		return new ServerGameChannel(os, con.getInputStream(), board);
 	}
 
