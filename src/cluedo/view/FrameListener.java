@@ -5,6 +5,11 @@ import java.util.List;
 import cluedo.model.Location;
 import cluedo.model.card.Token;
 
+/**
+ * 
+ * @author James Greenwood-Thessman
+ *
+ */
 public interface FrameListener {
 	/*
 	 * Events related to the canvas
