@@ -226,6 +226,7 @@ public class GUIGameInput implements GameInput, FrameListener{
 			} catch (InterruptedException e1) {
 			}
 		}
+		frame.displayRollDice(false);
 		suggesting = false;
 		accusing = false;
 		endingTurn = false;
@@ -247,6 +248,7 @@ public class GUIGameInput implements GameInput, FrameListener{
 		}
 		frame.getCanvas().unselectLocation();
 		frame.getCanvas().setPossibleLocations(null);
+		frame.displayTurnButtons(true);
 		if (selectedLocation instanceof Room){
 			frame.getCanvas().setCurrentAction("Make a Suggestion?");
 			frame.displaySuggestion(true);
@@ -387,8 +389,6 @@ public class GUIGameInput implements GameInput, FrameListener{
 	@Override
 	public void onRollDice() {
 		waitForDiceRoll = false;
-		frame.displayTurnButtons(true);
-		frame.displayRollDice(false);
 	}
 
 	@Override
