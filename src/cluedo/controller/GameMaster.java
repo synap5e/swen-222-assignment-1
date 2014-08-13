@@ -26,6 +26,7 @@ import cluedo.model.card.Room;
 import cluedo.model.cardcollection.Accusation;
 import cluedo.model.cardcollection.Hand;
 import cluedo.model.cardcollection.Suggestion;
+import cluedo.view.GUIGameInput;
 
 /**
  *
@@ -43,14 +44,21 @@ public class GameMaster {
 	private int turn;
 	private Board board;
 	private GameInput input;
-	private JsonObject defs;
+	private NetworkPlayerHandler networkPlayerHandler;
 
-	public GameMaster(Board board, JsonObject defs, GameInput input) {
+	public GameMaster(Board board, GameInput input) {
 		this.board = board;
 		this.input = input;
-		this.defs = defs;
+		
 		listeners = new ArrayList<GameListener>();
 	}
+	
+	public GameMaster(Board board, NetworkPlayerHandler netHandler, GameInput input) {
+		this(board, input);
+		this.networkPlayerHandler = netHandler;
+	}
+
+
 
 	public void addGameListener(GameListener listener) {
 		listeners.add(listener);
@@ -78,10 +86,8 @@ public class GameMaster {
 		int networkPlayers = input.getNetworkPlayerCount();
 		assert humanNames.size() + networkPlayers <= numberOfPlayers;
 
-		NetworkPlayerHandler networkPlayerHandler = null;
 		List<ServerGameChannel> networkChannels = new ArrayList<ServerGameChannel>();
 		if (networkPlayers > 0){
-			networkPlayerHandler = new NetworkPlayerHandler("0.0.0.0", 5362, defs, board);
 			for (int i=0;i<networkPlayers;i++){
 				for (GameListener listener : listeners){
 					listener.waitingForNetworkPlayers(networkPlayers-i);

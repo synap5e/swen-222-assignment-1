@@ -31,10 +31,10 @@ import cluedo.model.cardcollection.Hand;
 
 /**
  *
- * @author James Greenwood-Thessman
+ * @author James Greenwood-Thessman, Simon Pinfold
  *
  */
-public class GUIGameInput implements GameInput, FrameListener, ConfigListener{
+public class GUIGameInput implements GameInput, FrameListener{
 
 	private boolean wait = false;
 
@@ -52,48 +52,24 @@ public class GUIGameInput implements GameInput, FrameListener, ConfigListener{
 
 	private boolean ready = false;
 
-	public GUIGameInput(CluedoFrame frame){
+	public GUIGameInput(CluedoFrame frame, GameConfig gc){
 		this.frame = frame;
+		this.gameConfig = gc;
 		frame.addFrameListener(this);
 	}
 
 	@Override
-	public void onConfigured() {
-		ready = true;
-	}
-	private void waitConfigure() {
-		while (!ready){
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			};
-		}
-	}
-
-	@Override
 	public int getNumberOfPlayers(int min, int max) {
-		this.gameConfig = frame.createGameConfig(min, max);
-		gameConfig.setConfigListener(this);
-
-		waitConfigure();
-
 		return gameConfig.getNumberOfPlayers();
 	}
 
-
-
 	@Override
 	public List<String> getHumanNames() {
-		waitConfigure();
-
 		return gameConfig.getHumanNames();
 	}
 
 	@Override
 	public int getNetworkPlayerCount() {
-		waitConfigure();
-
 		return gameConfig.getNetworkCount();
 	}
 
@@ -340,7 +316,5 @@ public class GUIGameInput implements GameInput, FrameListener, ConfigListener{
 	public void onEndTurn() {
 		endingTurn = true;
 	}
-
-
 
 }
