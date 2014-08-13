@@ -30,62 +30,62 @@ import cluedo.model.card.Weapon;
 import cluedo.model.cardcollection.Hand;
 
 /**
- * 
+ *
  * @author James Greenwood-Thessman
  *
  */
 public class GUIGameInput implements GameInput, FrameListener{
 
 	private boolean wait = false;
-	
+
 	private boolean waitForDiceRoll = false;
 	private boolean endingTurn = false;
 	private boolean accusing = false;
 	private boolean suggesting = false;
 	private int numberOfPlayers;
 	private CluedoFrame frame;
-	
+
 	private Location selectedLocation = null;
 	private Token selectedToken = null;
-	
+
 	public GUIGameInput(CluedoFrame frame){
 		this.frame = frame;
 		frame.addFrameListener(this);
 	}
-	
+
 	@Override
 	public int getNumberOfPlayers(int min, int max) {
 		JDialog dialog = new JDialog(frame);
 		SpinnerNumberModel numberOfPlayersModel = new SpinnerNumberModel(min, min, max, 1);
 		JSpinner spinner = new JSpinner(numberOfPlayersModel);
-		
+
 		dialog.add(spinner, BorderLayout.EAST);
 		dialog.add(new JLabel("How may players?"), BorderLayout.WEST);
-		
+
 		wait = true;
-		
+
 		JButton submit = new JButton("Done");
 		submit.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				wait = false;
 			}
 		});
-		
+
 		dialog.add(submit, BorderLayout.SOUTH);
 		dialog.setVisible(true);
-		
+
 		//TODO: Remove
 		wait = false;
-		
+
 		while (wait){
 			try {
 				Thread.sleep(20);
 			} catch (InterruptedException e1) {
 			}
 		}
-		
+
 		dialog.dispose();
 		numberOfPlayers = numberOfPlayersModel.getNumber().intValue();
 		return numberOfPlayers;
@@ -96,16 +96,16 @@ public class GUIGameInput implements GameInput, FrameListener{
 		JDialog dialog = new JDialog(frame);
 
 		dialog.setLayout(new GridLayout(numberOfPlayers+1, 2));
-		
+
 		List<JTextField> names = new ArrayList<JTextField>();
 		List<JCheckBox> ais = new ArrayList<JCheckBox>();
-		
+
 		for (int i = 0; i < numberOfPlayers; ++i){
 			final JTextField name = new JTextField();
 			dialog.add(name);
 			JCheckBox isAI = new JCheckBox("AI");
 			isAI.addActionListener(new ActionListener() {
-				
+
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					name.setEditable(!name.isEditable());
@@ -115,24 +115,24 @@ public class GUIGameInput implements GameInput, FrameListener{
 			names.add(name);
 			ais.add(isAI);
 		}
-		
+
 		dialog.add(new JLabel(""));
-		
-		
+
+
 		wait = true;
-		
+
 		JButton submit = new JButton("Done");
 		submit.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				wait = false;
 			}
 		});
-		
+
 		dialog.add(submit);
 		dialog.setVisible(true);
-		
+
 		//TODO: Remove
 		wait = false;
 		while (wait){
@@ -141,16 +141,16 @@ public class GUIGameInput implements GameInput, FrameListener{
 			} catch (InterruptedException e1) {
 			}
 		}
-		
+
 		dialog.dispose();
-		
+
 		List<String> playerNames = new ArrayList<String>();
 		for (int i = 0; i < numberOfPlayers; ++i){
 			if (!ais.get(i).isSelected()){
 				playerNames.add(names.get(i).getText());
 			}
 		}
-		
+
 		//FIXME
 		int num = Integer.parseInt(JOptionPane.showInputDialog(frame, "Number of network players?"));
 		for (int i=0;i<num;i++) playerNames.remove(playerNames.size()-1);
@@ -167,11 +167,11 @@ public class GUIGameInput implements GameInput, FrameListener{
 		JDialog dialog = new JDialog(frame);
 
 		dialog.setLayout(new GridLayout(characters.size()+2, 1));
-		
+
 		dialog.add(new JLabel(playerName + ", who would you like to be?"));
-		
-		
-		
+
+
+
 		ButtonGroup group = new ButtonGroup();
 		for (Character ch : characters){
 			JRadioButton rb = new JRadioButton(ch.getName());
@@ -181,21 +181,21 @@ public class GUIGameInput implements GameInput, FrameListener{
 		    dialog.add(rb);
 		    group.add(rb);
 		}
-		
+
 		wait = true;
-		
+
 		JButton submit = new JButton("Done");
 		submit.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				wait = false;
 			}
 		});
-		
+
 		dialog.add(submit);
 		dialog.setVisible(true);
-		
+
 		while (wait){
 			try {
 				Thread.sleep(20);
@@ -206,7 +206,7 @@ public class GUIGameInput implements GameInput, FrameListener{
 		String name = group.getSelection().getActionCommand();
 		for (Character ch : availableCharacters){
 			if (ch.getName().equals(name)){
-				
+
 				return ch;
 			}
 		}
@@ -219,7 +219,7 @@ public class GUIGameInput implements GameInput, FrameListener{
 		frame.getCanvas().setCurrentAction("Roll the Dice");
 		frame.displayRollDice(true);
 		frame.getCanvas().setCurrentHand(h);
-		waitForDiceRoll = true; 
+		waitForDiceRoll = true;
 		while (waitForDiceRoll){
 			try {
 				Thread.sleep(20);
@@ -269,7 +269,7 @@ public class GUIGameInput implements GameInput, FrameListener{
 		frame.displaySuggestion(false);
 		return suggesting;
 	}
-	
+
 	@Override
 	public boolean hasAccusation() {
 		while (!(endingTurn || accusing)){
@@ -337,11 +337,10 @@ public class GUIGameInput implements GameInput, FrameListener{
 	}
 
 	@Override
-	public void suggestionDisproved(Character characterDisproved,
-			Card disprovingCard) {
+	public void suggestionDisproved(Character characterDisproved, Card disprovingCard) {
 		frame.getCanvas().setCurrentAction("Suggestion Disproved");
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -369,20 +368,20 @@ public class GUIGameInput implements GameInput, FrameListener{
 	@Override
 	public void onNumberOfPlayers(int num) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onPlayerSelection(List<String> names, int numberAI,
 			int numberNetwork) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onSinglePlayerName(String name) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

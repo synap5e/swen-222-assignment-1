@@ -12,7 +12,7 @@ import cluedo.model.cardcollection.Hand;
 import cluedo.model.cardcollection.Suggestion;
 
 /**
- * 
+ *
  * @author Simon Pinfold
  *
  */
@@ -29,58 +29,58 @@ public class AIPlayer extends Player implements GameListener{
 	public void onCharacterJoinedGame(String playerName, Character character,
 			PlayerType type) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onTurnBegin(String name, Character playersCharacter) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onSuggestionUndisputed(Character suggester,
 			Suggestion suggestion) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onSuggestionDisproved(Character suggester,
 			Suggestion suggestion, Character disprover) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onAccusation(Character accuser, Accusation accusation,
 			boolean correct) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onWeaponMove(Weapon weapon, Location room) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onCharacterMove(Character character, Location room) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	public void onDiceRolled(int roll) {
+	public void onDiceRolled(int dice1, int dice2) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onGameWon(String name, Character playersCharacter) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -124,20 +124,20 @@ public class AIPlayer extends Player implements GameListener{
 	public void suggestionDisproved(Suggestion suggestion, Character character,
 			Card disprovingCard) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void waitForDiceRollOK() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void waitingForNetworkPlayers(int i) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	
+
 }

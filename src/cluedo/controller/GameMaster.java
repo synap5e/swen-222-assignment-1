@@ -28,7 +28,7 @@ import cluedo.model.cardcollection.Hand;
 import cluedo.model.cardcollection.Suggestion;
 
 /**
- * 
+ *
  * @author Simon Pinfold
  *
  */
@@ -36,7 +36,7 @@ public class GameMaster {
 
 	private List<Player> players;
 	private Map<Player, Character> playingAs;
-	
+
 	private Accusation correctAccusation;
 	private List<GameListener> listeners;
 	private Random random = new Random();
@@ -51,33 +51,33 @@ public class GameMaster {
 		this.defs = defs;
 		listeners = new ArrayList<GameListener>();
 	}
-	
+
 	public void addGameListener(GameListener listener) {
 		listeners.add(listener);
 	}
-	
+
 	public void createGame() throws IOException{
 		turn = 0;
 		players = new ArrayList<Player>();
 		playingAs = new HashMap<Player, Character>();
-		
+
 		Dealer dealer = new Dealer(board);
 		this.correctAccusation = dealer.createAccusation();
-		
+
 		List<Character> pickableCharacters = new ArrayList<Character>(board.getCharacters());
-		
+
 		int numberOfPlayers = input.getNumberOfPlayers(2, pickableCharacters.size());
 		assert numberOfPlayers <= pickableCharacters.size();
 		List<Hand> hands = dealer.dealHands(numberOfPlayers);
-		
+
 		// This array is used to shuffle the order of players
 		// This can be extended if we get more that just human and computer players
 		ArrayList<Player.PlayerType> playerTypes = new ArrayList<Player.PlayerType>();
-		
+
 		List<String> humanNames = input.getHumanNames();
 		int networkPlayers = input.getNetworkPlayerCount();
 		assert humanNames.size() + networkPlayers <= numberOfPlayers;
-		
+
 		NetworkPlayerHandler networkPlayerHandler = null;
 		List<ServerGameChannel> networkChannels = new ArrayList<ServerGameChannel>();
 		if (networkPlayers > 0){
@@ -86,25 +86,25 @@ public class GameMaster {
 				for (GameListener listener : listeners){
 					listener.waitingForNetworkPlayers(networkPlayers-i);
 				}
-				
+
 				networkChannels.add(networkPlayerHandler.getRemoteInput(30));
 				// TODO handle timeout
-				
+
 			}
 		}
-		
+
 		for (int i=0;i<humanNames.size();i++) playerTypes.add(PlayerType.LocalHuman);
 		for (int i=0;i<networkPlayers;i++) playerTypes.add(PlayerType.RemoteHuman);
 		while (playerTypes.size() < numberOfPlayers) playerTypes.add(PlayerType.LocalAI);
-		
-		
+
+
 		// shuffle so that the starting order is random
 		Collections.shuffle(humanNames);
 		Collections.shuffle(playerTypes);
-		
+
 		// don't favour the first connected network players
 		Collections.shuffle(networkChannels);
-		
+
 		// create the players
 		for (int playerNumber=0;playerNumber<numberOfPlayers;playerNumber++){
 			PlayerType playerType = playerTypes.get(playerNumber);
@@ -133,77 +133,78 @@ public class GameMaster {
 			players.add(player);
 			playingAs.put(player, character);
 			pickableCharacters.remove(character);
-			
+
 		}
-		
-		// announce to all listeners who is playing the game. This is done after the players are 
+
+		// announce to all listeners who is playing the game. This is done after the players are
 		// created so all the AI players also get informed.
 		for (int playerNumber=0;playerNumber<numberOfPlayers;playerNumber++){
 			for (GameListener listener : listeners){
 				listener.onCharacterJoinedGame(players.get(playerNumber).getName(), playingAs.get(players.get(playerNumber)), playerTypes.get(playerNumber));
 			}
 		}
-		
+
 	}
 
 	public void startGame(){
 		while (true){
 			Player player = players.get(turn++ % players.size());
 			Character playersCharacter = playingAs.get(player);
-			
+
 			for (GameListener listener : listeners){
 				listener.onTurnBegin(player.getName(), playersCharacter);
 			}
-			
-			
-			int roll = random.nextInt(6)+1;
-			
+
+
+			int dice1 = random.nextInt(6)+1;
+			int dice2 = random.nextInt(6)+1;
+
 			player.waitForDiceRollOK();
-			
+
 			for (GameListener listener : listeners){
-				listener.onDiceRolled(roll);
+				listener.onDiceRolled(dice1, dice2);
 			}
-			
+
 			// TODO accusation can go here too
-			
-			List<Location> possibleLocations = board.getPossibleDestinations(board.getLocationOf(playersCharacter), roll);
-			
+
+			List<Location> possibleLocations = board.getPossibleDestinations(board.getLocationOf(playersCharacter), dice1+dice2);
+
 			Location destination = player.getDestination(possibleLocations);
-			
+
 			// TODO, what if not in passed in list - should we complain here always, or only in assert mode
 			// TODO this needs to kick the player - otherwise a remote user could cheat
 			assert possibleLocations.contains(destination);
-			
+
 			board.moveCharacter(playersCharacter, destination);
-			
+
 			for (GameListener listener : listeners){
 				listener.onCharacterMove(playersCharacter, destination);
 			}
-			
+
 			if(board.getLocationOf(playersCharacter) instanceof Room && player.hasSuggestion()){
 				Suggestion suggestion = player.getSuggestion();
 				Room room = (Room) board.getLocationOf(playersCharacter);
-				
+
 				board.moveWeapon(suggestion.getWeapon(), room);
 				for (GameListener listener : listeners){
 					listener.onWeaponMove(suggestion.getWeapon(), room);
 				}
-				
+
 				board.moveCharacter(suggestion.getCharacter(), room);
 				for (GameListener listener : listeners){
 					listener.onCharacterMove(suggestion.getCharacter(), room);
 				}
-				
+
 				boolean disproved = false;
 				for (Player p : getPlayersClockwiseOf(player)){
 					if (p.canDisprove(suggestion.getCharacter(), suggestion.getWeapon(), room)){
 						Card disprovingCard = p.selectDisprovingCard(suggestion.getCharacter(), suggestion.getWeapon(), room);
-						
+
 						// TODO should we complain here always, or only in assert mode?
-						assert 	disprovingCard == suggestion.getCharacter() || 
+						assert 	disprovingCard == suggestion.getCharacter() ||
 								disprovingCard == suggestion.getWeapon() ||
 								disprovingCard == room;
-						
+
 						for (GameListener listener : listeners){
 							if (listener != player){
 								listener.onSuggestionDisproved(playersCharacter, suggestion, playingAs.get(p));
@@ -211,35 +212,35 @@ public class GameMaster {
 						}
 						player.suggestionDisproved(suggestion, playingAs.get(p), disprovingCard);
 						disproved = true;
-						
+
 						break;
 					}
 				}
-				
+
 				if (!disproved){
 					for (GameListener listener : listeners){
 						listener.onSuggestionUndisputed(playersCharacter, suggestion);
 					}
 				}
 			}
-			
+
 			if (player.hasAccusation()){
 				Accusation accusation = player.getAccusation();
 				boolean correct = accusation.equals(correctAccusation);
 				for (GameListener listener : listeners){
 					listener.onAccusation(playersCharacter, accusation, correct);
 				}
-				
+
 				if (correct){
 					for (GameListener listener : listeners){
 						listener.onGameWon(player.getName(), playersCharacter);
 					}
 				}
-				
+
 			}
 		}
 	}
-	
+
 	private List<Player> getPlayersClockwiseOf(Player p) {
 		List<Player> r = new ArrayList<Player>(players);
 		Collections.rotate(r, players.indexOf(p));

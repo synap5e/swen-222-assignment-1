@@ -27,12 +27,12 @@ import cluedo.view.CluedoFrame;
 import cluedo.view.GUIGameInput;
 
 /**
- * 
+ *
  * @author Simon Pinfold
  *
  */
 public class GameSlave {
-	
+
 	private Board board;
 	private GameInput input;
 	private GameListener listener = null;
@@ -52,7 +52,7 @@ public class GameSlave {
 		assert this.listener == null : "GameSlave only supports one GameListener";
 		this.listener = listener;
 	}
-	
+
 	private void write(JsonObject ob) {
 		try {
 			os.write(ob.toString().getBytes());
@@ -68,17 +68,17 @@ public class GameSlave {
 			String type = ((JsonString) message.get("type")).value();
 			if (type.equals("pull")){
 				JsonEntity ret = handlePull(message);
-				
+
 				write(new MessageBuilder().
 							type("response").
 							returnValue(ret).
 						build());
-				
-				
+
+
 			} else if (type.equals("push")){
-				
+
 				handlePush(message);
-				
+
 			} else if (type.equals("hand")){
 				JsonObject parameters = (JsonObject) message.get("parameters");
 				this.hand = jsonToModel.jsonToHand(parameters.get("hand"));
@@ -91,7 +91,7 @@ public class GameSlave {
 	private void handlePush(JsonObject message) {
 		String methodName = ((JsonString) message.get("name")).value();
 		JsonObject parameters = (JsonObject)message.get("parameters");
-		
+
 		switch(methodName){
 		case "onCharacterJoinedGame":
 			listener.onCharacterJoinedGame(
@@ -100,42 +100,43 @@ public class GameSlave {
 					PlayerType.valueOf(((JsonString)parameters.get("playerType")).value())
 			);
 			return;
-			
+
 		case "onCharacterMove":
 			Character character = jsonToModel.jsonToCard(parameters.get("character"));
 			Location newLocation = jsonToModel.jsonToLocation(parameters.get("newLocation"));
 			board.moveCharacter(character, newLocation);
 			listener.onCharacterMove(character, newLocation);
 			return;
-			
+
 		case "onTurnBegin":
 			listener.onTurnBegin(
 					((JsonString)parameters.get("playerName")).value(),
 					jsonToModel.<Character>jsonToCard(parameters.get("playersCharacter"))
 			);
 			return;
-		
+
 		case "onDiceRolled":
 			listener.onDiceRolled(
-					(int) ((JsonNumber)parameters.get("roll")).value()
+					(int) ((JsonNumber)parameters.get("dice1")).value(),
+					(int) ((JsonNumber)parameters.get("dice2")).value()
 			);
 			return;
-			
+
 		default:
 			System.err.println("Game Slave could not handle push for \"" + methodName + "\"");
 			//throw new RuntimeException("Game Slave could not handle push for \"" + methodName + "\"");
-			
+
 		}
 	}
 
 	private JsonEntity handlePull(JsonObject message) {
 		String methodName = ((JsonString) message.get("name")).value();
 		JsonObject parameters = (JsonObject)message.get("parameters");
-		
+
 		switch(methodName){
 		case "getSingleName":
 			return new JsonString(input.getSingleName());
-			
+
 		case "chooseCharacter":
 			return ModelToJson.cardToJson(
 						input.chooseCharacter(
@@ -144,44 +145,44 @@ public class GameSlave {
 								jsonToModel.<Character>jsonToCards(parameters.get("availableCharacters"))
 						)
 					);
-			
+
 		case "startTurn":
 			input.startTurn(this.hand);
 			return new JsonObject();
-			
+
 		case "getDestination":
 			return ModelToJson.locationToJson(
 						input.getDestination(
 							jsonToModel.jsonToLocations(parameters.get("possibleLocations"))
 						)
 					);
-			
+
 		case "hasSuggestion":
 			return new JsonBoolean(input.hasSuggestion());
-		
+
 		case "pickWeapon":
 			return ModelToJson.cardToJson(
 						input.pickWeapon()
 					);
-			
+
 		case "pickCharacter":
 			return ModelToJson.cardToJson(
 						input.pickCharacter()
 					);
-			
+
 		case "hasAccusation":
 			return new JsonBoolean(input.hasAccusation());
-			
+
 		case "pickRoom":
 			return ModelToJson.cardToJson(
 						input.pickRoom()
 					);
-			
-					
+
+
 		default:
 			throw new RuntimeException("Game Slave could not answer pull for \"" + methodName + "\"");
 		}
 	}
 
-	
+
 }
