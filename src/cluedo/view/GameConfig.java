@@ -47,7 +47,7 @@ public class GameConfig extends JFrame{
 	private JTabbedPane tabs;
 
 	private static final int MINPLAYERS = 2;
-	private static final int MAXPLAYERS = 8;
+	private static final int MAXPLAYERS = 6;
 	private static final int DEFAULT_PORT = 5362;
 
 	public void setConfigListener(ConfigListener l) {
@@ -58,7 +58,7 @@ public class GameConfig extends JFrame{
 		super();
 
 		setTitle("Create Game");
-		setMinimumSize(new Dimension(600, 400));
+		setMinimumSize(new Dimension(600, 350));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		setLayout(new BorderLayout());
