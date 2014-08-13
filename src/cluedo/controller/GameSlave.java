@@ -22,6 +22,7 @@ import cluedo.model.Board;
 import cluedo.model.Location;
 import cluedo.model.card.Card;
 import cluedo.model.card.Character;
+import cluedo.model.card.Weapon;
 import cluedo.model.cardcollection.Hand;
 import cluedo.view.CluedoFrame;
 import cluedo.view.GUIGameInput;
@@ -121,10 +122,61 @@ public class GameSlave {
 					(int) ((JsonNumber)parameters.get("dice2")).value()
 			);
 			return;
-
+		
+		case "onSuggestionUndisputed":
+			listener.onSuggestionUndisputed(
+					jsonToModel.<Character>jsonToCard(parameters.get("suggester")),
+					jsonToModel.jsonToSuggestion(parameters.get("suggestion"))
+			);
+			return;
+			
+		case "onSuggestionDisproved":
+			listener.onSuggestionDisproved(
+					jsonToModel.<Character>jsonToCard(parameters.get("suggester")),
+					jsonToModel.jsonToSuggestion(parameters.get("suggestion")),
+					jsonToModel.<Character>jsonToCard(parameters.get("disprover"))
+			);
+			return;
+			
+		case "onAccusation":
+			listener.onAccusation(
+					jsonToModel.<Character>jsonToCard(parameters.get("accuser")),
+					jsonToModel.jsonToAccusation(parameters.get("accusation")),
+					((JsonBoolean)parameters.get("correct")).value()
+			);
+			return;
+			
+		case "onWeaponMove":
+			Weapon weapon = jsonToModel.jsonToCard(parameters.get("weapon"));
+			newLocation = jsonToModel.jsonToLocation(parameters.get("newLocation"));
+			board.moveWeapon(weapon, newLocation);
+			listener.onWeaponMove(weapon, newLocation);
+			return;
+			
+		case "onGameWon":
+			listener.onGameWon(
+					((JsonString)parameters.get("playerName")).value(),
+					jsonToModel.<Character>jsonToCard(parameters.get("playersCharacter"))
+			);
+			return;
+			
+		case "waitingForNetworkPlayers":
+			listener.waitingForNetworkPlayers(
+					(int) ((JsonNumber)parameters.get("remaining")).value()
+			);
+			return;
+		
+		case "onLostGame":
+			listener.onLostGame(
+					((JsonString)parameters.get("playerName")).value(),
+					jsonToModel.<Character>jsonToCard(parameters.get("playersCharacter"))
+			);
+			return;
+					
+					
 		default:
-			System.err.println("Game Slave could not handle push for \"" + methodName + "\"");
-			//throw new RuntimeException("Game Slave could not handle push for \"" + methodName + "\"");
+			//System.err.println("Game Slave could not handle push for \"" + methodName + "\"");
+			throw new RuntimeException("Game Slave could not handle push for \"" + methodName + "\"");
 
 		}
 	}
@@ -177,6 +229,24 @@ public class GameSlave {
 			return ModelToJson.cardToJson(
 						input.pickRoom()
 					);
+			
+		case "selectDisprovingCardToShow":
+			return ModelToJson.cardToJson(
+					input.selectDisprovingCardToShow(
+							jsonToModel.<Character>jsonToCard(parameters.get("character")),
+							jsonToModel.<Character>jsonToCard(parameters.get("suggester")),
+							jsonToModel.<Card>jsonToCards(parameters.get("possibleShow"))
+					)
+				);
+			
+		case "suggestionDisproved":
+				input.suggestionDisproved(
+							jsonToModel.<Character>jsonToCard(parameters.get("characterDisproved")),
+							jsonToModel.<Character>jsonToCard(parameters.get("disprovingCard"))
+				);
+				return new JsonObject();
+				
+			
 
 
 		default:

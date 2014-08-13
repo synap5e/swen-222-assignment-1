@@ -183,6 +183,8 @@ public class ServerGameChannel implements GameInput, GameListener {
 					parameter("characterDisproved", ModelToJson.cardToJson(characterDisproved)).
 					parameter("disprovingCard", ModelToJson.cardToJson(disprovingCard)).
 			build());
+		
+		inObs.next();
 	}
 
 	@Override
@@ -301,11 +303,11 @@ public class ServerGameChannel implements GameInput, GameListener {
 	}
 
 	@Override
-	public void onLostGame(String name, Character playersCharacter) {
+	public void onLostGame(String playerName, Character playersCharacter) {
 		write(new MessageBuilder().
 				type("push").
 				name("onLostGame").
-					parameter("name", name).
+					parameter("playerName", playerName).
 					parameter("playersCharacter", ModelToJson.cardToJson(playersCharacter)).
 			build());
 	}
