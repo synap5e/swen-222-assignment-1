@@ -71,6 +71,7 @@ public class GameConfig extends JFrame{
 		createServerHostBox(serverTab, "0.0.0.0", DEFAULT_PORT);
 		
 		JPanel clientTab = new JPanel(new GridLayout(7, 1));
+		// TODO create name box, which GUIGameInput will read the value of for get single name
 		createHostBox(clientTab, "127.0.0.1", DEFAULT_PORT);
 		
 		
