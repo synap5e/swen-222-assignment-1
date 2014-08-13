@@ -153,8 +153,9 @@ public class GameMaster {
 	}
 
 	public void startGame(){
+		ArrayList<Player> activePlayers = new ArrayList<Player>(players);
 		while (true){
-			Player player = players.get(turn++ % players.size());
+			Player player = activePlayers.get(turn++ % activePlayers.size());
 			Character playersCharacter = playingAs.get(player);
 
 			for (GameListener listener : listeners){
@@ -242,7 +243,7 @@ public class GameMaster {
 						listener.onGameWon(player.getName(), playersCharacter);
 					}
 				} else {
-					players.remove(player);
+					activePlayers.remove(player);
 					for (GameListener listener : listeners){
 						listener.onLostGame(player.getName(), playersCharacter);
 					}
