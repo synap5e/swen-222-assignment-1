@@ -48,7 +48,6 @@ public class ServerGameChannel implements GameInput, GameListener {
 
 	private synchronized void write(JsonObject ob) {
 		try {
-			System.out.println(ob.toString());
 			os.write(ob.toString().getBytes());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
