@@ -14,7 +14,9 @@ import cluedo.model.card.Card;
 import cluedo.model.card.Character;
 import cluedo.model.card.Room;
 import cluedo.model.card.Weapon;
+import cluedo.model.cardcollection.Accusation;
 import cluedo.model.cardcollection.Hand;
+import cluedo.model.cardcollection.Suggestion;
 
 /**
  * 
@@ -71,6 +73,21 @@ public class JsonToModel {
 			h.addCard(c);
 		}
 		return h;
+	}
+
+	public Suggestion jsonToSuggestion(JsonEntity jsonEntity) {
+		return new Suggestion(
+				this.<Weapon>jsonToCard(((JsonObject) jsonEntity).get("weapon")), 
+				this.<Character>jsonToCard(((JsonObject) jsonEntity).get("character"))
+		);
+	}
+
+	public Accusation jsonToAccusation(JsonEntity jsonEntity) {
+		return new Accusation(
+				this.<Weapon>jsonToCard(((JsonObject) jsonEntity).get("weapon")), 
+				this.<Character>jsonToCard(((JsonObject) jsonEntity).get("suggestion")),
+				this.<Room>jsonToCard(((JsonObject) jsonEntity).get("room"))
+		);
 	}
 
 }
