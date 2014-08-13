@@ -4,12 +4,18 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -43,6 +49,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 	private JButton accusation;
 	private JButton rollDice;
 	private JButton endTurn;
+	private SuggestionDisprovePanel disprovePanel;
 
 	public CluedoFrame(Board board, JsonObject def){
 		listeners = new ArrayList<FrameListener>();
@@ -60,7 +67,37 @@ public class CluedoFrame extends JFrame implements GameListener {
 		pane.setLayout(new GridBagLayout());
 		GridBagConstraints con = createConstraints();
 
-		this.canvas = new Canvas(this, board, def);
+		Map<String, Image> cardImages = new HashMap<String, Image>();
+		try {
+			//Load weapon pictures
+			cardImages.put("Dagger", ImageIO.read(new File("./images/card_dagger.png")));
+			cardImages.put("Revolver", ImageIO.read(new File("./images/card_revolver.png")));
+			cardImages.put("Rope", ImageIO.read(new File("./images/card_rope.png")));
+			cardImages.put("Spanner", ImageIO.read(new File("./images/card_spanner.png")));
+			cardImages.put("Lead Piping", ImageIO.read(new File("./images/card_lead_piping.png")));
+			cardImages.put("Candlestick", ImageIO.read(new File("./images/card_candlestick.png")));
+
+			//Load character pictures
+			cardImages.put("Colonel Mustard", ImageIO.read(new File("./images/card_colonel_mustard.png")));
+			cardImages.put("Miss Scarlett", ImageIO.read(new File("./images/card_miss_scarlett.png")));
+			cardImages.put("Mrs Peacock", ImageIO.read(new File("./images/card_mrs_peacock.png")));
+			cardImages.put("Mrs White", ImageIO.read(new File("./images/card_mrs_white.png")));
+			cardImages.put("Professor Plum", ImageIO.read(new File("./images/card_professor_plum.png")));
+			cardImages.put("Rev. Green", ImageIO.read(new File("./images/card_rev_green.png")));
+
+			//Load room pictures
+			cardImages.put("Ballroom", ImageIO.read(new File("./images/card_ballroom.png")));
+			cardImages.put("Billiard Room", ImageIO.read(new File("./images/card_billiard_room.png")));
+			cardImages.put("Conservatory", ImageIO.read(new File("./images/card_conservatory.png")));
+			cardImages.put("Dining Room", ImageIO.read(new File("./images/card_dining_room.png")));
+			cardImages.put("Hall", ImageIO.read(new File("./images/card_hall.png")));
+			cardImages.put("Kitchen", ImageIO.read(new File("./images/card_kitchen.png")));
+			cardImages.put("Library", ImageIO.read(new File("./images/card_library.png")));
+			cardImages.put("Lounge", ImageIO.read(new File("./images/card_lounge.png")));
+			cardImages.put("Study", ImageIO.read(new File("./images/card_study.png")));
+		} catch (IOException e) {
+		}
+		this.canvas = new Canvas(this, board, def, cardImages);
 
 		//Add Gap
 		setConstraints(con, 1, 0, 1, false, true);
@@ -105,13 +142,28 @@ public class CluedoFrame extends JFrame implements GameListener {
 		displayTurnButtons(false);
 		suggestion.setVisible(false);
 		displayRollDice(false);
-
+		
+		setConstraints(con, 1, 0, 1, true, true);
+		con.insets = new Insets(0,0,0,0);
+		con.gridheight = 5;
+		disprovePanel = new SuggestionDisprovePanel(cardImages);
+		pane.add(disprovePanel, con);
+		disprovePanel.setVisible(false);
+		
 		setConstraints(con, 0, 0, 2, true, true);
 		con.gridheight = 5;
 
 		con.insets = new Insets(0,0,0,0);
 		pane.add(canvas, con);
 		setVisible(true);
+	}
+	
+	public SuggestionDisprovePanel getDisprovePanel(){
+		return disprovePanel;
+	}
+	
+	public void displayDisprovePanel(boolean visible){
+		disprovePanel.setVisible(visible);
 	}
 
 	public void displayTurnButtons(boolean visible){

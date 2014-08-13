@@ -28,13 +28,14 @@ import cluedo.model.card.Room;
 import cluedo.model.card.Token;
 import cluedo.model.card.Weapon;
 import cluedo.model.cardcollection.Hand;
+import cluedo.view.SuggestionDisprovePanel.CardListener;
 
 /**
  *
  * @author James Greenwood-Thessman, Simon Pinfold
  *
  */
-public class GUIGameInput implements GameInput, FrameListener{
+public class GUIGameInput implements GameInput, FrameListener, CardListener{
 
 	private boolean wait = false;
 
@@ -47,6 +48,7 @@ public class GUIGameInput implements GameInput, FrameListener{
 
 	private Location selectedLocation = null;
 	private Token selectedToken = null;
+	private Card selectedCard = null;
 
 	private GameConfig gameConfig;
 
@@ -56,6 +58,7 @@ public class GUIGameInput implements GameInput, FrameListener{
 		this.frame = frame;
 		this.gameConfig = gc;
 		frame.addFrameListener(this);
+		frame.getDisprovePanel().addListener(this);
 	}
 
 	@Override
@@ -221,6 +224,7 @@ public class GUIGameInput implements GameInput, FrameListener{
 			} catch (InterruptedException e1) {
 			}
 		}
+		frame.getCanvas().setCurrentAction("Suggestion Succeeded");
 		frame.getCanvas().focusCharacters(false);
 		return (Character) selectedToken;
 	}
@@ -245,7 +249,17 @@ public class GUIGameInput implements GameInput, FrameListener{
 	@Override
 	public Card selectDisprovingCardToShow(Character character, Character suggester, List<Card> possibleShow) {
 		// TODO Auto-generated method stub
-		return possibleShow.get(0);
+		frame.displayDisprovePanel(true);
+		frame.getDisprovePanel().setCards(possibleShow);
+		selectedCard = null;
+		while (selectedCard == null){
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e1) {
+			}
+		}
+		frame.displayDisprovePanel(false);
+		return selectedCard;
 	}
 
 	@Override
@@ -315,6 +329,11 @@ public class GUIGameInput implements GameInput, FrameListener{
 	@Override
 	public void onEndTurn() {
 		endingTurn = true;
+	}
+
+	@Override
+	public void onCardSelected(Card c) {
+		selectedCard = c;
 	}
 
 }
