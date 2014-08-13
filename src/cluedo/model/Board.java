@@ -44,7 +44,7 @@ public class Board {
 
 	private Map<String, Card> cardsByName;
 
-	public Board(JsonObject defs){
+	public Board(JsonObject defs, JsonObject weaponLocationDefs) {
 		JsonList rows = (JsonList) defs.get("board");
 
 		rooms = new ArrayList<Room>();
@@ -61,14 +61,16 @@ public class Board {
 		JsonObject characterDefs = (JsonObject) defs.get("characters");
 		JsonList doorwayDefs = (JsonList) defs.get("doorways");
 
-		Map<Double, Room> roomKeys = new HashMap<Double, Room>();
+		Map<Double, Room> kestToRooms = new HashMap<Double, Room>();
+		Map<Room, Double> roomsToKeys = new HashMap<Room, Double>();
 		Map<String, Room> roomNames = new HashMap<String, Room>();
 		for (String name : roomsDef.keys()){
 			JsonObject roomDef = (JsonObject) roomsDef.get(name);
 			Double key = ((JsonNumber)roomDef.get("key")).value();
 			Room room = new Room(name);
 			rooms.add(room);
-			roomKeys.put(key, room);
+			kestToRooms.put(key, room);
+			roomsToKeys.put(room, key);
 			roomNames.put(name, room);
 			cardsByName.put(name, room);
 		}
@@ -83,15 +85,27 @@ public class Board {
 			cardsByName.put(name, c);
 		}
 
-		List<Double> roomKeyList = new ArrayList<Double>(roomKeys.keySet());
+		List<Double> roomKeyList = new ArrayList<Double>(kestToRooms.keySet());
 		for (String name : weaponsDef.keys()){
 			JsonObject weaponDef = ((JsonObject) weaponsDef.get(name));
 
 			Weapon w = new Weapon(name);
 			weapons.add(w);
-			startLocations.put(roomKeyList.remove(random.nextInt(roomKeyList.size())), w);
 			cardsByName.put(name, w);
+			
+			if (weaponLocationDefs == null){
+				// random location
+				startLocations.put(roomKeyList.remove(random.nextInt(roomKeyList.size())), w);
+			} else {
+				// defined location by weaponLocationDefs = { ... "<weapon name>" : "<room name>", ... }
+				String roomName = ((JsonString) weaponLocationDefs.get(name)).value();
+				Room room = roomNames.get(roomName);
+				double roomKey = roomsToKeys.get(room);
+				startLocations.put(roomKey, w);
+			}
 		}
+		
+		
 
 		Map<Double, Room> doorways = new HashMap<Double, Room>();
 		for (JsonEntity doorway : doorwayDefs){
@@ -101,8 +115,11 @@ public class Board {
 			doorways.put(((JsonNumber)doorwayDef.get(0)).value(), room);
 		}
 
-		createBoard(rows, roomsDef, roomKeys, startLocations, doorways);
-
+		createBoard(rows, roomsDef, kestToRooms, startLocations, doorways);
+	}
+	
+	public Board(JsonObject defs){
+		this(defs, null);
 	}
 
 	private void createBoard(	JsonList rows, JsonObject roomsDef, Map<Double, Room> roomKeys,
