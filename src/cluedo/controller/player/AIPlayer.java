@@ -20,8 +20,8 @@ public class AIPlayer extends Player implements GameListener{
 
 	private GameStateFacade gameView;
 
-	public AIPlayer(Hand h, GameStateFacade gameView) {
-		super("HAL9000", h);
+	public AIPlayer(Hand h, Character c, GameStateFacade gameView) {
+		super("HAL9000", h, c);
 		this.gameView = gameView;
 	}
 

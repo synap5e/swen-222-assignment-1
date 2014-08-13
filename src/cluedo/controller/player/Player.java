@@ -19,15 +19,18 @@ import cluedo.model.cardcollection.Suggestion;
 public abstract class Player{
 
 	public enum PlayerType { LocalHuman, RemoteHuman, LocalAI };
+
 	
 	protected Hand hand;
 	private String name;
+	protected Character character;
 
-	public Player(String name, Hand h){
+	public Player(String name, Hand h, Character c){
 		hand = h;
 		this.name = name;
+		this.character = c;
 	}
-	
+
 	public String getName(){
 		return name;
 	}

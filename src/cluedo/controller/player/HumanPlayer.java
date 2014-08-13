@@ -20,8 +20,8 @@ public class HumanPlayer extends Player {
 
 	private GameInput input;
 
-	public HumanPlayer(String name, Hand h, GameInput input) {
-		super(name, h);
+	public HumanPlayer(String name, Hand h, Character c, GameInput input) {
+		super(name, h, c);
 		this.input = input;
 	}
 
@@ -57,8 +57,8 @@ public class HumanPlayer extends Player {
 	}
 
 	@Override
-	protected Card selectDisprovingCardToShow(Character character, List<Card> possibleShow) {
-		return input.selectDisprovingCardToShow(character, possibleShow);
+	protected Card selectDisprovingCardToShow(Character suggester, List<Card> possibleShow) {
+		return input.selectDisprovingCardToShow(this.character, suggester, possibleShow);
 	}
 
 	@Override

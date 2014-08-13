@@ -159,18 +159,20 @@ public class ServerGameChannel implements GameInput, GameListener {
 				type("pull").
 				name("pickRoom").
 			build());
+
 		
 		return jsonToModel.jsonToCard(inObs.next().get("return"));
 	}
 
-	public synchronized Card selectDisprovingCardToShow(Character character, List<Card> possibleShow) {
+	public synchronized Card selectDisprovingCardToShow(Character character, Character suggester, List<Card> possibleShow) {
 		write(new MessageBuilder().
 				type("pull").
 				name("selectDisprovingCardToShow").
 					parameter("character", ModelToJson.cardToJson(character)).
+					parameter("suggester", ModelToJson.cardToJson(suggester)).
 					parameter("possibleShow", ModelToJson.cardsToJson(possibleShow)).
 			build());
-		
+
 		return jsonToModel.jsonToCard(inObs.next().get("return"));
 	}
 

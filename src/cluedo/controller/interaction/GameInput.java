@@ -45,18 +45,21 @@ public interface GameInput {
 	public boolean hasAccusation();
 	
 	public Room pickRoom();
+
+
 	
 	
 	/**
-	 * 
-	 * @param character the character who made the suggestion (i.e. the one you must show the card to)
+	 *
+	 * @param character
+	 * @param suggester the character who made the suggestion (i.e. the one you must show the card to)
 	 * @param possibleShow the list of cards that must show one of to character
 	 * @return the card you want to show
 	 */
-	public Card selectDisprovingCardToShow(Character character,	List<Card> possibleShow);
+	public Card selectDisprovingCardToShow(Character character,	Character suggester, List<Card> possibleShow);
 
 	/**
-	 * 
+	 *
 	 * @param suggestion the suggestion <i>you</i> made
 	 * @param characterDisproved the character that disproved your suggestion
 	 * @param disprovingCard the card they disproved your suggestion with

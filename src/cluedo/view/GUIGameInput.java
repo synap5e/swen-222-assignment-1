@@ -331,8 +331,7 @@ public class GUIGameInput implements GameInput, FrameListener{
 	}
 
 	@Override
-	public Card selectDisprovingCardToShow(Character character,
-			List<Card> possibleShow) {
+	public Card selectDisprovingCardToShow(Character character, Character suggester, List<Card> possibleShow) {
 		// TODO Auto-generated method stub
 		return null;
 	}

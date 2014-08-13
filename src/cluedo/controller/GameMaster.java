@@ -113,20 +113,20 @@ public class GameMaster {
 			if (playerType == PlayerType.LocalHuman){
 				String name = humanNames.remove(0);
 				character = input.chooseCharacter(name, board.getCharacters(), pickableCharacters);
-				player = new HumanPlayer(name, hands.remove(0), input);
+				player = new HumanPlayer(name, hands.remove(0), character, input);
 			} else if (playerType == PlayerType.RemoteHuman){
 				ServerGameChannel remoteChannel = networkChannels.remove(0);
-				
+
 				listeners.add(remoteChannel);
 				String name = remoteChannel.getSingleName();
 				character = remoteChannel.chooseCharacter(name, board.getCharacters(), pickableCharacters);
-				
+
 				Hand hand = hands.remove(0);
-				player = new HumanPlayer(name, hand, remoteChannel);
+				player = new HumanPlayer(name, hand, character, remoteChannel);
 				remoteChannel.sendHand(hand);
 			} else {
 				character = pickableCharacters.get(random.nextInt(pickableCharacters.size()));
-				AIPlayer rp = new AIPlayer(hands.remove(0), new GameStateFacade(board, character, this));
+				AIPlayer rp = new AIPlayer(hands.remove(0), character, new GameStateFacade(board, character, this));
 				listeners.add(rp);
 				player = rp;
 			}
