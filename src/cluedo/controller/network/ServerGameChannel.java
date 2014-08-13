@@ -301,4 +301,14 @@ public class ServerGameChannel implements GameInput, GameListener {
 			build());
 	}
 
+	@Override
+	public void onLostGame(String name, Character playersCharacter) {
+		write(new MessageBuilder().
+				type("push").
+				name("onLostGame").
+					parameter("name", name).
+					parameter("playersCharacter", ModelToJson.cardToJson(playersCharacter)).
+			build());
+	}
+
 }

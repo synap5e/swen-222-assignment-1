@@ -338,8 +338,15 @@ public class GUIGameInput implements GameInput, FrameListener{
 
 	@Override
 	public void suggestionDisproved(Character characterDisproved, Card disprovingCard) {
+		// FIXME: this is not where you show "suggestion disproved". This is where a single character is shown a card that
+		// disproves <i>their</i> suggestion (that they just made). In other words this is called to tell the suggester
+		// the result of their suggestion. To show suggestion disproved, do it firing on Canvas.onSuggestionDisproved
+		// If you need the Character object of the suggester I can do that, but it is still that players turn when this gets
+		// called
 		frame.getCanvas().setCurrentAction("Suggestion Disproved");
 		// TODO Auto-generated method stub
+
+		System.out.printf("Psst [message only shown to current player]. %s disproved your suggestion by showing they hold %s\n", characterDisproved.getName(), disprovingCard.getName());
 
 	}
 

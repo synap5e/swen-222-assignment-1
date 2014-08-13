@@ -529,4 +529,16 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
 		frame.repaint();
 	}
+
+
+	public void waitingForNetworkPlayers(int i) {
+		// TODO Auto-generated method stub
+
+	}
+
+
+	public void onLostGame(String name, Character playersCharacter) {
+		// TODO Auto-generated method stub
+		System.out.printf("%s (%s) lost the game due to an incorrect suggestion\n", name, playersCharacter.getName());
+	}
 }

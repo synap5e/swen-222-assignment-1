@@ -235,6 +235,11 @@ public class GameMaster {
 					for (GameListener listener : listeners){
 						listener.onGameWon(player.getName(), playersCharacter);
 					}
+				} else {
+					players.remove(player);
+					for (GameListener listener : listeners){
+						listener.onLostGame(player.getName(), playersCharacter);
+					}
 				}
 
 			}

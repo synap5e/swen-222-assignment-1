@@ -139,5 +139,11 @@ public class AIPlayer extends Player implements GameListener{
 
 	}
 
+	@Override
+	public void onLostGame(String name, Character playersCharacter) {
+		// TODO Auto-generated method stub
+
+	}
+
 
 }

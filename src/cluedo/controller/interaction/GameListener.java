@@ -54,4 +54,6 @@ public interface GameListener {
 	 */
 	public void waitingForNetworkPlayers(int i);
 
+	public void onLostGame(String name, Character playersCharacter);
+
 }
