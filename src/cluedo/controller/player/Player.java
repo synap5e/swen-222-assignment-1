@@ -12,7 +12,7 @@ import cluedo.model.cardcollection.Accusation;
 import cluedo.model.cardcollection.Hand;
 import cluedo.model.cardcollection.Suggestion;
 /**
- * 
+ *
  * @author Simon Pinfold
  *
  */
@@ -20,7 +20,7 @@ public abstract class Player{
 
 	public enum PlayerType { LocalHuman, RemoteHuman, LocalAI };
 
-	
+
 	protected Hand hand;
 	private String name;
 	protected Character character;
@@ -34,7 +34,7 @@ public abstract class Player{
 	public String getName(){
 		return name;
 	}
-	
+
 	public abstract Location getDestination(List<Location> possibleLocations);
 
 	public abstract boolean hasSuggestion();
@@ -49,13 +49,15 @@ public abstract class Player{
 		return hand.hasCard(character) || hand.hasCard(weapon) || hand.hasCard(room);
 	}
 
-	public Card selectDisprovingCard(Character character, Card... cards) {
+	public Card selectDisprovingCard(Card... cards) {
+		assert cards.length > 0;
 		List<Card> possibleShow = new ArrayList<Card>();
 		for (Card c : cards){
 			if (hand.hasCard(c)){
 				possibleShow.add(c);
 			}
 		}
+		assert possibleShow.size() > 0;
 		return selectDisprovingCardToShow(character, possibleShow);
 	}
 
@@ -64,6 +66,6 @@ public abstract class Player{
 	public abstract void suggestionDisproved(Suggestion suggestion, Character character, Card disprovingCard);
 
 	public abstract void waitForDiceRollOK();
-	
+
 
 }
