@@ -306,16 +306,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			g2d.drawImage(cardImages.get(hover.getName()), 0, 0, CARD_WIDTH, CARD_HEIGHT, null);
 		}
 	}
-	
-	public void paintCards(List<Card> cards, Graphics2D g, int width, int height){
-		g.setBackground(ROOM);
-		int x = (width-cards.size()*(CARD_WIDTH+5)+5)/2;
-		int y = (height-cards.size()*CARD_HEIGHT)/2;
-		
-		for (Card c : cards){
-			g.drawImage(cardImages.get(c.getName()), x, y, CARD_WIDTH, CARD_HEIGHT, null);
-		}
-	}
 
 	/**
 	 * Draws the wall specified if the two locations should be separated by a wall.
