@@ -457,7 +457,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
 	public void onTurnBegin(String name, Character playersCharacter) {
 		currentPlayer = playersCharacter;
-		System.out.printf("Its %s's (%s) turn\n", name, playersCharacter);
+		System.out.printf("Its %s's (%s) turn\n", name, playersCharacter.getName());
 	}
 
 
