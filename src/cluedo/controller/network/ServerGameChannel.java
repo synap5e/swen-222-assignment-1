@@ -30,7 +30,7 @@ import cluedo.model.cardcollection.Hand;
 import cluedo.model.cardcollection.Suggestion;
 
 /**
- * 
+ *
  * @author Simon Pinfold
  *
  */
@@ -45,7 +45,7 @@ public class ServerGameChannel implements GameInput, GameListener {
 		this.inObs = new JsonStreamReader(inputStream);
 		this.jsonToModel = new JsonToModel(board);
 	}
-	
+
 	private synchronized void write(JsonObject ob) {
 		try {
 			System.out.println(ob.toString());
@@ -54,22 +54,22 @@ public class ServerGameChannel implements GameInput, GameListener {
 			throw new RuntimeException(e);
 		}
 	}
-	
-	
+
+
 	@Override
 	public synchronized int getNumberOfPlayers(int min, int max) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 
 	@Override
 	public synchronized List<String> getHumanNames() {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
 	public synchronized String getSingleName() {
-		
+
 		write(new MessageBuilder().
 					type("pull").
 					name("getSingleName").
@@ -86,11 +86,11 @@ public class ServerGameChannel implements GameInput, GameListener {
 						parameter("allCharacters", ModelToJson.<Character>cardsToJson(allCharacters)).
 						parameter("availableCharacters", ModelToJson.<Character>cardsToJson(availableCharacters)).
 				build());
-		
+
 		return jsonToModel.jsonToCard(inObs.next().get("return"));
 	}
 
-	
+
 
 	@Override
 	public synchronized void startTurn(Hand hand) {
@@ -109,7 +109,7 @@ public class ServerGameChannel implements GameInput, GameListener {
 				name("getDestination").
 					parameter("possibleLocations", ModelToJson.locationsToJson(possibleLocations)).
 			build());
-		
+
 		return jsonToModel.jsonToLocation(inObs.next().get("return"));
 	}
 
@@ -119,7 +119,7 @@ public class ServerGameChannel implements GameInput, GameListener {
 				type("pull").
 				name("hasSuggestion").
 			build());
-		
+
 		return ((JsonBoolean)inObs.next().get("return")).value();
 	}
 
@@ -129,7 +129,7 @@ public class ServerGameChannel implements GameInput, GameListener {
 				type("pull").
 				name("pickWeapon").
 			build());
-		
+
 		return jsonToModel.jsonToCard(inObs.next().get("return"));
 	}
 
@@ -139,7 +139,7 @@ public class ServerGameChannel implements GameInput, GameListener {
 				type("pull").
 				name("pickCharacter").
 			build());
-		
+
 		return jsonToModel.jsonToCard(inObs.next().get("return"));
 	}
 
@@ -149,7 +149,7 @@ public class ServerGameChannel implements GameInput, GameListener {
 				type("pull").
 				name("hasAccusation").
 			build());
-		
+
 		return ((JsonBoolean)inObs.next().get("return")).value();
 	}
 
@@ -160,7 +160,7 @@ public class ServerGameChannel implements GameInput, GameListener {
 				name("pickRoom").
 			build());
 
-		
+
 		return jsonToModel.jsonToCard(inObs.next().get("return"));
 	}
 
@@ -256,7 +256,7 @@ public class ServerGameChannel implements GameInput, GameListener {
 
 	@Override
 	public synchronized void onCharacterMove(Character character, Location newLocation) {
-		
+
 		write(new MessageBuilder().
 				type("push").
 				name("onCharacterMove").
@@ -266,11 +266,12 @@ public class ServerGameChannel implements GameInput, GameListener {
 	}
 
 	@Override
-	public synchronized void onDiceRolled(int roll) {
+	public synchronized void onDiceRolled(int dice1, int dice2) {
 		write(new MessageBuilder().
 				type("push").
 				name("onDiceRolled").
-					parameter("roll", roll).
+					parameter("dice1", dice1).
+					parameter("dice2", dice2).
 			build());
 	}
 
@@ -297,6 +298,16 @@ public class ServerGameChannel implements GameInput, GameListener {
 				type("push").
 				name("waitingForNetworkPlayers").
 					parameter("remaining", remaining).
+			build());
+	}
+
+	@Override
+	public void onLostGame(String name, Character playersCharacter) {
+		write(new MessageBuilder().
+				type("push").
+				name("onLostGame").
+					parameter("name", name).
+					parameter("playersCharacter", ModelToJson.cardToJson(playersCharacter)).
 			build());
 	}
 

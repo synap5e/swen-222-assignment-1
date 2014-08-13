@@ -30,135 +30,47 @@ import cluedo.model.card.Weapon;
 import cluedo.model.cardcollection.Hand;
 
 /**
- * 
- * @author James Greenwood-Thessman
+ *
+ * @author James Greenwood-Thessman, Simon Pinfold
  *
  */
 public class GUIGameInput implements GameInput, FrameListener{
 
 	private boolean wait = false;
-	
+
 	private boolean waitForDiceRoll = false;
 	private boolean endingTurn = false;
 	private boolean accusing = false;
 	private boolean suggesting = false;
 	private int numberOfPlayers;
 	private CluedoFrame frame;
-	
+
 	private Location selectedLocation = null;
 	private Token selectedToken = null;
-	
-	public GUIGameInput(CluedoFrame frame){
+
+	private GameConfig gameConfig;
+
+	private boolean ready = false;
+
+	public GUIGameInput(CluedoFrame frame, GameConfig gc){
 		this.frame = frame;
+		this.gameConfig = gc;
 		frame.addFrameListener(this);
 	}
-	
+
 	@Override
 	public int getNumberOfPlayers(int min, int max) {
-		JDialog dialog = new JDialog(frame);
-		SpinnerNumberModel numberOfPlayersModel = new SpinnerNumberModel(min, min, max, 1);
-		JSpinner spinner = new JSpinner(numberOfPlayersModel);
-		
-		dialog.add(spinner, BorderLayout.EAST);
-		dialog.add(new JLabel("How may players?"), BorderLayout.WEST);
-		
-		wait = true;
-		
-		JButton submit = new JButton("Done");
-		submit.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				wait = false;
-			}
-		});
-		
-		dialog.add(submit, BorderLayout.SOUTH);
-		dialog.setVisible(true);
-		
-		//TODO: Remove
-		wait = false;
-		
-		while (wait){
-			try {
-				Thread.sleep(20);
-			} catch (InterruptedException e1) {
-			}
-		}
-		
-		dialog.dispose();
-		numberOfPlayers = numberOfPlayersModel.getNumber().intValue();
-		return numberOfPlayers;
+		return gameConfig.getNumberOfPlayers();
 	}
 
 	@Override
 	public List<String> getHumanNames() {
-		JDialog dialog = new JDialog(frame);
+		return gameConfig.getHumanNames();
+	}
 
-		dialog.setLayout(new GridLayout(numberOfPlayers+1, 2));
-		
-		List<JTextField> names = new ArrayList<JTextField>();
-		List<JCheckBox> ais = new ArrayList<JCheckBox>();
-		
-		for (int i = 0; i < numberOfPlayers; ++i){
-			final JTextField name = new JTextField();
-			dialog.add(name);
-			JCheckBox isAI = new JCheckBox("AI");
-			isAI.addActionListener(new ActionListener() {
-				
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					name.setEditable(!name.isEditable());
-				}
-			});
-			dialog.add(isAI);
-			names.add(name);
-			ais.add(isAI);
-		}
-		
-		dialog.add(new JLabel(""));
-		
-		
-		wait = true;
-		
-		JButton submit = new JButton("Done");
-		submit.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				wait = false;
-			}
-		});
-		
-		dialog.add(submit);
-		dialog.setVisible(true);
-		
-		//TODO: Remove
-		wait = false;
-		while (wait){
-			try {
-				Thread.sleep(20);
-			} catch (InterruptedException e1) {
-			}
-		}
-		
-		dialog.dispose();
-		
-		List<String> playerNames = new ArrayList<String>();
-		for (int i = 0; i < numberOfPlayers; ++i){
-			if (!ais.get(i).isSelected()){
-				playerNames.add(names.get(i).getText());
-			}
-		}
-		
-		//FIXME
-		int num = Integer.parseInt(JOptionPane.showInputDialog(frame, "Number of network players?"));
-		for (int i=0;i<num;i++) playerNames.remove(playerNames.size()-1);
-
-		//TODO: return to previous
-		List<String> temp = new ArrayList<String>();
-		Collections.addAll(temp, "James", "Simon");
-		return temp;//playerNames;
+	@Override
+	public int getNetworkPlayerCount() {
+		return gameConfig.getNetworkCount();
 	}
 
 	@Override
@@ -167,11 +79,11 @@ public class GUIGameInput implements GameInput, FrameListener{
 		JDialog dialog = new JDialog(frame);
 
 		dialog.setLayout(new GridLayout(characters.size()+2, 1));
-		
+
 		dialog.add(new JLabel(playerName + ", who would you like to be?"));
-		
-		
-		
+
+
+
 		ButtonGroup group = new ButtonGroup();
 		for (Character ch : characters){
 			JRadioButton rb = new JRadioButton(ch.getName());
@@ -181,21 +93,21 @@ public class GUIGameInput implements GameInput, FrameListener{
 		    dialog.add(rb);
 		    group.add(rb);
 		}
-		
+
 		wait = true;
-		
+
 		JButton submit = new JButton("Done");
 		submit.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				wait = false;
 			}
 		});
-		
+
 		dialog.add(submit);
 		dialog.setVisible(true);
-		
+
 		while (wait){
 			try {
 				Thread.sleep(20);
@@ -206,7 +118,7 @@ public class GUIGameInput implements GameInput, FrameListener{
 		String name = group.getSelection().getActionCommand();
 		for (Character ch : availableCharacters){
 			if (ch.getName().equals(name)){
-				
+
 				return ch;
 			}
 		}
@@ -219,7 +131,7 @@ public class GUIGameInput implements GameInput, FrameListener{
 		frame.getCanvas().setCurrentAction("Roll the Dice");
 		frame.displayRollDice(true);
 		frame.getCanvas().setCurrentHand(h);
-		waitForDiceRoll = true; 
+		waitForDiceRoll = true;
 		while (waitForDiceRoll){
 			try {
 				Thread.sleep(20);
@@ -269,7 +181,7 @@ public class GUIGameInput implements GameInput, FrameListener{
 		frame.displaySuggestion(false);
 		return suggesting;
 	}
-	
+
 	@Override
 	public boolean hasAccusation() {
 		while (!(endingTurn || accusing)){
@@ -333,21 +245,21 @@ public class GUIGameInput implements GameInput, FrameListener{
 	@Override
 	public Card selectDisprovingCardToShow(Character character, Character suggester, List<Card> possibleShow) {
 		// TODO Auto-generated method stub
-		return null;
+		return possibleShow.get(0);
 	}
 
 	@Override
-	public void suggestionDisproved(Character characterDisproved,
-			Card disprovingCard) {
+	public void suggestionDisproved(Character characterDisproved, Card disprovingCard) {
+		// FIXME: this is not where you show "suggestion disproved". This is where a single character is shown a card that
+		// disproves <i>their</i> suggestion (that they just made). In other words this is called to tell the suggester
+		// the result of their suggestion. To show suggestion disproved, do it firing on Canvas.onSuggestionDisproved
+		// If you need the Character object of the suggester I can do that, but it is still that players turn when this gets
+		// called
 		frame.getCanvas().setCurrentAction("Suggestion Disproved");
 		// TODO Auto-generated method stub
-		
-	}
 
-	@Override
-	public int getNetworkPlayerCount() {
-		// TODO
-		return Integer.parseInt(JOptionPane.showInputDialog(frame, "Number of network players?"));
+		System.out.printf("Psst [message only shown to current player]. %s disproved your suggestion by showing they hold %s\n", characterDisproved.getName(), disprovingCard.getName());
+
 	}
 
 	@Override
@@ -369,20 +281,20 @@ public class GUIGameInput implements GameInput, FrameListener{
 	@Override
 	public void onNumberOfPlayers(int num) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onPlayerSelection(List<String> names, int numberAI,
 			int numberNetwork) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onSinglePlayerName(String name) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

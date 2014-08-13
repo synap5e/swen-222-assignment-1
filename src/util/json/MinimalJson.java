@@ -68,6 +68,9 @@ public class MinimalJson {
 	}
 
 	private static JsonString parseString(Scanner scan) throws JsonParseException {
+		if (gobble("\"", scan)){
+			return new JsonString("");
+		}
 		scan.useDelimiter("[\"\\r\\n]");
 		String s = scan.next();
 		scan.useDelimiter(pat);
