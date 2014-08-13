@@ -103,7 +103,8 @@ public class CluedoFrame extends JFrame implements GameListener {
 			}
 		}, con);
 		displayTurnButtons(false);
-		displayRollDice(true);
+		suggestion.setVisible(false);
+		displayRollDice(false);
 		
 		setConstraints(con, 0, 0, 2, true, true);
 		con.gridheight = 5;
@@ -114,9 +115,13 @@ public class CluedoFrame extends JFrame implements GameListener {
 	}
 	
 	public void displayTurnButtons(boolean visible){
-		suggestion.setVisible(visible);
 		accusation.setVisible(visible);
 		endTurn.setVisible(visible);
+		repaint();
+	}
+	
+	public void displaySuggestion(boolean visible){
+		suggestion.setVisible(visible);
 		repaint();
 	}
 	
