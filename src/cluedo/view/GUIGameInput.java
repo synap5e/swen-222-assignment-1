@@ -34,7 +34,7 @@ import cluedo.model.cardcollection.Hand;
  * @author James Greenwood-Thessman
  *
  */
-public class GUIGameInput implements GameInput, FrameListener{
+public class GUIGameInput implements GameInput, FrameListener, ConfigListener{
 
 	private boolean wait = false;
 
@@ -48,117 +48,53 @@ public class GUIGameInput implements GameInput, FrameListener{
 	private Location selectedLocation = null;
 	private Token selectedToken = null;
 
+	private GameConfig gameConfig;
+
+	private boolean ready = false;
+
 	public GUIGameInput(CluedoFrame frame){
 		this.frame = frame;
 		frame.addFrameListener(this);
 	}
 
 	@Override
-	public int getNumberOfPlayers(int min, int max) {
-		JDialog dialog = new JDialog(frame);
-		SpinnerNumberModel numberOfPlayersModel = new SpinnerNumberModel(min, min, max, 1);
-		JSpinner spinner = new JSpinner(numberOfPlayersModel);
-
-		dialog.add(spinner, BorderLayout.EAST);
-		dialog.add(new JLabel("How may players?"), BorderLayout.WEST);
-
-		wait = true;
-
-		JButton submit = new JButton("Done");
-		submit.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				wait = false;
-			}
-		});
-
-		dialog.add(submit, BorderLayout.SOUTH);
-		dialog.setVisible(true);
-
-		//TODO: Remove
-		wait = false;
-
-		while (wait){
+	public void onConfigured() {
+		ready = true;
+	}
+	private void waitConfigure() {
+		while (!ready){
 			try {
-				Thread.sleep(20);
-			} catch (InterruptedException e1) {
-			}
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			};
 		}
-
-		dialog.dispose();
-		numberOfPlayers = numberOfPlayersModel.getNumber().intValue();
-		return numberOfPlayers;
 	}
 
 	@Override
+	public int getNumberOfPlayers(int min, int max) {
+		this.gameConfig = frame.createGameConfig(min, max);
+		gameConfig.setConfigListener(this);
+
+		waitConfigure();
+
+		return gameConfig.getNumberOfPlayers();
+	}
+
+
+
+	@Override
 	public List<String> getHumanNames() {
-		JDialog dialog = new JDialog(frame);
+		waitConfigure();
 
-		dialog.setLayout(new GridLayout(numberOfPlayers+1, 2));
+		return gameConfig.getHumanNames();
+	}
 
-		List<JTextField> names = new ArrayList<JTextField>();
-		List<JCheckBox> ais = new ArrayList<JCheckBox>();
+	@Override
+	public int getNetworkPlayerCount() {
+		waitConfigure();
 
-		for (int i = 0; i < numberOfPlayers; ++i){
-			final JTextField name = new JTextField();
-			dialog.add(name);
-			JCheckBox isAI = new JCheckBox("AI");
-			isAI.addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					name.setEditable(!name.isEditable());
-				}
-			});
-			dialog.add(isAI);
-			names.add(name);
-			ais.add(isAI);
-		}
-
-		dialog.add(new JLabel(""));
-
-
-		wait = true;
-
-		JButton submit = new JButton("Done");
-		submit.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				wait = false;
-			}
-		});
-
-		dialog.add(submit);
-		dialog.setVisible(true);
-
-		//TODO: Remove
-		wait = false;
-		while (wait){
-			try {
-				Thread.sleep(20);
-			} catch (InterruptedException e1) {
-			}
-		}
-
-		dialog.dispose();
-
-		List<String> playerNames = new ArrayList<String>();
-		for (int i = 0; i < numberOfPlayers; ++i){
-			if (!ais.get(i).isSelected()){
-				playerNames.add(names.get(i).getText());
-			}
-		}
-
-		//FIXME
-		int num = Integer.parseInt(JOptionPane.showInputDialog(frame, "Number of network players?"));
-		for (int i=0;i<num;i++) playerNames.remove(playerNames.size()-1);
-
-		//TODO: return to previous
-		List<String> temp = new ArrayList<String>();
-		Collections.addAll(temp, "James", "Simon");
-		return temp;//playerNames;
+		return gameConfig.getNetworkCount();
 	}
 
 	@Override
@@ -351,12 +287,6 @@ public class GUIGameInput implements GameInput, FrameListener{
 	}
 
 	@Override
-	public int getNetworkPlayerCount() {
-		// TODO
-		return Integer.parseInt(JOptionPane.showInputDialog(frame, "Number of network players?"));
-	}
-
-	@Override
 	public String getSingleName() {
 		// TODO Auto-generated method stub
 		return JOptionPane.showInputDialog("Name?");
@@ -410,5 +340,7 @@ public class GUIGameInput implements GameInput, FrameListener{
 	public void onEndTurn() {
 		endingTurn = true;
 	}
+
+
 
 }

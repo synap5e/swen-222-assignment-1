@@ -259,4 +259,10 @@ public class CluedoFrame extends JFrame implements GameListener {
 	}
 
 
+
+	public GameConfig createGameConfig(int min, int max) {
+		return new GameConfig(this, min, max);
+	}
+
+
 }
