@@ -174,10 +174,9 @@ public class NetworkConsistencyTests implements GameListener {
 		JsonObject defs = MinimalJson.parseJson(new File("./rules/cards.json"));
 		JsonObject starts = MinimalJson.parseJson("{ \"Rope\" : \"Library\",\"Dagger\" : \"Ballroom\",\"Spanner\" : \"Conservatory\",\"Revolver\" : \"Kitchen\",\"Candlestick\" : \"Lounge\",\"Lead Piping\" : \"Billiard Room\"}");
 				
-		
-		Queue<Object[]> player1Moves = new LinkedList<Object[]>(); // colonel mustard
 		Board masterBoard = new Board(defs, starts);
 		
+		Queue<Object[]> player1Moves = new LinkedList<Object[]>(); // colonel mustard
 		Queue<Object[]> player2Moves = new LinkedList<Object[]>(); // miss scarlet
 		
 		player1Moves.offer(new Object[]{Moves.MOVE, masterBoard.getLocation(7,4)});
@@ -212,7 +211,47 @@ public class NetworkConsistencyTests implements GameListener {
 		
 		runGame(masterBoard, player1Moves, player2Moves);
 	}
+	
+	@Test
+	/** Among other things this tests ServerGameChannel.waitingForNetworkPlayers
+	 * 
+	 */
+	public void testMultipleRemotePlayers() throws JsonParseException, IOException{
+		JsonObject defs = MinimalJson.parseJson(new File("./rules/cards.json"));
+		JsonObject starts = MinimalJson.parseJson("{ \"Rope\" : \"Library\",\"Dagger\" : \"Ballroom\",\"Spanner\" : \"Conservatory\",\"Revolver\" : \"Kitchen\",\"Candlestick\" : \"Lounge\",\"Lead Piping\" : \"Billiard Room\"}");
+				
+		Board masterBoard = new Board(defs, starts);
+		
+		Queue<Object[]> player1Moves = new LinkedList<Object[]>(); // colonel mustard
+		Queue<Object[]> player2Moves = new LinkedList<Object[]>(); // miss scarlet
+		Queue<Object[]> player3Moves = new LinkedList<Object[]>(); // Mrs Peacock
+		
+		player1Moves.offer(new Object[]{Moves.MOVE, masterBoard.getLocation(7,4)});
+		
+		player2Moves.offer(new Object[]{Moves.MOVE, masterBoard.getLocation(16,4)});
+		
+		player3Moves.offer(new Object[]{Moves.MOVE, masterBoard.getLocation(18,5)});
+		player3Moves.offer(new Object[]{Moves.ACCUSE,
+				masterBoard.getCard("Dagger"),
+				masterBoard.getCard("Rev. Green"),
+				masterBoard.getCard("Lounge"),
+				
+		}); // loose the game
+		
+		runGame(masterBoard, player1Moves, player2Moves, player3Moves);
+	}
 
+	/** Run a using playerScripts as the scripts for all players.
+	 * The first playerScript defines the "local" player while the subsequent playerScripts 
+	 * are run in new threads as network players. Note that because the model is serialized 
+	 * using the card names all scripts can use cards from masterBoard, even though the 
+	 * actual cards used by the network players will not be equal to these.
+	 * 
+	 * Once the game is over all boards will be compared to ensure they are in the same state
+	 * 
+	 * @param masterBoard The board used by the GameMaster (and therefore the local player)
+	 * @param playerScripts the "scripts" for the players to follow.
+	 */
 	private void runGame(final Board masterBoard, final Queue<Object[]> ... playerScripts) throws IOException, JsonParseException {
 		JsonObject defs = MinimalJson.parseJson(new File("./rules/cards.json"));
 		
