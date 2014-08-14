@@ -1,7 +1,10 @@
 package cluedo.view;
 
 import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -58,7 +61,6 @@ public class GUIGameInput implements GameInput, FrameListener, CardListener{
 		this.frame = frame;
 		this.gameConfig = gc;
 		frame.addFrameListener(this);
-		frame.getDisprovePanel().addListener(this);
 	}
 
 	@Override
@@ -248,9 +250,24 @@ public class GUIGameInput implements GameInput, FrameListener, CardListener{
 
 	@Override
 	public Card selectDisprovingCardToShow(Character character, Character suggester, List<Card> possibleShow) {
-		// TODO Auto-generated method stub
-		frame.displayDisprovePanel(true);
-		frame.getDisprovePanel().setCards(possibleShow);
+		JDialog dialog = new JDialog(frame);
+		dialog.setSize(400, 300);
+		dialog.setResizable(false);
+		dialog.setAlwaysOnTop(true);
+		
+		dialog.setLayout(new GridLayout(2, 1));
+		dialog.setLayout(new GridBagLayout());
+		GridBagConstraints con = new GridBagConstraints();
+		con.fill = GridBagConstraints.BOTH;
+		setConstraints(con, 1, 0, 1, false, false);
+		dialog.add(new JLabel(character.getName() + ", choose a card to disprove the suggestion"), con);
+		setConstraints(con, 0, 1, 3, true, true);
+		SuggestionDisprovePanel disprovePanel = new SuggestionDisprovePanel(frame.getCardImages());
+		disprovePanel.setCards(possibleShow);
+		disprovePanel.addListener(this);
+		dialog.add(disprovePanel, con);
+		dialog.setVisible(true);
+		
 		selectedCard = null;
 		while (selectedCard == null){
 			try {
@@ -258,7 +275,8 @@ public class GUIGameInput implements GameInput, FrameListener, CardListener{
 			} catch (InterruptedException e1) {
 			}
 		}
-		frame.displayDisprovePanel(false);
+		dialog.dispose();
+		
 		return selectedCard;
 	}
 
@@ -333,6 +351,25 @@ public class GUIGameInput implements GameInput, FrameListener, CardListener{
 	@Override
 	public void onCardSelected(Card c) {
 		selectedCard = c;
+	}
+	
+	/**
+	 * Sets a given constraints with the given values.
+	 *
+	 * @param con - the constraints to set
+	 * @param row - the row
+	 * @param col - the column
+	 * @param width - how many positions in the grid to span horizontally
+	 * @param expandX - whether components should try fill as much horizontal space
+	 * @param expandY - whether components should try fill as much vertical space
+	 */
+	private void setConstraints(GridBagConstraints con, int x, int y, int width, boolean expandX, boolean expandY){
+		con.gridy = y;
+		con.gridx = x;
+		con.gridwidth = width;
+		con.insets = new Insets(0, 0, 0, 0);
+		con.weightx = (expandX) ? 1 : 0;
+		con.weighty = (expandY) ? 1 : 0;
 	}
 
 }
