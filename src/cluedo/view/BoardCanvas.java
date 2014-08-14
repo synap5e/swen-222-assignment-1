@@ -66,6 +66,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 
 	private final Map<String, Image> cardImages;
 	private final Map<String, Image> tokenImages;
+	private final Map<String, Color> characterColors;
 
 	private String action = "Game Setup";
 	private CluedoFrame frame;
@@ -130,6 +131,14 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 			tokenImages.put("Revolver", ImageIO.read(new File("./images/token_revolver.png")));
 		} catch (IOException e) {
 		}
+		
+		characterColors = new HashMap<String, Color>();
+		characterColors.put("Colonel Mustard", new Color(224, 220, 6));
+		characterColors.put("Miss Scarlett", new Color(197, 25, 51));
+		characterColors.put("Mrs Peacock", new Color(0, 106, 160));
+		characterColors.put("Mrs White", Color.WHITE);
+		characterColors.put("Professor Plum", new Color(84, 34, 85));
+		characterColors.put("Rev. Green", new Color(2, 101, 72));
 
 		setBackground(BACKGROUND);
 		addMouseListener(this);
@@ -203,9 +212,8 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 					g2d.setColor(GRID_COLOR);
 					g2d.drawRect(x*tileWidth, y*tileWidth, tileWidth, tileWidth);
 
-					//TODO: set color to match token
-					g2d.setColor(Color.WHITE);
 					if (loc.getTokens().size() > 0){
+						g2d.setColor(characterColors.get(loc.getTokens().get(0).getName()));
 						g2d.fillOval(x*tileWidth+3, y*tileWidth+3, tileWidth-5, tileWidth-5);
 						if (loc.getTokens().get(0) == currentPlayer){
 							g2d.setColor(Color.BLACK);
@@ -235,8 +243,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 			int x = (int) center.getX()*tileWidth-(tileWidth*room.getTokens().size())/2 ;
 			for (Token token : room.getTokens()){
 				if (token instanceof Character){
-					//TODO: set color to match token
-					g2d.setColor(Color.WHITE);
+					g2d.setColor(characterColors.get(token.getName()));
 					g2d.fillOval(x+3, startY+3, tileWidth-5, tileWidth-5);
 					if (focusCharacters){
 						g2d.setColor(SELECTION_COLOR);
