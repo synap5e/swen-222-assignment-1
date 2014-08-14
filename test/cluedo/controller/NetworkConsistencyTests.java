@@ -134,11 +134,13 @@ public class NetworkConsistencyTests implements GameListener {
 		
 		@Override
 		public int getNumberOfPlayers(int min, int max) {
+			assert false;
 			return 0;
 		}
 
 		@Override
 		public List<String> getHumanNames() {
+			assert false;
 			return null;
 		}
 
@@ -149,12 +151,13 @@ public class NetworkConsistencyTests implements GameListener {
 
 		@Override
 		public int getNetworkPlayerCount() {
-			return 1;
+			assert false;
+			return 0;
 		}
 
 		@Override
 		public String getSingleName() {
-			return null;
+			return toString();
 		}
 
 	}
@@ -250,6 +253,8 @@ public class NetworkConsistencyTests implements GameListener {
 		runGame(masterBoard, player0Moves, player1Moves, player2Moves);
 	}
 
+	// TODO remote player selects disproving card to show - then should have good coverage
+	
 	/** Run a using playerScripts as the scripts for all players.
 	 * The first playerScript defines the "local" player while the subsequent playerScripts 
 	 * are run in new threads as network players. Note that because the model is serialized 
@@ -299,6 +304,8 @@ public class NetworkConsistencyTests implements GameListener {
 						return o1.getName().compareTo(o2.getName());
 					}
 				});
+				List<Character> availCharacters = new ArrayList<Character>(pickableCharacters);
+				
 				
 				int handSize = deck.size() / playerScripts.length;
 				
@@ -311,17 +318,33 @@ public class NetworkConsistencyTests implements GameListener {
 				System.out.println(pickableCharacters.get(0).getName());
 				
 				for (int i=1;i<playerScripts.length;i++){
+					for (GameListener listener : listeners){
+						listener.waitingForNetworkPlayers(playerScripts.length-i);
+					}
+					
 					hand = new Hand();
 					for (int x=0;x<handSize;x++){
 						hand.addCard(deck.remove(0));
 					}
 					ServerGameChannel n = this.networkPlayerHandler.getRemoteInput(30);
 					this.addGameListener(n);
-					players.add(new HumanPlayer("test_player_" + i, hand, pickableCharacters.get(i), n));
+					
+					String name = n.getSingleName();
+					Character c = n.chooseCharacter(name, pickableCharacters, availCharacters);
+					availCharacters.remove(c);
+					players.add(new HumanPlayer("test_player_" + i + " - " + name, hand, pickableCharacters.get(i), n));
 					playingAs.put(players.get(i), pickableCharacters.get(i));
-					System.out.println(pickableCharacters.get(i).getName());
+					n.sendHand(hand);
+				}
+				
+				for (int playerNumber=0;playerNumber<playerScripts.length;playerNumber++){
+					for (GameListener listener : listeners){
+						listener.onCharacterJoinedGame(players.get(playerNumber).getName(), playingAs.get(players.get(playerNumber)), PlayerType.RemoteHuman);
+					}
 				}
 			}
+			
+			
 		};
 		
 		master.addGameListener(this);
@@ -372,6 +395,12 @@ public class NetworkConsistencyTests implements GameListener {
 					}
 				}
 			}).start();
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		master.createGame();
