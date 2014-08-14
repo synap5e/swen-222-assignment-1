@@ -1,27 +1,18 @@
 package cluedo.view;
 
-import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
-
 import cluedo.controller.interaction.GameInput;
 import cluedo.model.Location;
 import cluedo.model.Tile;
@@ -31,7 +22,7 @@ import cluedo.model.card.Room;
 import cluedo.model.card.Token;
 import cluedo.model.card.Weapon;
 import cluedo.model.cardcollection.Hand;
-import cluedo.view.SuggestionDisprovePanel.CardListener;
+import cluedo.view.CardListPanel.CardListener;
 
 /**
  *
@@ -46,7 +37,6 @@ public class GUIGameInput implements GameInput, FrameListener, CardListener{
 	private boolean endingTurn = false;
 	private boolean accusing = false;
 	private boolean suggesting = false;
-	private int numberOfPlayers;
 	private CluedoFrame frame;
 
 	private Location selectedLocation = null;
@@ -54,8 +44,6 @@ public class GUIGameInput implements GameInput, FrameListener, CardListener{
 	private Card selectedCard = null;
 
 	private GameConfig gameConfig;
-
-	private boolean ready = false;
 
 	public GUIGameInput(CluedoFrame frame, GameConfig gc){
 		this.frame = frame;
@@ -82,7 +70,7 @@ public class GUIGameInput implements GameInput, FrameListener, CardListener{
 	public Character chooseCharacter(String playerName,
 			List<Character> characters, List<Character> availableCharacters) {
 		JDialog dialog = new JDialog(frame);
-
+		dialog.setMinimumSize(new Dimension(200, 300));
 		dialog.setLayout(new GridLayout(characters.size()+2, 1));
 
 		dialog.add(new JLabel(playerName + ", who would you like to be?"));
@@ -135,7 +123,7 @@ public class GUIGameInput implements GameInput, FrameListener, CardListener{
 	public void startTurn(Hand h) {
 		frame.getCanvas().setCurrentAction("Roll the Dice");
 		frame.displayRollDice(true);
-		frame.getCanvas().setCurrentHand(h);
+		frame.setHand(h);
 		waitForDiceRoll = true;
 		while (waitForDiceRoll){
 			try {
@@ -262,7 +250,7 @@ public class GUIGameInput implements GameInput, FrameListener, CardListener{
 		setConstraints(con, 1, 0, 1, false, false);
 		dialog.add(new JLabel(character.getName() + ", choose a card to disprove the suggestion"), con);
 		setConstraints(con, 0, 1, 3, true, true);
-		SuggestionDisprovePanel disprovePanel = new SuggestionDisprovePanel(frame.getCardImages());
+		CardListPanel disprovePanel = new CardListPanel(frame.getCardImages());
 		disprovePanel.setCards(possibleShow);
 		disprovePanel.addListener(this);
 		dialog.add(disprovePanel, con);
@@ -282,13 +270,8 @@ public class GUIGameInput implements GameInput, FrameListener, CardListener{
 
 	@Override
 	public void suggestionDisproved(Character characterDisproved, Card disprovingCard) {
-		// FIXME: this is not where you show "suggestion disproved". This is where a single character is shown a card that
-		// disproves <i>their</i> suggestion (that they just made). In other words this is called to tell the suggester
-		// the result of their suggestion. To show suggestion disproved, do it firing on Canvas.onSuggestionDisproved
-		// If you need the Character object of the suggester I can do that, but it is still that players turn when this gets
-		// called
 		frame.getCanvas().setCurrentAction("Suggestion Disproved");
-		// TODO Auto-generated method stub
+		// TODO: Show card to the user
 
 		System.out.printf("Psst [message only shown to current player]. %s disproved your suggestion by showing they hold %s\n", characterDisproved.getName(), disprovingCard.getName());
 
@@ -312,20 +295,16 @@ public class GUIGameInput implements GameInput, FrameListener, CardListener{
 	@Override
 	public void onNumberOfPlayers(int num) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
-	public void onPlayerSelection(List<String> names, int numberAI,
-			int numberNetwork) {
+	public void onPlayerSelection(List<String> names, int numberAI, int numberNetwork) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onSinglePlayerName(String name) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override

@@ -7,7 +7,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -23,10 +22,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
-
 import util.json.JsonObject;
 import cluedo.controller.player.Player.PlayerType;
 import cluedo.model.Board;
@@ -38,7 +35,6 @@ import cluedo.model.card.Room;
 import cluedo.model.card.Token;
 import cluedo.model.card.Weapon;
 import cluedo.model.cardcollection.Accusation;
-import cluedo.model.cardcollection.Hand;
 import cluedo.model.cardcollection.Suggestion;
 
 /**
@@ -46,7 +42,7 @@ import cluedo.model.cardcollection.Suggestion;
  * @author James Greenwood-Thessman
  *
  */
-public class Canvas extends JPanel implements MouseListener, MouseMotionListener{
+public class BoardCanvas extends JPanel implements MouseListener, MouseMotionListener{
 
 	private static final Color BACKGROUND = new Color(145,204,176);
 	private static final Color TILE = new Color(238,177,70);
@@ -62,13 +58,11 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	private static final int TITLE_HEIGHT = 40;
 	private static final int TITLE_WIDTH = 400;
 
-	private static final int SIDE_GAP = 50;
-
 	private final Board board;
 
 	private final Map<String, Image> cardImages;
 	private final Map<String, Image> tokenImages;
-	private Image cardBack;
+	private final Map<String, Color> characterColors;
 
 	private String action = "Game Setup";
 	private CluedoFrame frame;
@@ -80,7 +74,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	private int yOffset;
 
 	private Location selected;
-	private Hand currentHand;
 	private List<Location> endLocations;
 
 	private Map<Room, Point2D> roomCorner;
@@ -94,7 +87,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
 	
 	
-	public Canvas(CluedoFrame fram, Board brd, JsonObject def, Map<String, Image> cardImages){
+	public BoardCanvas(CluedoFrame fram, Board brd, JsonObject def, Map<String, Image> cardImages){
 		frame = fram;
 		board = brd;
 		endLocations = Collections.emptyList();
@@ -125,8 +118,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		tokenImages = new HashMap<String, Image>();
 		this.cardImages = cardImages;
 		try {
-			cardBack = ImageIO.read(new File("./images/card_back.png"));
-
 			//Load token images
 			tokenImages.put("Spanner", ImageIO.read(new File("./images/token_spanner.png")));
 			tokenImages.put("Lead Piping", ImageIO.read(new File("./images/token_lead_piping.png")));
@@ -136,6 +127,14 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			tokenImages.put("Revolver", ImageIO.read(new File("./images/token_revolver.png")));
 		} catch (IOException e) {
 		}
+		
+		characterColors = new HashMap<String, Color>();
+		characterColors.put("Colonel Mustard", new Color(224, 220, 6));
+		characterColors.put("Miss Scarlett", new Color(197, 25, 51));
+		characterColors.put("Mrs Peacock", new Color(0, 106, 160));
+		characterColors.put("Mrs White", Color.WHITE);
+		characterColors.put("Professor Plum", new Color(84, 34, 85));
+		characterColors.put("Rev. Green", new Color(2, 101, 72));
 
 		setBackground(BACKGROUND);
 		addMouseListener(this);
@@ -147,8 +146,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
 			@Override
 			public void componentResized(ComponentEvent arg0) {
-				Canvas can = (Canvas) arg0.getSource();
-				int height = can.getHeight() - CARD_HEIGHT-5-TITLE_HEIGHT-10;
+				BoardCanvas can = (BoardCanvas) arg0.getSource();
+				int height = can.getHeight() -TITLE_HEIGHT-10;
 				tileWidth = (can.getWidth()/board.getWidth() < height/board.getHeight()) ? can.getWidth()/board.getWidth() : height/board.getHeight();
 				xOffset = (can.getWidth()-tileWidth*24)/2;
 				yOffset = (height-tileWidth*25)/2;
@@ -209,9 +208,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 					g2d.setColor(GRID_COLOR);
 					g2d.drawRect(x*tileWidth, y*tileWidth, tileWidth, tileWidth);
 
-					//TODO: set color to match token
-					g2d.setColor(Color.WHITE);
 					if (loc.getTokens().size() > 0){
+						g2d.setColor(characterColors.get(loc.getTokens().get(0).getName()));
 						g2d.fillOval(x*tileWidth+3, y*tileWidth+3, tileWidth-5, tileWidth-5);
 						if (loc.getTokens().get(0) == currentPlayer){
 							g2d.setColor(Color.BLACK);
@@ -241,8 +239,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			int x = (int) center.getX()*tileWidth-(tileWidth*room.getTokens().size())/2 ;
 			for (Token token : room.getTokens()){
 				if (token instanceof Character){
-					//TODO: set color to match token
-					g2d.setColor(Color.WHITE);
+					g2d.setColor(characterColors.get(token.getName()));
 					g2d.fillOval(x+3, startY+3, tileWidth-5, tileWidth-5);
 					if (focusCharacters){
 						g2d.setColor(SELECTION_COLOR);
@@ -279,28 +276,18 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
 				//Draw the south wall if it exists
 				drawWall(g2d, loc, board.getLocation(x, y+1), x, y+1, 1, 0);
+				
+				//Draw wall when cornered by a room
+				Location above = board.getLocation(x, y-1);
+				Location right = board.getLocation(x+1, y);
+				if (above == right && above != null && loc.getNeighbours().contains(above)){
+					g.drawLine((x+1)*tileWidth, y*tileWidth, (x+1)*tileWidth, (y+1)*tileWidth);
+				}
 			}
 		}
 
 		//Return the transformation on the graphics back to what it was
 		g2d.setTransform(saveTransform);
-
-		//Draw the hand
-		if (currentHand != null) {
-			int size = 0;
-			for (Card card : currentHand) ++size;
-			int x = (board.getWidth()*tileWidth-CARD_WIDTH*size)/2+xOffset;
-			int step = CARD_WIDTH+2;
-
-			if (x < SIDE_GAP){
-				x = SIDE_GAP;
-				step = (this.getWidth()-SIDE_GAP)/size;
-			}
-			for (Card card : currentHand){
-				g2d.drawImage(cardImages.get(card.getName()), x, tileWidth*board.getHeight()+5+yOffset+TITLE_HEIGHT+10, CARD_WIDTH, CARD_HEIGHT, null);
-				x += step;
-			}
-		}
 
 		if (hover != null){
 			g2d.drawImage(cardImages.get(hover.getName()), 0, 0, CARD_WIDTH, CARD_HEIGHT, null);
@@ -321,10 +308,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		if (neighbour == null || !(loc.getNeighbours().contains(neighbour) || loc == neighbour)){
 			g.drawLine(x*tileWidth, y*tileWidth, (x+width)*tileWidth, (y+height)*tileWidth);
 		}
-	}
-
-	public void setCurrentHand(Hand hand){
-		currentHand = hand;
 	}
 
 	public void unselectLocation(){
@@ -464,10 +447,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
 
 	@Override
-	public void mouseDragged(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
+	public void mouseDragged(MouseEvent arg0) {}
 
 
 	@Override
@@ -479,12 +459,10 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		if (loc != null){
 			if (loc instanceof Tile){
 				if (loc.getTokens().size() > 0){
-					hover = loc.getTokens().get(0);
-				} else {
-					hover = null;
+					frame.setDisplayedCard(loc.getTokens().get(0));
 				}
 			} else { //must be a room
-				hover = (Room) loc;
+				Card hover = (Room) loc;
 				if (loc.getTokens().size() > 0){
 					double xc = roomCenter.get(loc).getX();
 					double yc = roomCenter.get(loc).getY() - 10d/tileWidth+1;
@@ -496,12 +474,9 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 						++xc;
 					}
 				}
+				frame.setDisplayedCard(hover);
 			}
-		} else {
-			hover = null;
 		}
-
-		frame.repaint();
 	}
 
 
