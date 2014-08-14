@@ -3,11 +3,13 @@ package cluedo.view;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-
 import javax.swing.JPanel;
 
-import cluedo.model.card.Card;
-
+/**
+*
+* @author James Greenwood-Thessman
+*
+*/
 public class DiceCanvas extends JPanel{
 	
 	private static final Color BACKGROUND = new Color(212,196,173);

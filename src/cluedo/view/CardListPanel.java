@@ -6,15 +6,17 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import javax.swing.JPanel;
-
 import cluedo.model.card.Card;
 
+/**
+*
+* @author James Greenwood-Thessman
+*
+*/
 public class CardListPanel extends JPanel implements MouseListener{
 	private static final int CARD_WIDTH = 100;
 	private static final int CARD_HEIGHT = 150;

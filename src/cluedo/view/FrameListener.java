@@ -1,7 +1,6 @@
 package cluedo.view;
 
 import java.util.List;
-
 import cluedo.model.Location;
 import cluedo.model.card.Token;
 

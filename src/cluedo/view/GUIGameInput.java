@@ -1,6 +1,5 @@
 package cluedo.view;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -8,21 +7,12 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
-
 import cluedo.controller.interaction.GameInput;
 import cluedo.model.Location;
 import cluedo.model.Tile;
@@ -47,7 +37,6 @@ public class GUIGameInput implements GameInput, FrameListener, CardListener{
 	private boolean endingTurn = false;
 	private boolean accusing = false;
 	private boolean suggesting = false;
-	private int numberOfPlayers;
 	private CluedoFrame frame;
 
 	private Location selectedLocation = null;
@@ -55,8 +44,6 @@ public class GUIGameInput implements GameInput, FrameListener, CardListener{
 	private Card selectedCard = null;
 
 	private GameConfig gameConfig;
-
-	private boolean ready = false;
 
 	public GUIGameInput(CluedoFrame frame, GameConfig gc){
 		this.frame = frame;
@@ -283,13 +270,8 @@ public class GUIGameInput implements GameInput, FrameListener, CardListener{
 
 	@Override
 	public void suggestionDisproved(Character characterDisproved, Card disprovingCard) {
-		// FIXME: this is not where you show "suggestion disproved". This is where a single character is shown a card that
-		// disproves <i>their</i> suggestion (that they just made). In other words this is called to tell the suggester
-		// the result of their suggestion. To show suggestion disproved, do it firing on Canvas.onSuggestionDisproved
-		// If you need the Character object of the suggester I can do that, but it is still that players turn when this gets
-		// called
 		frame.getCanvas().setCurrentAction("Suggestion Disproved");
-		// TODO Auto-generated method stub
+		// TODO: Show card to the user
 
 		System.out.printf("Psst [message only shown to current player]. %s disproved your suggestion by showing they hold %s\n", characterDisproved.getName(), disprovingCard.getName());
 
@@ -313,20 +295,16 @@ public class GUIGameInput implements GameInput, FrameListener, CardListener{
 	@Override
 	public void onNumberOfPlayers(int num) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
-	public void onPlayerSelection(List<String> names, int numberAI,
-			int numberNetwork) {
+	public void onPlayerSelection(List<String> names, int numberAI, int numberNetwork) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onSinglePlayerName(String name) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override

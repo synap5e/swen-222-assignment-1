@@ -7,7 +7,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -23,10 +22,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
-
 import util.json.JsonObject;
 import cluedo.controller.player.Player.PlayerType;
 import cluedo.model.Board;
@@ -38,7 +35,6 @@ import cluedo.model.card.Room;
 import cluedo.model.card.Token;
 import cluedo.model.card.Weapon;
 import cluedo.model.cardcollection.Accusation;
-import cluedo.model.cardcollection.Hand;
 import cluedo.model.cardcollection.Suggestion;
 
 /**
