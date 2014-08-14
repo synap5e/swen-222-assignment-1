@@ -238,7 +238,7 @@ public class ServerGameChannel implements GameInput, GameListener {
 	public synchronized void onAccusation(Character accuser, Accusation accusation,	boolean correct) {
 		write(new MessageBuilder().
 				type("push").
-				name("onSuggestionDisproved").
+				name("onAccusation").
 					parameter("accuser", ModelToJson.cardToJson(accuser)).
 					parameter("accusation", ModelToJson.accusationToJson(accusation)).
 					parameter("correct", correct).
