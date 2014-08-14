@@ -53,6 +53,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 	
 	private CardListPanel hand;
 	private CardListPanel cardDisplay;
+	private DiceCanvas dice;
 	
 	private JButton suggestion;
 	private JButton accusation;
@@ -83,6 +84,9 @@ public class CluedoFrame extends JFrame implements GameListener {
 		cardDisplay.setMinimumSize(new Dimension(110, 175));
 		pane.add(cardDisplay, con);
 		
+		dice = new DiceCanvas();
+		setConstraints(con, 0, 1, 1, false, true);
+		pane.add(dice, con);
 		//Add Gap
 		//setConstraints(con, 0, 2, 1, false, true);
 		//con.gridheight = 2;
@@ -312,7 +316,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 
 	@Override
 	public void onDiceRolled(int dice1, int dice2) {
-		canvas.onDiceRolled(dice1, dice2);
+		dice.showDice(dice1, dice2);
 	}
 
 	@Override
