@@ -278,8 +278,7 @@ public class GUIGameInput implements GameInput, FrameListener, CardListener{
 
 	@Override
 	public String getSingleName() {
-		// TODO Auto-generated method stub
-		return JOptionPane.showInputDialog("Name?");
+		return gameConfig.getSingleName();
 	}
 
 	@Override

@@ -71,7 +71,7 @@ public class GameConfig extends JFrame{
 		createServerHostBox(serverTab, "0.0.0.0", DEFAULT_PORT);
 		
 		JPanel clientTab = new JPanel(new GridLayout(7, 1));
-		// TODO create name box, which GUIGameInput will read the value of for get single name
+		createNameBox(clientTab);
 		createHostBox(clientTab, "127.0.0.1", DEFAULT_PORT);
 		
 		
@@ -119,6 +119,8 @@ public class GameConfig extends JFrame{
 	private JTextField localHost;
 
 	private JSpinner localPort;
+
+	private JTextField singleName;
 	
 	private void createPlayerCountSpinner(JPanel serverTab, final int def, final int min, final int max) {
 		JPanel jp = new JPanel(new BorderLayout());
@@ -218,12 +220,16 @@ public class GameConfig extends JFrame{
 		jp.add(remotePort, BorderLayout.EAST);
 		
 		clientTab.add(new JPanel());
+		clientTab.add(new JPanel());
+		clientTab.add(new JLabel("Remote host"));
 		clientTab.add(jp);
 	}
 	
 	private void createServerHostBox(JPanel serverTab, String def, int defport) {
 		
 		JPanel jp = new JPanel(new BorderLayout());
+		
+		jp.add(new JLabel("Bind address"), BorderLayout.NORTH);
 		
 		this.localHost = new JTextField();
 		Font bigfont = new Font(localHost.getFont().getName(), localHost.getFont().getStyle(), localHost.getFont().getSize()*2);
@@ -238,6 +244,13 @@ public class GameConfig extends JFrame{
 		jp.add(localPort, BorderLayout.EAST);
 		
 		serverTab.add(jp, BorderLayout.SOUTH);
+	}
+	
+	private void createNameBox(JPanel clientTab) {
+		singleName = new JTextField();
+		
+		clientTab.add(new JLabel("Name"));
+		clientTab.add(singleName);
 	}
 	
 
@@ -281,6 +294,10 @@ public class GameConfig extends JFrame{
 
 	public int getLocalPort() {
 		return (int) localPort.getValue();
+	}
+
+	public String getSingleName() {
+		return singleName.getText();
 	}
 
 }
