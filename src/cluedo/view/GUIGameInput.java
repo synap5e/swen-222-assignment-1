@@ -1,6 +1,7 @@
 package cluedo.view;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -82,7 +83,7 @@ public class GUIGameInput implements GameInput, FrameListener, CardListener{
 	public Character chooseCharacter(String playerName,
 			List<Character> characters, List<Character> availableCharacters) {
 		JDialog dialog = new JDialog(frame);
-
+		dialog.setMinimumSize(new Dimension(200, 300));
 		dialog.setLayout(new GridLayout(characters.size()+2, 1));
 
 		dialog.add(new JLabel(playerName + ", who would you like to be?"));
