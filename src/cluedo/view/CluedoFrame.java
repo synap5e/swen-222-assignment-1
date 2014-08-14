@@ -1,5 +1,6 @@
 package cluedo.view;
 
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -64,7 +65,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 		listeners = new ArrayList<FrameListener>();
 
 		setTitle("Cluedo");
-		setMinimumSize(new Dimension(600, 700));
+		setMinimumSize(new Dimension(700, 850));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		menu = new JMenuBar();
 		menu.add(new JMenuItem("File"));
@@ -87,18 +88,16 @@ public class CluedoFrame extends JFrame implements GameListener {
 		dice = new DiceCanvas();
 		setConstraints(con, 0, 1, 1, false, true);
 		pane.add(dice, con);
-		//Add Gap
-		//setConstraints(con, 0, 2, 1, false, true);
-		//con.gridheight = 2;
-		//pane.add(new JLabel(""), con);
-		//con.gridheight = 1;
-		//setConstraints(con, 1, 3, 1, true, false);
-		//pane.add(new JLabel(""), con);
 
 		JPanel buttonPanel = new JPanel(new GridBagLayout());
+		buttonPanel.setBackground(new Color(212,196,173));
 		buttonPanel.setMinimumSize(new Dimension(110, 200));
 		
-		suggestion = createButton(buttonPanel, "Suggest", 0, 0, 1, 2, new ActionListener() {
+		//Add Gap
+		setConstraints(con, 0, 0, 1, false, true);
+		buttonPanel.add(new JLabel(""), con);
+		
+		suggestion = createButton(buttonPanel, "Suggest", 0, 1, 1, 2, new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -107,7 +106,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 				}
 			}
 		}, con);
-		accusation = createButton(buttonPanel, "Accuse", 0, 1, 1, 2, new ActionListener() {
+		accusation = createButton(buttonPanel, "Accuse", 0, 2, 1, 2, new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -116,7 +115,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 				}
 			}
 		}, con);
-		endTurn = createButton(buttonPanel, "End Turn", 0, 2, 1, 20, new ActionListener() {
+		endTurn = createButton(buttonPanel, "End Turn", 0, 3, 1, 20, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				for (FrameListener l : listeners){
@@ -124,7 +123,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 				}
 			}
 		}, con);
-		rollDice = createButton(buttonPanel, "Roll Dice", 0, 3, 1, 20, new ActionListener() {
+		rollDice = createButton(buttonPanel, "Roll Dice", 0, 4, 1, 20, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				for (FrameListener l : listeners){
@@ -265,7 +264,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 		button.setOpaque(false);
 		button.addActionListener(listener);
 		setConstraints(con, x, y, width, false, false);
-		con.insets = new Insets(0, 0, 0, 0);
+		con.insets = new Insets(0, 0, bottomInset, 0);
 		pane.add(button, con);
 		return button;
 	}
