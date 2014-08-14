@@ -92,7 +92,7 @@ public class Board {
 			Weapon w = new Weapon(name);
 			weapons.add(w);
 			cardsByName.put(name, w);
-			
+
 			if (weaponLocationDefs == null){
 				// random location
 				startLocations.put(roomKeyList.remove(random.nextInt(roomKeyList.size())), w);
@@ -104,8 +104,8 @@ public class Board {
 				startLocations.put(roomKey, w);
 			}
 		}
-		
-		
+
+
 
 		Map<Double, Room> doorways = new HashMap<Double, Room>();
 		for (JsonEntity doorway : doorwayDefs){
@@ -117,7 +117,7 @@ public class Board {
 
 		createBoard(rows, roomsDef, kestToRooms, startLocations, doorways);
 	}
-	
+
 	public Board(JsonObject defs){
 		this(defs, null);
 	}
@@ -252,9 +252,12 @@ public class Board {
 		tokenLocations.put(playersCharacter, dest);
 	}
 
-	public void moveWeapon(Weapon weapon, Location location) {
-		// TODO Auto-generated method stub
+	public void moveWeapon(Weapon weapon, Location dest) {
+		Location start = tokenLocations.get(weapon);
+		start.removeToken(weapon);
 
+		dest.addToken(weapon);
+		tokenLocations.put(weapon, dest);
 	}
 
 	public Card getCard(String name) {
