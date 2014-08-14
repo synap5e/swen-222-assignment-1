@@ -273,6 +273,13 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 
 				//Draw the south wall if it exists
 				drawWall(g2d, loc, board.getLocation(x, y+1), x, y+1, 1, 0);
+				
+				//Draw wall when cornered by a room
+				Location above = board.getLocation(x, y-1);
+				Location right = board.getLocation(x+1, y);
+				if (above == right && above != null && loc.getNeighbours().contains(above)){
+					g.drawLine((x+1)*tileWidth, y*tileWidth, (x+1)*tileWidth, (y+1)*tileWidth);
+				}
 			}
 		}
 
@@ -437,10 +444,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 
 
 	@Override
-	public void mouseDragged(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
+	public void mouseDragged(MouseEvent arg0) {}
 
 
 	@Override
