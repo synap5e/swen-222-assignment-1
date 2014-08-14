@@ -45,11 +45,12 @@ public class CluedoFrame extends JFrame implements GameListener {
 
 	private List<FrameListener> listeners;
 
+	private Map<String, Image> cardImages;
+	
 	private JButton suggestion;
 	private JButton accusation;
 	private JButton rollDice;
 	private JButton endTurn;
-	private SuggestionDisprovePanel disprovePanel;
 
 	public CluedoFrame(Board board, JsonObject def){
 		listeners = new ArrayList<FrameListener>();
@@ -67,7 +68,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 		pane.setLayout(new GridBagLayout());
 		GridBagConstraints con = createConstraints();
 
-		Map<String, Image> cardImages = new HashMap<String, Image>();
+		cardImages = new HashMap<String, Image>();
 		try {
 			//Load weapon pictures
 			cardImages.put("Dagger", ImageIO.read(new File("./images/card_dagger.png")));
@@ -146,9 +147,6 @@ public class CluedoFrame extends JFrame implements GameListener {
 		setConstraints(con, 1, 0, 1, true, true);
 		con.insets = new Insets(0,0,0,0);
 		con.gridheight = 5;
-		disprovePanel = new SuggestionDisprovePanel(cardImages);
-		pane.add(disprovePanel, con);
-		disprovePanel.setVisible(false);
 		
 		setConstraints(con, 0, 0, 2, true, true);
 		con.gridheight = 5;
@@ -158,12 +156,8 @@ public class CluedoFrame extends JFrame implements GameListener {
 		setVisible(true);
 	}
 	
-	public SuggestionDisprovePanel getDisprovePanel(){
-		return disprovePanel;
-	}
-	
-	public void displayDisprovePanel(boolean visible){
-		disprovePanel.setVisible(visible);
+	public Map<String, Image> getCardImages(){
+		return cardImages;
 	}
 
 	public void displayTurnButtons(boolean visible){

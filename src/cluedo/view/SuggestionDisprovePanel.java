@@ -42,7 +42,7 @@ public class SuggestionDisprovePanel extends JPanel implements MouseListener{
 		super.paint(g);
 		if (cards != null){
 			int x = (getWidth()-cards.size()*(CARD_WIDTH+5)+5)/2;
-			int y = (getHeight()-cards.size()*CARD_HEIGHT)/2;
+			int y = (getHeight()-CARD_HEIGHT)/2;
 			
 			for (Card c : cards){
 				g.drawImage(cardImages.get(c.getName()), x, y, CARD_WIDTH, CARD_HEIGHT, null);
