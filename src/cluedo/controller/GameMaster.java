@@ -155,7 +155,10 @@ public class GameMaster {
 	public void startGame(){
 		ArrayList<Player> activePlayers = new ArrayList<Player>(players);
 		while (true){
-			Player player = activePlayers.get(turn++ % activePlayers.size());
+			Player player = players.get(turn++ % players.size());
+			
+			if (!activePlayers.contains(player)) continue; // skip players who have lost
+			
 			Character playersCharacter = playingAs.get(player);
 
 			for (GameListener listener : listeners){
