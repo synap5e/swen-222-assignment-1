@@ -93,11 +93,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 		buttonPanel.setBackground(new Color(212,196,173));
 		buttonPanel.setMinimumSize(new Dimension(110, 200));
 		
-		//Add Gap
-		setConstraints(con, 0, 0, 1, false, true);
-		buttonPanel.add(new JLabel(""), con);
-		
-		suggestion = createButton(buttonPanel, "Suggest", 0, 1, 1, 2, new ActionListener() {
+		suggestion = createButton(buttonPanel, "Suggest", 0, 0, 1, new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -106,7 +102,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 				}
 			}
 		}, con);
-		accusation = createButton(buttonPanel, "Accuse", 0, 2, 1, 2, new ActionListener() {
+		accusation = createButton(buttonPanel, "Accuse", 0, 1, 1, new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -115,7 +111,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 				}
 			}
 		}, con);
-		endTurn = createButton(buttonPanel, "End Turn", 0, 3, 1, 20, new ActionListener() {
+		endTurn = createButton(buttonPanel, "End Turn", 0, 2, 1, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				for (FrameListener l : listeners){
@@ -123,7 +119,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 				}
 			}
 		}, con);
-		rollDice = createButton(buttonPanel, "Roll Dice", 0, 4, 1, 20, new ActionListener() {
+		rollDice = createButton(buttonPanel, "Roll Dice", 0, 3, 1, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				for (FrameListener l : listeners){
@@ -131,6 +127,12 @@ public class CluedoFrame extends JFrame implements GameListener {
 				}
 			}
 		}, con);
+		//Add Gap
+		setConstraints(con, 0, 4, 1, false, true);
+		JLabel gap = new JLabel("");
+		gap.setMinimumSize(new Dimension(110, 5));
+		buttonPanel.add(gap, con);
+		
 		displayTurnButtons(false);
 		suggestion.setVisible(false);
 		displayRollDice(false);
@@ -259,12 +261,12 @@ public class CluedoFrame extends JFrame implements GameListener {
 	 *
 	 * @return the created button
 	 */
-	private JButton createButton(Container pane, String text, int x, int y, int width, int bottomInset, ActionListener listener, GridBagConstraints con){
+	private JButton createButton(Container pane, String text, int x, int y, int width, ActionListener listener, GridBagConstraints con){
 		JButton button = new JButton(text);
 		button.setOpaque(false);
 		button.addActionListener(listener);
 		setConstraints(con, x, y, width, false, false);
-		con.insets = new Insets(0, 0, bottomInset, 0);
+		con.insets = new Insets(5, 0, 0, 0);
 		pane.add(button, con);
 		return button;
 	}
