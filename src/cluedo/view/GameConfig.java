@@ -58,7 +58,7 @@ public class GameConfig extends JFrame{
 		super();
 
 		setTitle("Create Game");
-		setMinimumSize(new Dimension(600, 350));
+		setMinimumSize(new Dimension(600, 380));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		setLayout(new BorderLayout());
