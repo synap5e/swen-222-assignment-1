@@ -222,23 +222,33 @@ public class NetworkConsistencyTests implements GameListener {
 				
 		Board masterBoard = new Board(defs, starts);
 		
-		Queue<Object[]> player1Moves = new LinkedList<Object[]>(); // colonel mustard
-		Queue<Object[]> player2Moves = new LinkedList<Object[]>(); // miss scarlet
-		Queue<Object[]> player3Moves = new LinkedList<Object[]>(); // Mrs Peacock
+		Queue<Object[]> player0Moves = new LinkedList<Object[]>(); // colonel mustard
+		Queue<Object[]> player1Moves = new LinkedList<Object[]>(); // miss scarlet
+		Queue<Object[]> player2Moves = new LinkedList<Object[]>(); // Mrs Peacock
 		
-		player1Moves.offer(new Object[]{Moves.MOVE, masterBoard.getLocation(7,4)});
+		player0Moves.offer(new Object[]{Moves.MOVE, masterBoard.getLocation(7,4)});
 		
-		player2Moves.offer(new Object[]{Moves.MOVE, masterBoard.getLocation(16,4)});
+		player1Moves.offer(new Object[]{Moves.MOVE, masterBoard.getLocation(16,4)});
 		
-		player3Moves.offer(new Object[]{Moves.MOVE, masterBoard.getLocation(18,5)});
-		player3Moves.offer(new Object[]{Moves.ACCUSE,
+		player2Moves.offer(new Object[]{Moves.MOVE, masterBoard.getLocation(18,5)});
+		player2Moves.offer(new Object[]{Moves.ACCUSE,
 				masterBoard.getCard("Dagger"),
 				masterBoard.getCard("Rev. Green"),
 				masterBoard.getCard("Lounge"),
-				
 		}); // loose the game
 		
-		runGame(masterBoard, player1Moves, player2Moves, player3Moves);
+		player0Moves.offer(new Object[]{Moves.MOVE, masterBoard.getLocation(8,9)});
+		player0Moves.offer(new Object[]{
+				Moves.ACCUSE, 
+				masterBoard.getCard("Rope"),
+				masterBoard.getCard("Mrs Peacock"),
+				masterBoard.getCard("Study"),
+		});  // win the game
+		
+		player1Moves.offer(new Object[]{null}); // end of game
+		
+		runGame(masterBoard, player0Moves, player1Moves, player2Moves);
+		JOptionPane.showConfirmDialog(null, "");
 	}
 
 	/** Run a using playerScripts as the scripts for all players.
