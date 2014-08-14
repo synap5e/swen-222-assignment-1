@@ -46,7 +46,7 @@ import cluedo.model.cardcollection.Suggestion;
  * @author James Greenwood-Thessman
  *
  */
-public class Canvas extends JPanel implements MouseListener, MouseMotionListener{
+public class BoardCanvas extends JPanel implements MouseListener, MouseMotionListener{
 
 	private static final Color BACKGROUND = new Color(145,204,176);
 	private static final Color TILE = new Color(238,177,70);
@@ -62,13 +62,10 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	private static final int TITLE_HEIGHT = 40;
 	private static final int TITLE_WIDTH = 400;
 
-	private static final int SIDE_GAP = 50;
-
 	private final Board board;
 
 	private final Map<String, Image> cardImages;
 	private final Map<String, Image> tokenImages;
-	private Image cardBack;
 
 	private String action = "Game Setup";
 	private CluedoFrame frame;
@@ -80,7 +77,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	private int yOffset;
 
 	private Location selected;
-	private Hand currentHand;
 	private List<Location> endLocations;
 
 	private Map<Room, Point2D> roomCorner;
@@ -94,7 +90,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
 	
 	
-	public Canvas(CluedoFrame fram, Board brd, JsonObject def, Map<String, Image> cardImages){
+	public BoardCanvas(CluedoFrame fram, Board brd, JsonObject def, Map<String, Image> cardImages){
 		frame = fram;
 		board = brd;
 		endLocations = Collections.emptyList();
@@ -125,8 +121,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		tokenImages = new HashMap<String, Image>();
 		this.cardImages = cardImages;
 		try {
-			cardBack = ImageIO.read(new File("./images/card_back.png"));
-
 			//Load token images
 			tokenImages.put("Spanner", ImageIO.read(new File("./images/token_spanner.png")));
 			tokenImages.put("Lead Piping", ImageIO.read(new File("./images/token_lead_piping.png")));
@@ -147,8 +141,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
 			@Override
 			public void componentResized(ComponentEvent arg0) {
-				Canvas can = (Canvas) arg0.getSource();
-				int height = can.getHeight() - CARD_HEIGHT-5-TITLE_HEIGHT-10;
+				BoardCanvas can = (BoardCanvas) arg0.getSource();
+				int height = can.getHeight() -TITLE_HEIGHT-10;
 				tileWidth = (can.getWidth()/board.getWidth() < height/board.getHeight()) ? can.getWidth()/board.getWidth() : height/board.getHeight();
 				xOffset = (can.getWidth()-tileWidth*24)/2;
 				yOffset = (height-tileWidth*25)/2;
@@ -285,23 +279,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		//Return the transformation on the graphics back to what it was
 		g2d.setTransform(saveTransform);
 
-		//Draw the hand
-		if (currentHand != null) {
-			int size = 0;
-			for (Card card : currentHand) ++size;
-			int x = (board.getWidth()*tileWidth-CARD_WIDTH*size)/2+xOffset;
-			int step = CARD_WIDTH+2;
-
-			if (x < SIDE_GAP){
-				x = SIDE_GAP;
-				step = (this.getWidth()-SIDE_GAP)/size;
-			}
-			for (Card card : currentHand){
-				g2d.drawImage(cardImages.get(card.getName()), x, tileWidth*board.getHeight()+5+yOffset+TITLE_HEIGHT+10, CARD_WIDTH, CARD_HEIGHT, null);
-				x += step;
-			}
-		}
-
 		if (hover != null){
 			g2d.drawImage(cardImages.get(hover.getName()), 0, 0, CARD_WIDTH, CARD_HEIGHT, null);
 		}
@@ -321,10 +298,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		if (neighbour == null || !(loc.getNeighbours().contains(neighbour) || loc == neighbour)){
 			g.drawLine(x*tileWidth, y*tileWidth, (x+width)*tileWidth, (y+height)*tileWidth);
 		}
-	}
-
-	public void setCurrentHand(Hand hand){
-		currentHand = hand;
 	}
 
 	public void unselectLocation(){

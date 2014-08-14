@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,16 +22,19 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 
 import util.json.JsonObject;
 import cluedo.controller.interaction.GameListener;
 import cluedo.controller.player.Player.PlayerType;
 import cluedo.model.Board;
 import cluedo.model.Location;
+import cluedo.model.card.Card;
 import cluedo.model.card.Character;
 import cluedo.model.card.Token;
 import cluedo.model.card.Weapon;
 import cluedo.model.cardcollection.Accusation;
+import cluedo.model.cardcollection.Hand;
 import cluedo.model.cardcollection.Suggestion;
 
 /**
@@ -41,11 +45,14 @@ import cluedo.model.cardcollection.Suggestion;
 public class CluedoFrame extends JFrame implements GameListener {
 
 	private JMenuBar menu;
-	private Canvas canvas;
+	private BoardCanvas canvas;
 
 	private List<FrameListener> listeners;
 
 	private Map<String, Image> cardImages;
+	
+	private CardListPanel hand;
+	
 	
 	private JButton suggestion;
 	private JButton accusation;
@@ -64,12 +71,89 @@ public class CluedoFrame extends JFrame implements GameListener {
 
 		setJMenuBar(menu);
 
+		//Load images
+		loadImages();
+		
 		Container pane = getContentPane();
 		pane.setLayout(new GridBagLayout());
 		GridBagConstraints con = createConstraints();
 
+		//Add Gap
+		//setConstraints(con, 0, 2, 1, false, true);
+		//con.gridheight = 2;
+		//pane.add(new JLabel(""), con);
+		//con.gridheight = 1;
+		//setConstraints(con, 1, 3, 1, true, false);
+		//pane.add(new JLabel(""), con);
+
+		JPanel buttonPanel = new JPanel(new GridBagLayout());
+		buttonPanel.setMinimumSize(new Dimension(100, 200));
+		
+		suggestion = createButton(buttonPanel, "Suggest", 0, 0, 1, 2, new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				for (FrameListener l : listeners){
+					l.onSuggest();
+				}
+			}
+		}, con);
+		accusation = createButton(buttonPanel, "Accuse", 0, 1, 1, 2, new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				for (FrameListener l : listeners){
+					l.onAccuse();
+				}
+			}
+		}, con);
+		endTurn = createButton(buttonPanel, "End Turn", 0, 2, 1, 20, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				for (FrameListener l : listeners){
+					l.onEndTurn();
+				}
+			}
+		}, con);
+		rollDice = createButton(buttonPanel, "Roll Dice", 0, 3, 1, 20, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				for (FrameListener l : listeners){
+					l.onRollDice();
+				}
+			}
+		}, con);
+		displayTurnButtons(false);
+		suggestion.setVisible(false);
+		displayRollDice(false);
+		
+		setConstraints(con, 0, 2, 1, false, false);
+		pane.add(buttonPanel, con);
+		
+		//Setup the board canvas
+		canvas = new BoardCanvas(this, board, def, cardImages);
+		setConstraints(con, 1, 0, 1, true, true);
+		con.gridheight = 2;
+		con.insets = new Insets(0,0,0,0);
+		pane.add(canvas, con);
+		
+		//Setup the hand panel
+		hand = new CardListPanel(cardImages);
+		hand.setPreferredSize(new Dimension(2000, 200));
+		setConstraints(con, 1, 2, 1, true, false);
+		con.gridheight = 1;
+		con.insets = new Insets(0,0,0,0);
+		pane.add(hand, con);
+		
+		setVisible(true);
+	}
+	
+	private void loadImages(){
 		cardImages = new HashMap<String, Image>();
 		try {
+			//Load card back
+			cardImages.put("back", ImageIO.read(new File("./images/card_back.png")));
+			
 			//Load weapon pictures
 			cardImages.put("Dagger", ImageIO.read(new File("./images/card_dagger.png")));
 			cardImages.put("Revolver", ImageIO.read(new File("./images/card_revolver.png")));
@@ -98,62 +182,17 @@ public class CluedoFrame extends JFrame implements GameListener {
 			cardImages.put("Study", ImageIO.read(new File("./images/card_study.png")));
 		} catch (IOException e) {
 		}
-		this.canvas = new Canvas(this, board, def, cardImages);
-
-		//Add Gap
-		setConstraints(con, 1, 0, 1, false, true);
-		pane.add(new JLabel(""), con);
-		setConstraints(con, 1, 3, 1, true, false);
-		pane.add(new JLabel(""), con);
-
-		suggestion = createButton(pane, "Suggest", 0, 1, 1, 2, new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				for (FrameListener l : listeners){
-					l.onSuggest();
-				}
+	}
+	
+	public void setHand(Hand hand){
+		List<Card> cards = null;
+		if (hand != null){
+			cards = new ArrayList<Card>();
+			for (Card c : hand){
+				cards.add(c);
 			}
-		}, con);
-		accusation = createButton(pane, "Accuse", 0, 2, 1, 2, new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				for (FrameListener l : listeners){
-					l.onAccuse();
-				}
-			}
-		}, con);
-		endTurn = createButton(pane, "End Turn", 0, 3, 1, 20, new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				for (FrameListener l : listeners){
-					l.onEndTurn();
-				}
-			}
-		}, con);
-		rollDice = createButton(pane, "Roll Dice", 0, 4, 1, 20, new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				for (FrameListener l : listeners){
-					l.onRollDice();
-				}
-			}
-		}, con);
-		displayTurnButtons(false);
-		suggestion.setVisible(false);
-		displayRollDice(false);
-		
-		setConstraints(con, 1, 0, 1, true, true);
-		con.insets = new Insets(0,0,0,0);
-		con.gridheight = 5;
-		
-		setConstraints(con, 0, 0, 2, true, true);
-		con.gridheight = 5;
-
-		con.insets = new Insets(0,0,0,0);
-		pane.add(canvas, con);
-		setVisible(true);
+		}
+		this.hand.setCards(cards);
 	}
 	
 	public Map<String, Image> getCardImages(){
@@ -210,7 +249,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 		button.setOpaque(false);
 		button.addActionListener(listener);
 		setConstraints(con, x, y, width, false, false);
-		con.insets = new Insets(1, 20, bottomInset, 1);
+		con.insets = new Insets(0, 0, 0, 0);
 		pane.add(button, con);
 		return button;
 	}
@@ -229,7 +268,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 		con.gridy = y;
 		con.gridx = x;
 		con.gridwidth = width;
-		con.insets = new Insets(1, 20, 2, 1);
+		con.insets = new Insets(0, 0, 0, 0);
 		con.weightx = (expandX) ? 1 : 0;
 		con.weighty = (expandY) ? 1 : 0;
 	}
@@ -246,7 +285,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 		return con;
 	}
 
-	public Canvas getCanvas(){
+	public BoardCanvas getCanvas(){
 		return canvas;
 	}
 

@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +15,7 @@ import javax.swing.JPanel;
 
 import cluedo.model.card.Card;
 
-public class SuggestionDisprovePanel extends JPanel implements MouseListener{
+public class CardListPanel extends JPanel implements MouseListener{
 	private static final int CARD_WIDTH = 100;
 	private static final int CARD_HEIGHT = 150;
 	
@@ -25,28 +26,40 @@ public class SuggestionDisprovePanel extends JPanel implements MouseListener{
 	
 	private List<CardListener> listeners;
 	
-	public SuggestionDisprovePanel(Map<String, Image> cardImages){
+	private boolean hidden = false;
+	
+	public CardListPanel(Map<String, Image> cardImages){
 		this.cardImages = cardImages;
 		listeners = new ArrayList<CardListener>();
+		setBackground(ROOM);
+		addMouseListener(this);
 	}
 	
 	public void setCards(List<Card> cards){
-		setBackground(ROOM);
 		this.cards = cards;
-		addMouseListener(this);
+	}
+	
+	public void hideCards(boolean hide){
+		hidden = hide;
 	}
 	
 	@Override
 	public void paint(Graphics gg){
 		Graphics2D g = (Graphics2D) gg;
 		super.paint(g);
+		
 		if (cards != null){
-			int x = (getWidth()-cards.size()*(CARD_WIDTH+5)+5)/2;
+			int step = CARD_WIDTH+5;
+			int x = (getWidth()-cards.size()*(step)+5)/2;
 			int y = (getHeight()-CARD_HEIGHT)/2;
 			
+			if (x < 5){
+				x = 5;
+				step = (this.getWidth()-5)/cards.size();
+			}
 			for (Card c : cards){
-				g.drawImage(cardImages.get(c.getName()), x, y, CARD_WIDTH, CARD_HEIGHT, null);
-				x+=CARD_WIDTH+5;
+				g.drawImage(cardImages.get((hidden) ? "back" : c.getName()), x, y, CARD_WIDTH, CARD_HEIGHT, null);
+				x+=step;
 			}
 		}
 	}
@@ -60,14 +73,6 @@ public class SuggestionDisprovePanel extends JPanel implements MouseListener{
 		public void onCardSelected(Card c);
 	}
 
-	@Override
-	public void mouseClicked(MouseEvent arg0) {}
-
-	@Override
-	public void mouseEntered(MouseEvent arg0) {}
-
-	@Override
-	public void mouseExited(MouseEvent arg0) {}
 
 	@Override
 	public void mousePressed(MouseEvent arg0) {
@@ -87,7 +92,16 @@ public class SuggestionDisprovePanel extends JPanel implements MouseListener{
 			}
 		}
 	}
+	
+	@Override
+	public void mouseClicked(MouseEvent arg0) {}
 
+	@Override
+	public void mouseEntered(MouseEvent arg0) {}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {}
+	
 	@Override
 	public void mouseReleased(MouseEvent arg0) {}
 }

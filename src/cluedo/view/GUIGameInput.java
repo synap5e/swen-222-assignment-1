@@ -31,7 +31,7 @@ import cluedo.model.card.Room;
 import cluedo.model.card.Token;
 import cluedo.model.card.Weapon;
 import cluedo.model.cardcollection.Hand;
-import cluedo.view.SuggestionDisprovePanel.CardListener;
+import cluedo.view.CardListPanel.CardListener;
 
 /**
  *
@@ -135,7 +135,7 @@ public class GUIGameInput implements GameInput, FrameListener, CardListener{
 	public void startTurn(Hand h) {
 		frame.getCanvas().setCurrentAction("Roll the Dice");
 		frame.displayRollDice(true);
-		frame.getCanvas().setCurrentHand(h);
+		frame.setHand(h);
 		waitForDiceRoll = true;
 		while (waitForDiceRoll){
 			try {
@@ -262,7 +262,7 @@ public class GUIGameInput implements GameInput, FrameListener, CardListener{
 		setConstraints(con, 1, 0, 1, false, false);
 		dialog.add(new JLabel(character.getName() + ", choose a card to disprove the suggestion"), con);
 		setConstraints(con, 0, 1, 3, true, true);
-		SuggestionDisprovePanel disprovePanel = new SuggestionDisprovePanel(frame.getCardImages());
+		CardListPanel disprovePanel = new CardListPanel(frame.getCardImages());
 		disprovePanel.setCards(possibleShow);
 		disprovePanel.addListener(this);
 		dialog.add(disprovePanel, con);
