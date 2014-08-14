@@ -52,7 +52,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 	private Map<String, Image> cardImages;
 	
 	private CardListPanel hand;
-	
+	private CardListPanel cardDisplay;
 	
 	private JButton suggestion;
 	private JButton accusation;
@@ -78,6 +78,11 @@ public class CluedoFrame extends JFrame implements GameListener {
 		pane.setLayout(new GridBagLayout());
 		GridBagConstraints con = createConstraints();
 
+		cardDisplay = new CardListPanel(cardImages);
+		setConstraints(con, 0, 0, 1, false, false);
+		cardDisplay.setMinimumSize(new Dimension(110, 175));
+		pane.add(cardDisplay, con);
+		
 		//Add Gap
 		//setConstraints(con, 0, 2, 1, false, true);
 		//con.gridheight = 2;
@@ -87,7 +92,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 		//pane.add(new JLabel(""), con);
 
 		JPanel buttonPanel = new JPanel(new GridBagLayout());
-		buttonPanel.setMinimumSize(new Dimension(100, 200));
+		buttonPanel.setMinimumSize(new Dimension(110, 200));
 		
 		suggestion = createButton(buttonPanel, "Suggest", 0, 0, 1, 2, new ActionListener() {
 
@@ -182,6 +187,13 @@ public class CluedoFrame extends JFrame implements GameListener {
 			cardImages.put("Study", ImageIO.read(new File("./images/card_study.png")));
 		} catch (IOException e) {
 		}
+	}
+	
+	public void setDisplayedCard(Card card){
+		List<Card> cards = new ArrayList<Card>();
+		cards.add(card);
+		cardDisplay.setCards(cards);
+		cardDisplay.repaint();
 	}
 	
 	public void setHand(Hand hand){

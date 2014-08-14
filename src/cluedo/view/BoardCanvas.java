@@ -452,12 +452,10 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 		if (loc != null){
 			if (loc instanceof Tile){
 				if (loc.getTokens().size() > 0){
-					hover = loc.getTokens().get(0);
-				} else {
-					hover = null;
+					frame.setDisplayedCard(loc.getTokens().get(0));
 				}
 			} else { //must be a room
-				hover = (Room) loc;
+				Card hover = (Room) loc;
 				if (loc.getTokens().size() > 0){
 					double xc = roomCenter.get(loc).getX();
 					double yc = roomCenter.get(loc).getY() - 10d/tileWidth+1;
@@ -469,12 +467,9 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 						++xc;
 					}
 				}
+				frame.setDisplayedCard(hover);
 			}
-		} else {
-			hover = null;
 		}
-
-		frame.repaint();
 	}
 
 
