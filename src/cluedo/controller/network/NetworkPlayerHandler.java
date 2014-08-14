@@ -45,4 +45,8 @@ public class NetworkPlayerHandler {
 		return new ServerGameChannel(os, con.getInputStream(), board);
 	}
 
+	public void shutdown() throws IOException {
+		this.socket.close();
+	}
+
 }

@@ -248,7 +248,6 @@ public class NetworkConsistencyTests implements GameListener {
 		player1Moves.offer(new Object[]{null}); // end of game
 		
 		runGame(masterBoard, player0Moves, player1Moves, player2Moves);
-		JOptionPane.showConfirmDialog(null, "");
 	}
 
 	/** Run a using playerScripts as the scripts for all players.
@@ -265,9 +264,10 @@ public class NetworkConsistencyTests implements GameListener {
 	private void runGame(final Board masterBoard, final Queue<Object[]> ... playerScripts) throws IOException, JsonParseException {
 		JsonObject defs = MinimalJson.parseJson(new File("./rules/cards.json"));
 		
+		NetworkPlayerHandler net;
 		this.master = new GameMaster(
 				masterBoard,
-				new NetworkPlayerHandler("127.0.0.1", 1337, defs, masterBoard),
+				net = new NetworkPlayerHandler("127.0.0.1", 1337, defs, masterBoard),
 				null
 		){
 			@Override
@@ -326,8 +326,9 @@ public class NetworkConsistencyTests implements GameListener {
 		
 		master.addGameListener(this);
 		
+		CluedoFrame cf = null;
 		if (showgames){
-			CluedoFrame cf = new CluedoFrame(masterBoard, defs);
+			cf = new CluedoFrame(masterBoard, defs);
 			master.addGameListener(cf);
 		}
 		
@@ -427,6 +428,11 @@ public class NetworkConsistencyTests implements GameListener {
 			}
 			lastBoard = b;
 		}
+		
+		if (cf != null){
+			cf.dispose();
+		}
+		net.shutdown();
 	}
 
 	@Override

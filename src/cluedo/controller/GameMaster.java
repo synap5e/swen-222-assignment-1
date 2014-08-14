@@ -20,6 +20,7 @@ import cluedo.controller.player.Player;
 import cluedo.controller.player.Player.PlayerType;
 import cluedo.model.Board;
 import cluedo.model.Location;
+import cluedo.model.Tile;
 import cluedo.model.card.Card;
 import cluedo.model.card.Character;
 import cluedo.model.card.Room;
@@ -183,7 +184,8 @@ public class GameMaster {
 
 			// TODO, what if not in passed in list - should we complain here always, or only in assert mode
 			// TODO this needs to kick the player - otherwise a remote user could cheat
-			assert possibleLocations.contains(destination);
+			
+			assert possibleLocations.contains(destination) : "assert "+ possibleLocations + ".contains(" + destination + ")";
 
 			board.moveCharacter(playersCharacter, destination);
 
