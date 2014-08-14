@@ -35,16 +35,16 @@ import cluedo.view.GUIGameInput;
  */
 public class GameMaster {
 
-	private List<Player> players;
-	private Map<Player, Character> playingAs;
+	protected List<Player> players;
+	protected Map<Player, Character> playingAs;
 
-	private Accusation correctAccusation;
-	private List<GameListener> listeners;
-	private Random random = new Random();
-	private int turn;
-	private Board board;
-	private GameInput input;
-	private NetworkPlayerHandler networkPlayerHandler;
+	protected Accusation correctAccusation;
+	protected List<GameListener> listeners;
+	protected Random random = new Random();
+	protected int turn;
+	protected Board board;
+	protected GameInput input;
+	protected NetworkPlayerHandler networkPlayerHandler;
 
 	public GameMaster(Board board, GameInput input) {
 		this.board = board;
@@ -242,10 +242,14 @@ public class GameMaster {
 					for (GameListener listener : listeners){
 						listener.onGameWon(player.getName(), playersCharacter);
 					}
+					break;
 				} else {
 					activePlayers.remove(player);
 					for (GameListener listener : listeners){
 						listener.onLostGame(player.getName(), playersCharacter);
+					}
+					if (activePlayers.size() == 1){
+						break;
 					}
 				}
 
