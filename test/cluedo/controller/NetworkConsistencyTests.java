@@ -3,6 +3,7 @@ package cluedo.controller;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -44,6 +45,9 @@ import cluedo.model.cardcollection.Accusation;
 import cluedo.model.cardcollection.Hand;
 import cluedo.model.cardcollection.Suggestion;
 import cluedo.view.CluedoFrame;
+import cluedo.view.ConfigListener;
+import cluedo.view.GUIGameInput;
+import cluedo.view.GameConfig;
 
 /** This test suite tests that 2 (or more) boards across a networked game
  * end up in an identical state. In doing so this tests a large portion of 
@@ -129,8 +133,7 @@ public class NetworkConsistencyTests implements GameListener {
 			}
 		}
 		
-		
-		
+
 		
 		@Override
 		public int getNumberOfPlayers(int min, int max) {
@@ -241,6 +244,23 @@ public class NetworkConsistencyTests implements GameListener {
 		runGame(masterBoard, player1Moves, player2Moves, player3Moves);
 	}
 
+	
+	boolean createScript = false;
+	GUIGameInput guin;
+	private static void main(String[] args) throws JsonParseException, IOException{
+		new NetworkConsistencyTests();
+	}
+	
+	public NetworkConsistencyTests() throws JsonParseException, IOException {
+		this.createScript = true;
+		JsonObject defs = MinimalJson.parseJson(new File("./rules/cards.json"));
+		JsonObject starts = MinimalJson.parseJson("{ \"Rope\" : \"Library\",\"Dagger\" : \"Ballroom\",\"Spanner\" : \"Conservatory\",\"Revolver\" : \"Kitchen\",\"Candlestick\" : \"Lounge\",\"Lead Piping\" : \"Billiard Room\"}");
+				
+		Board masterBoard = new Board(defs, starts);
+		
+		runGame(masterBoard, null, null, null);
+	}
+	
 	/** Run a using playerScripts as the scripts for all players.
 	 * The first playerScript defines the "local" player while the subsequent playerScripts 
 	 * are run in new threads as network players. Note that because the model is serialized 
@@ -254,6 +274,14 @@ public class NetworkConsistencyTests implements GameListener {
 	 */
 	private void runGame(final Board masterBoard, final Queue<Object[]> ... playerScripts) throws IOException, JsonParseException {
 		JsonObject defs = MinimalJson.parseJson(new File("./rules/cards.json"));
+		
+		CluedoFrame cfr = null;
+		if (showgames || createScript){
+			cfr = new CluedoFrame(masterBoard, defs);
+			GameConfig cfg = new GameConfig();
+			waitFor(cfg);
+			guin = new GUIGameInput(cfr, cfg);
+		}
 		
 		this.master = new GameMaster(
 				masterBoard,
@@ -296,7 +324,14 @@ public class NetworkConsistencyTests implements GameListener {
 				for (int x=0;x<handSize;x++){
 					hand.addCard(deck.remove(0));
 				}
-				players.add(new HumanPlayer("test_player_" + 0, hand, pickableCharacters.get(0), new ScriptedInput(playerScripts[0])));
+				
+				GameInput in;
+				if (createScript){
+					in = guin;
+				} else {
+					in = new ScriptedInput(playerScripts[0]);
+				}
+				players.add(new HumanPlayer("test_player_" + 0, hand, pickableCharacters.get(0), in));
 				playingAs.put(players.get(0), pickableCharacters.get(0));
 				System.out.println(pickableCharacters.get(0).getName());
 				
@@ -305,8 +340,14 @@ public class NetworkConsistencyTests implements GameListener {
 					for (int x=0;x<handSize;x++){
 						hand.addCard(deck.remove(0));
 					}
-					ServerGameChannel n = this.networkPlayerHandler.getRemoteInput(30);
-					this.addGameListener(n);
+					
+					GameInput n;
+					if (createScript){
+						n = guin;
+					} else {
+						n = this.networkPlayerHandler.getRemoteInput(30);
+						this.addGameListener((GameListener) n);
+					}
 					players.add(new HumanPlayer("test_player_" + i, hand, pickableCharacters.get(i), n));
 					playingAs.put(players.get(i), pickableCharacters.get(i));
 					System.out.println(pickableCharacters.get(i).getName());
@@ -316,9 +357,8 @@ public class NetworkConsistencyTests implements GameListener {
 		
 		master.addGameListener(this);
 		
-		if (showgames){
-			CluedoFrame cf = new CluedoFrame(masterBoard, defs);
-			master.addGameListener(cf);
+		if (showgames || createScript){
+			master.addGameListener(cfr);
 		}
 		
 		final List<Board> allBoards = new ArrayList<Board>();
@@ -416,6 +456,25 @@ public class NetworkConsistencyTests implements GameListener {
 				
 			}
 			lastBoard = b;
+		}
+	}
+
+	boolean w = true;
+	private void waitFor(GameConfig cfg) {
+		cfg.setConfigListener(new ConfigListener() {
+			
+			@Override
+			public void onConfigured() {
+				w = false;
+			}
+		});
+		while(w){
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
