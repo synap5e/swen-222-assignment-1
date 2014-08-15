@@ -228,7 +228,7 @@ public class Board {
 				allowed.add(l);
 			} else {
 				for (Location n : l.getNeighbours()){
-					if (!depths.containsKey(n)){
+					if (!depths.containsKey(n) && (n instanceof Room || ((Tile)n).getTokens().size() == 0)){
 						q.offer(n);
 						depths.put(n, depth+1);
 					}
