@@ -338,17 +338,9 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 		action = act;
 		frame.repaint();
 	}
-
-	@Override
-	public void mouseClicked(MouseEvent arg0) {
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent arg0) {
-	}
-
-	@Override
-	public void mouseExited(MouseEvent arg0) {
+	
+	public void onTurnBegin(String name, Character playersCharacter) {
+		currentPlayer = playersCharacter;
 	}
 
 	@Override
@@ -393,64 +385,6 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 	}
 
 	@Override
-	public void mouseReleased(MouseEvent arg0) {
-	}
-
-
-	public void onCharacterMove(Character character, Location destination) {
-		frame.repaint();
-	}
-
-	public void onWeaponMove(Weapon weapon, Location room) {
-		frame.repaint();
-	}
-
-
-
-	public void onCharacterJoinedGame(String playerName, Character character, PlayerType type) {
-		System.out.printf("%s (%s) joind the game as %s\n", playerName, character.getName(), type == PlayerType.LocalHuman? "human" : "AI");
-	}
-
-
-	public void onTurnBegin(String name, Character playersCharacter) {
-		currentPlayer = playersCharacter;
-		System.out.printf("Its %s's (%s) turn\n", name, playersCharacter.getName());
-	}
-
-
-	public void onDiceRolled(int dice1, int dice2) {
-		System.out.printf("A %d and a %d was rolled\n", dice1, dice2);
-	}
-
-
-	public void onSuggestionUndisputed(Character suggester,	Suggestion suggestion) {
-		System.out.printf("%s suggested that %s killed Dr Black with a %s and no-one could disprove that\n",
-				suggester.getName(), suggestion.getCharacter().getName(), suggestion.getWeapon().getName());
-	}
-
-
-	public void onSuggestionDisproved(Character suggester, Suggestion suggestion, Character disprover) {
-		System.out.printf("%s suggested that %s killed Dr Black with a %s but %s proved that could not be\n",
-				suggester.getName(), suggestion.getCharacter().getName(), suggestion.getWeapon().getName(), disprover.getName());
-	}
-
-
-	public void onAccusation(Character accussuer, Accusation accusation, boolean correct) {
-		System.out.printf(	"%s accused %s of killing Dr Black in the %s with a %s\n" +
-							(correct ? "This was magically verified as true" : "They were wrong and got killed") + "\n",
-							accussuer.getName(), accusation.getCharacter().getName(), accusation.getRoom().getName(), accusation.getWeapon().getName());
-	}
-
-	public void onGameWon(String name, Character playersCharacter) {
-		System.out.printf("%s (%s) won the game!\n", name, playersCharacter.getName());
-	}
-
-
-	@Override
-	public void mouseDragged(MouseEvent arg0) {}
-
-
-	@Override
 	public void mouseMoved(MouseEvent arg0) {
 		double x = ((double) (arg0.getX()-xOffset))/tileWidth;
 		double y = ((double) (arg0.getY()-yOffset-TITLE_HEIGHT-10))/tileWidth;
@@ -478,15 +412,19 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 			}
 		}
 	}
+	
+	@Override
+	public void mouseClicked(MouseEvent arg0) {}
 
+	@Override
+	public void mouseEntered(MouseEvent arg0) {}
 
-	public void waitingForNetworkPlayers(int i) {
-		System.out.printf("Still waiting for %d network players\n", i);
-	}
+	@Override
+	public void mouseExited(MouseEvent arg0) {}
+	
+	@Override
+	public void mouseReleased(MouseEvent arg0) {}
 
-
-	public void onLostGame(String name, Character playersCharacter) {
-		// TODO Auto-generated method stub
-		System.out.printf("%s (%s) lost the game due to an incorrect accusation\n", name, playersCharacter.getName());
-	}
+	@Override
+	public void mouseDragged(MouseEvent arg0) {}
 }
