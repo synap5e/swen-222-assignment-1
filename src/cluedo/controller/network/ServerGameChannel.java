@@ -214,22 +214,24 @@ public class ServerGameChannel implements GameInput, GameListener {
 	}
 
 	@Override
-	public synchronized void onSuggestionUndisputed(Character suggester, Suggestion suggestion) {
+	public synchronized void onSuggestionUndisputed(Character suggester, Suggestion suggestion, Room room) {
 		write(new MessageBuilder().
 				type("push").
 				name("onSuggestionUndisputed").
 					parameter("suggester", ModelToJson.cardToJson(suggester)).
 					parameter("suggestion", ModelToJson.suggestionToJson(suggestion)).
+					parameter("room", ModelToJson.cardToJson(room)).
 			build());
 	}
 
 	@Override
-	public synchronized void onSuggestionDisproved(Character suggester,	Suggestion suggestion, Character disprover) {
+	public synchronized void onSuggestionDisproved(Character suggester,	Suggestion suggestion, Room room, Character disprover) {
 		write(new MessageBuilder().
 				type("push").
 				name("onSuggestionDisproved").
 					parameter("suggester", ModelToJson.cardToJson(suggester)).
 					parameter("suggestion", ModelToJson.suggestionToJson(suggestion)).
+					parameter("room", ModelToJson.cardToJson(room)).
 					parameter("disprover", ModelToJson.cardToJson(disprover)).
 			build());
 	}

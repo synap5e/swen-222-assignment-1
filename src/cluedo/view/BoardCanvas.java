@@ -423,13 +423,13 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 	}
 
 
-	public void onSuggestionUndisputed(Character suggester,	Suggestion suggestion) {
+	public void onSuggestionUndisputed(Character suggester,	Suggestion suggestion, Room room) {
 		System.out.printf("%s suggested that %s killed Dr Black with a %s and no-one could disprove that\n",
 				suggester.getName(), suggestion.getCharacter().getName(), suggestion.getWeapon().getName());
 	}
 
 
-	public void onSuggestionDisproved(Character suggester, Suggestion suggestion, Character disprover) {
+	public void onSuggestionDisproved(Character suggester, Suggestion suggestion, Room room, Character disprover) {
 		System.out.printf("%s suggested that %s killed Dr Black with a %s but %s proved that could not be\n",
 				suggester.getName(), suggestion.getCharacter().getName(), suggestion.getWeapon().getName(), disprover.getName());
 	}

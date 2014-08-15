@@ -22,6 +22,7 @@ import cluedo.model.Board;
 import cluedo.model.Location;
 import cluedo.model.card.Card;
 import cluedo.model.card.Character;
+import cluedo.model.card.Room;
 import cluedo.model.card.Weapon;
 import cluedo.model.cardcollection.Hand;
 import cluedo.view.CluedoFrame;
@@ -126,7 +127,8 @@ public class GameSlave {
 		case "onSuggestionUndisputed":
 			listener.onSuggestionUndisputed(
 					jsonToModel.<Character>jsonToCard(parameters.get("suggester")),
-					jsonToModel.jsonToSuggestion(parameters.get("suggestion"))
+					jsonToModel.jsonToSuggestion(parameters.get("suggestion")),
+					jsonToModel.<Room>jsonToCard(parameters.get("room"))
 			);
 			return;
 			
@@ -134,6 +136,7 @@ public class GameSlave {
 			listener.onSuggestionDisproved(
 					jsonToModel.<Character>jsonToCard(parameters.get("suggester")),
 					jsonToModel.jsonToSuggestion(parameters.get("suggestion")),
+					jsonToModel.<Room>jsonToCard(parameters.get("room")),
 					jsonToModel.<Character>jsonToCard(parameters.get("disprover"))
 			);
 			return;

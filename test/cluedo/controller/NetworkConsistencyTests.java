@@ -534,20 +534,6 @@ public class NetworkConsistencyTests implements GameListener {
 	}
 
 	@Override
-	public void onSuggestionUndisputed(Character suggester,
-			Suggestion suggestion) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onSuggestionDisproved(Character suggester,
-			Suggestion suggestion, Character disprover) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void onAccusation(Character accuser, Accusation accusation,
 			boolean correct) {
 		// TODO Auto-generated method stub
@@ -586,6 +572,20 @@ public class NetworkConsistencyTests implements GameListener {
 
 	@Override
 	public void onLostGame(String name, Character playersCharacter) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSuggestionUndisputed(Character suggester,
+			Suggestion suggestion, Room room) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSuggestionDisproved(Character suggester,
+			Suggestion suggestion, Room room, Character disprover) {
 		// TODO Auto-generated method stub
 		
 	}

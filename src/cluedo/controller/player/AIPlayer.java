@@ -6,6 +6,7 @@ import cluedo.controller.interaction.GameListener;
 import cluedo.model.Location;
 import cluedo.model.card.Card;
 import cluedo.model.card.Character;
+import cluedo.model.card.Room;
 import cluedo.model.card.Weapon;
 import cluedo.model.cardcollection.Accusation;
 import cluedo.model.cardcollection.Hand;
@@ -34,20 +35,6 @@ public class AIPlayer extends Player implements GameListener{
 
 	@Override
 	public void onTurnBegin(String name, Character playersCharacter) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onSuggestionUndisputed(Character suggester,
-			Suggestion suggestion) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onSuggestionDisproved(Character suggester,
-			Suggestion suggestion, Character disprover) {
 		// TODO Auto-generated method stub
 
 	}
@@ -143,6 +130,20 @@ public class AIPlayer extends Player implements GameListener{
 	public void onLostGame(String name, Character playersCharacter) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void onSuggestionUndisputed(Character suggester,
+			Suggestion suggestion, Room room) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSuggestionDisproved(Character suggester,
+			Suggestion suggestion, Room room, Character disprover) {
+		// TODO Auto-generated method stub
+		
 	}
 
 

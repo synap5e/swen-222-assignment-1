@@ -219,7 +219,7 @@ public class GameMaster {
 
 						for (GameListener listener : listeners){
 							if (listener != player){
-								listener.onSuggestionDisproved(playersCharacter, suggestion, playingAs.get(p));
+								listener.onSuggestionDisproved(playersCharacter, suggestion, room, playingAs.get(p));
 							}
 						}
 						player.suggestionDisproved(suggestion, playingAs.get(p), disprovingCard);
@@ -231,7 +231,7 @@ public class GameMaster {
 
 				if (!disproved){
 					for (GameListener listener : listeners){
-						listener.onSuggestionUndisputed(playersCharacter, suggestion);
+						listener.onSuggestionUndisputed(playersCharacter, suggestion, room);
 					}
 				}
 			}

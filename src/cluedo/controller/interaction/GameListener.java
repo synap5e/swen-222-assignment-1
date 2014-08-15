@@ -3,6 +3,7 @@ package cluedo.controller.interaction;
 import cluedo.controller.player.Player.PlayerType;
 import cluedo.model.Location;
 import cluedo.model.card.Character;
+import cluedo.model.card.Room;
 import cluedo.model.card.Weapon;
 import cluedo.model.cardcollection.Accusation;
 import cluedo.model.cardcollection.Suggestion;
@@ -26,9 +27,9 @@ public interface GameListener {
 
 
 
-	public void onSuggestionUndisputed(Character suggester, Suggestion suggestion);
+	public void onSuggestionUndisputed(Character suggester, Suggestion suggestion, Room room);
 
-	public void onSuggestionDisproved(Character suggester, Suggestion suggestion, Character disprover);
+	public void onSuggestionDisproved(Character suggester, Suggestion suggestion, Room room, Character disprover);
 
 	public void onAccusation(Character accuser, Accusation accusation, boolean correct);
 
