@@ -29,7 +29,9 @@ import cluedo.model.cardcollection.Accusation;
 import cluedo.model.cardcollection.Hand;
 import cluedo.model.cardcollection.Suggestion;
 
-/**
+/** This class serves as the channel of communication between a GameMaster and GameSlave.
+ * ServerGameChannel implmented both GameInput and GameListener and as such is used
+ * for both querying input from a remote player and sending events to remote players
  *
  * @author Simon Pinfold
  *
@@ -57,18 +59,19 @@ public class ServerGameChannel implements GameInput, GameListener {
 
 	@Override
 	public synchronized int getNumberOfPlayers(int min, int max) {
+		// not required for network players
 		throw new UnsupportedOperationException();
 	}
 
 
 	@Override
 	public synchronized List<String> getHumanNames() {
+		// not required for network players
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public synchronized String getSingleName() {
-
 		write(new MessageBuilder().
 					type("pull").
 					name("getSingleName").
