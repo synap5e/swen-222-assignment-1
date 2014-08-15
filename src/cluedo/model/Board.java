@@ -116,6 +116,18 @@ public class Board {
 		}
 
 		createBoard(rows, roomsDef, kestToRooms, startLocations, doorways);
+		
+		for (JsonEntity je : (JsonList)defs.get("passages")){
+			JsonList tuple = (JsonList) je;
+			JsonString r1 = (JsonString) tuple.get(0);
+			JsonString r2 = (JsonString) tuple.get(1);
+			
+			String n1 = r1.value();
+			String n2 = r2.value();
+			
+			roomNames.get(n1).addNeighbour(roomNames.get(n2));
+			roomNames.get(n2).addNeighbour(roomNames.get(n1));
+		}
 	}
 
 	public Board(JsonObject defs){
