@@ -383,7 +383,7 @@ public class NetworkConsistencyTests implements GameListener {
 					for (int x=0;x<handSize;x++){
 						hand.addCard(deck.remove(0));
 					}
-					ServerGameChannel n = this.networkPlayerHandler.getRemoteInput(30);
+					ServerGameChannel n = this.networkPlayerHandler.getRemoteInput();
 					this.addGameListener(n);
 					
 					String name = n.getSingleName();

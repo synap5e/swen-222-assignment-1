@@ -94,7 +94,7 @@ public class GameMaster {
 					listener.waitingForNetworkPlayers(networkPlayers-i);
 				}
 
-				ServerGameChannel chanel = networkPlayerHandler.getRemoteInput(30);
+				ServerGameChannel chanel = networkPlayerHandler.getRemoteInput();
 				networkChannels.add(chanel);
 				listeners.add(chanel);
 				
