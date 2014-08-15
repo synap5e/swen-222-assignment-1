@@ -1,0 +1,3 @@
+Emma was used to find the coverage of NetworkConsistencyTests.testGameScript1() and more tests were 
+genrated to test the code paths in ServerGameChannel, GameSlave, ModelToJson and JsonToModel that were 
+not covered. 

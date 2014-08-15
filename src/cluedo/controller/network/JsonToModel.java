@@ -85,7 +85,7 @@ public class JsonToModel {
 	public Accusation jsonToAccusation(JsonEntity jsonEntity) {
 		return new Accusation(
 				this.<Weapon>jsonToCard(((JsonObject) jsonEntity).get("weapon")), 
-				this.<Character>jsonToCard(((JsonObject) jsonEntity).get("suggestion")),
+				this.<Character>jsonToCard(((JsonObject) jsonEntity).get("character")),
 				this.<Room>jsonToCard(((JsonObject) jsonEntity).get("room"))
 		);
 	}
