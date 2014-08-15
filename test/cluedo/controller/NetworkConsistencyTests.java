@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -180,8 +181,8 @@ public class NetworkConsistencyTests implements GameListener {
 				
 		Board masterBoard = new Board(defs, starts);
 		
-		Queue<Object[]> player0Moves = new LinkedList<Object[]>(); // colonel mustard
-		Queue<Object[]> player1Moves = new LinkedList<Object[]>(); // miss scarlet
+		Queue<Object[]> player0Moves = new LinkedList<Object[]>(); // Mrs White
+		Queue<Object[]> player1Moves = new LinkedList<Object[]>(); // Rev. Green
 		
 		player0Moves.offer(new Object[]{Moves.MOVE, masterBoard.getLocation(7,4)});
 		
@@ -226,8 +227,8 @@ public class NetworkConsistencyTests implements GameListener {
 				
 		Board masterBoard = new Board(defs, starts);
 		
-		Queue<Object[]> player0Moves = new LinkedList<Object[]>(); // colonel mustard
-		Queue<Object[]> player1Moves = new LinkedList<Object[]>(); // miss scarlet
+		Queue<Object[]> player0Moves = new LinkedList<Object[]>(); // Mrs White
+		Queue<Object[]> player1Moves = new LinkedList<Object[]>(); // Rev. Green
 		Queue<Object[]> player2Moves = new LinkedList<Object[]>(); // Mrs Peacock
 		
 		player0Moves.offer(new Object[]{Moves.MOVE, masterBoard.getLocation(7,4)});
@@ -261,8 +262,8 @@ public class NetworkConsistencyTests implements GameListener {
 				
 		Board masterBoard = new Board(defs, starts);
 		
-		Queue<Object[]> player0Moves = new LinkedList<Object[]>(); // colonel mustard
-		Queue<Object[]> player1Moves = new LinkedList<Object[]>(); // miss scarlet
+		Queue<Object[]> player0Moves = new LinkedList<Object[]>(); // Mrs White
+		Queue<Object[]> player1Moves = new LinkedList<Object[]>(); // Rev. Green
 		Queue<Object[]> player2Moves = new LinkedList<Object[]>(); // Mrs Peacock
 		
 		player0Moves.offer(new Object[]{Moves.MOVE, masterBoard.getLocation(6,3)});
@@ -346,13 +347,20 @@ public class NetworkConsistencyTests implements GameListener {
 				deck.remove(correctAccusation.getCharacter());
 				deck.remove(correctAccusation.getRoom());
 				
-				List<Character> pickableCharacters = new ArrayList<Character>(board.getCharacters());
-				Collections.sort(pickableCharacters, new Comparator<Character>() {
-					@Override
-					public int compare(Character o1, Character o2) {
-						return o1.getName().compareTo(o2.getName());
+				
+				Character[] cs = new Character[3];
+				for (Character c : board.getCharacters()){
+					if (c.getName().equals("Mrs White")){
+						cs[0] = c;
 					}
-				});
+					if (c.getName().equals("Rev. Green")){
+						cs[1] = c;
+					}
+					if (c.getName().equals("Mrs Peacock")){
+						cs[2] = c;
+					}
+				}
+				List<Character> pickableCharacters = Arrays.asList(cs);
 				List<Character> availCharacters = new ArrayList<Character>(pickableCharacters);
 				
 				
