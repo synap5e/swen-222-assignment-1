@@ -16,7 +16,8 @@ import cluedo.model.card.Room;
 import cluedo.model.card.Weapon;
 import cluedo.model.cardcollection.Accusation;
 import cluedo.model.cardcollection.Hand;
-/**
+/** This class is responsible for creating an accusation and dealing the 
+ * hands of the players in the game.
  * 
  * @author Simon Pinfold
  *
@@ -34,6 +35,10 @@ public class Dealer {
 		rooms = new ArrayList<Room>(board.getRooms());
 	}
 
+	/** Create a random accusation.
+	 * 
+	 * @return the accusation created
+	 */
 	public Accusation createAccusation() {
 		return new Accusation(
 			weapons.remove(random.nextInt(weapons.size())),
@@ -42,6 +47,12 @@ public class Dealer {
 		);
 	}
 
+	/** Return a list of numberOfPlayers hands, randomly selected and equal
+	 * size. The hands cannot contain the cards used in the accusation created.
+	 * 
+	 * @param numberOfPlayers the number of players, and therefore number of hands to create
+	 * @return the list of hands
+	 */
 	public List<Hand> dealHands(int numberOfPlayers) {
 		List<Hand> hands = new ArrayList<Hand>();
 		for (int i =0; i<numberOfPlayers;i++){

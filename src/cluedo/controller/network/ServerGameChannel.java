@@ -56,6 +56,8 @@ public class ServerGameChannel implements GameInput, GameListener {
 		}
 	}
 
+	
+	// documentation imported from interfaces
 
 	@Override
 	public synchronized int getNumberOfPlayers(int min, int max) {
