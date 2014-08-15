@@ -3,6 +3,7 @@ package cluedo.controller;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -179,40 +180,40 @@ public class NetworkConsistencyTests implements GameListener {
 				
 		Board masterBoard = new Board(defs, starts);
 		
-		Queue<Object[]> player1Moves = new LinkedList<Object[]>(); // colonel mustard
-		Queue<Object[]> player2Moves = new LinkedList<Object[]>(); // miss scarlet
+		Queue<Object[]> player0Moves = new LinkedList<Object[]>(); // colonel mustard
+		Queue<Object[]> player1Moves = new LinkedList<Object[]>(); // miss scarlet
 		
-		player1Moves.offer(new Object[]{Moves.MOVE, masterBoard.getLocation(7,4)});
+		player0Moves.offer(new Object[]{Moves.MOVE, masterBoard.getLocation(7,4)});
 		
-		player2Moves.offer(new Object[]{Moves.MOVE, masterBoard.getLocation(16,4)});
+		player1Moves.offer(new Object[]{Moves.MOVE, masterBoard.getLocation(16,4)});
 		
-		player1Moves.offer(new Object[]{Moves.MOVE, masterBoard.getLocation(8,5)}); // ballroom
-		player1Moves.offer(new Object[]{
+		player0Moves.offer(new Object[]{Moves.MOVE, masterBoard.getLocation(8,5)}); // ballroom
+		player0Moves.offer(new Object[]{
 				Moves.SUGGEST, 
 				masterBoard.getCard("Rope"),
 				masterBoard.getCard("Rev. Green")
 		});  // suggest Rev. Green with the rope (in the ballroom)
 		// can't disprove
 		
-		player2Moves.offer(new Object[]{Moves.MOVE, masterBoard.getLocation(19,5)}); // move to conservatory
-		player2Moves.offer(new Object[]{
+		player1Moves.offer(new Object[]{Moves.MOVE, masterBoard.getLocation(19,5)}); // move to conservatory
+		player1Moves.offer(new Object[]{
 				Moves.SUGGEST, 
 				masterBoard.getCard("Revolver"),
 				masterBoard.getCard("Mrs Peacock")
 		});  // suggest Mers Peacock with the Revolver (in the conservatory)
-		player1Moves.offer(new Object[]{Moves.SHOW, masterBoard.getCard("Conservatory")}); // but player 1 shows Conservatory to player 2
+		player0Moves.offer(new Object[]{Moves.SHOW, masterBoard.getCard("Conservatory")}); // but player 1 shows Conservatory to player 2
 
-		player1Moves.offer(new Object[]{Moves.MOVE, masterBoard.getLocation(9,13)}); // near the middle
-		player1Moves.offer(new Object[]{
+		player0Moves.offer(new Object[]{Moves.MOVE, masterBoard.getLocation(9,13)}); // near the middle
+		player0Moves.offer(new Object[]{
 				Moves.ACCUSE, 
 				masterBoard.getCard("Rope"),
 				masterBoard.getCard("Mrs Peacock"),
 				masterBoard.getCard("Study"),
 		});  // win the game
 		
-		player2Moves.offer(new Object[]{null}); // end of game
+		player1Moves.offer(new Object[]{null}); // end of game
 		
-		runGame(masterBoard, player1Moves, player2Moves);
+		runGame(masterBoard, player0Moves, player1Moves);
 	}
 	
 	@Test
@@ -253,7 +254,55 @@ public class NetworkConsistencyTests implements GameListener {
 		runGame(masterBoard, player0Moves, player1Moves, player2Moves);
 	}
 
-	// TODO remote player selects disproving card to show - then should have good coverage
+	@Test
+	public void testRemotePlayerShowHand() throws IOException, JsonParseException{
+		JsonObject defs = MinimalJson.parseJson(new File("./rules/cards.json"));
+		JsonObject starts = MinimalJson.parseJson("{ \"Rope\" : \"Library\",\"Dagger\" : \"Ballroom\",\"Spanner\" : \"Conservatory\",\"Revolver\" : \"Kitchen\",\"Candlestick\" : \"Lounge\",\"Lead Piping\" : \"Billiard Room\"}");
+				
+		Board masterBoard = new Board(defs, starts);
+		
+		Queue<Object[]> player0Moves = new LinkedList<Object[]>(); // colonel mustard
+		Queue<Object[]> player1Moves = new LinkedList<Object[]>(); // miss scarlet
+		Queue<Object[]> player2Moves = new LinkedList<Object[]>(); // Mrs Peacock
+		
+		player0Moves.offer(new Object[]{Moves.MOVE, masterBoard.getLocation(6,3)});
+		
+		player1Moves.offer(new Object[]{Moves.MOVE, masterBoard.getLocation(17,3)});
+		
+		player2Moves.offer(new Object[]{Moves.MOVE, masterBoard.getLocation(18,7)});
+		
+		player0Moves.offer(new Object[]{Moves.MOVE, masterBoard.getCard("Ballroom")});
+		
+		player1Moves.offer(new Object[]{Moves.MOVE, masterBoard.getCard("Ballroom")});
+		
+		player2Moves.offer(new Object[]{Moves.MOVE, masterBoard.getCard("Ballroom")});
+		
+		player0Moves.offer(new Object[]{Moves.MOVE, masterBoard.getCard("Billiard Room")});
+		player0Moves.offer(new Object[]{Moves.SUGGEST,
+				masterBoard.getCard("Lead Piping"),
+				masterBoard.getCard("Colonel Mustard"),
+		});
+		player1Moves.offer(new Object[]{Moves.SHOW, masterBoard.getCard("Billiard Room")}); // remote player disproves
+		player0Moves.offer(new Object[]{
+				Moves.ACCUSE, 
+				masterBoard.getCard("Lead Piping"),
+				masterBoard.getCard("Colonel Mustard"),
+				masterBoard.getCard("Billiard Room"),
+		});  // loose the game
+		
+		player1Moves.offer(new Object[]{Moves.MOVE, masterBoard.getCard("Billiard Room")});
+		player1Moves.offer(new Object[]{
+				Moves.ACCUSE, 
+				masterBoard.getCard("Lead Piping"),
+				masterBoard.getCard("Colonel Mustard"),
+				masterBoard.getCard("Billiard Room"),
+		});  // loose the game
+		
+		player2Moves.offer(new Object[]{null}); // game over here
+		
+		
+		runGame(masterBoard, player0Moves, player1Moves, player2Moves);
+	}
 	
 	/** Run a using playerScripts as the scripts for all players.
 	 * The first playerScript defines the "local" player while the subsequent playerScripts 
