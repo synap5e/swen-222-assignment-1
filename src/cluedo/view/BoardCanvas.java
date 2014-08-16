@@ -22,9 +22,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+
+import util.json.JsonNumber;
 import util.json.JsonObject;
+import util.json.JsonString;
 import cluedo.controller.player.Player.PlayerType;
 import cluedo.model.Board;
 import cluedo.model.Location;
@@ -87,7 +91,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 
 	
 	
-	public BoardCanvas(CluedoFrame fram, Board brd, JsonObject def, Map<String, Image> cardImages){
+	public BoardCanvas(CluedoFrame fram, Board brd, JsonObject def, Map<String, Image> cardImages, Map<String, Image> tokenImages){
 		frame = fram;
 		board = brd;
 		endLocations = Collections.emptyList();
@@ -115,26 +119,19 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 			roomCorner.put(r, new Point(minX, minY));
 			roomCenter.put(r, new Point2D.Double((minX+maxX)/2, (minY+maxY)/2));
 		}
-		tokenImages = new HashMap<String, Image>();
+		this.tokenImages = tokenImages;
 		this.cardImages = cardImages;
-		try {
-			//Load token images
-			tokenImages.put("Spanner", ImageIO.read(new File("./images/token_spanner.png")));
-			tokenImages.put("Lead Piping", ImageIO.read(new File("./images/token_lead_piping.png")));
-			tokenImages.put("Dagger", ImageIO.read(new File("./images/token_knife.png")));
-			tokenImages.put("Candlestick", ImageIO.read(new File("./images/token_candlestick.png")));
-			tokenImages.put("Rope", ImageIO.read(new File("./images/token_rope.png")));
-			tokenImages.put("Revolver", ImageIO.read(new File("./images/token_revolver.png")));
-		} catch (IOException e) {
-		}
 		
+		//Load Character colours
 		characterColors = new HashMap<String, Color>();
-		characterColors.put("Colonel Mustard", new Color(224, 220, 6));
-		characterColors.put("Miss Scarlett", new Color(197, 25, 51));
-		characterColors.put("Mrs Peacock", new Color(0, 106, 160));
-		characterColors.put("Mrs White", Color.WHITE);
-		characterColors.put("Professor Plum", new Color(84, 34, 85));
-		characterColors.put("Rev. Green", new Color(2, 101, 72));
+		JsonObject character = (JsonObject) def.get("characters");
+		for (String key : character.keys()){
+			JsonObject colorDefinition = (JsonObject) ((JsonObject) character.get(key)).get("colour");
+			Color color = new Color((int) ((JsonNumber) colorDefinition.get("red")).value(),
+									(int) ((JsonNumber) colorDefinition.get("green")).value(),
+									(int) ((JsonNumber) colorDefinition.get("blue")).value());
+			characterColors.put(key, color);
+		}
 
 		setBackground(BACKGROUND);
 		addMouseListener(this);

@@ -28,6 +28,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import util.json.JsonObject;
+import util.json.JsonString;
 import cluedo.controller.interaction.GameListener;
 import cluedo.controller.player.Player.PlayerType;
 import cluedo.model.Board;
@@ -53,6 +54,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 	private List<FrameListener> listeners;
 
 	private Map<String, Image> cardImages;
+	private Map<String, Image> tokenImages;
 	
 	private CardListPanel hand;
 	private CardListPanel cardDisplay;
@@ -78,7 +80,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 		setJMenuBar(menu);
 
 		//Load images
-		loadImages();
+		loadImages(def);
 		
 		Container pane = getContentPane();
 		pane.setLayout(new GridBagLayout());
@@ -101,7 +103,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 		pane.add(buttonPanel, con);
 		
 		//Setup the board canvas
-		canvas = new BoardCanvas(this, board, def, cardImages);
+		canvas = new BoardCanvas(this, board, def, cardImages, tokenImages);
 		setConstraints(con, 1, 0, true, true);
 		con.gridheight = 2;
 		pane.add(canvas, con);
@@ -128,38 +130,35 @@ public class CluedoFrame extends JFrame implements GameListener {
 		setVisible(true);
 	}
 	
-	private void loadImages(){
+	private void loadImages(JsonObject def){
 		cardImages = new HashMap<String, Image>();
+		tokenImages = new HashMap<String, Image>();
 		try {
 			//Load card back
-			cardImages.put("back", ImageIO.read(new File("./images/card_back.png")));
+			cardImages.put("back", ImageIO.read(new File(((JsonString) def.get("card back")).value())));
+
+			//Load Weapon images
+			JsonObject weapon = (JsonObject) def.get("weapons");
+			for (String key : weapon.keys()){
+				cardImages.put(key, ImageIO.read(
+						new File(((JsonString)((JsonObject) weapon.get(key)).get("card")).value())));
+				tokenImages.put(key, ImageIO.read(
+						new File(((JsonString)((JsonObject) weapon.get(key)).get("token")).value())));
+			}
 			
-			//Load weapon pictures
-			cardImages.put("Dagger", ImageIO.read(new File("./images/card_dagger.png")));
-			cardImages.put("Revolver", ImageIO.read(new File("./images/card_revolver.png")));
-			cardImages.put("Rope", ImageIO.read(new File("./images/card_rope.png")));
-			cardImages.put("Spanner", ImageIO.read(new File("./images/card_spanner.png")));
-			cardImages.put("Lead Piping", ImageIO.read(new File("./images/card_lead_piping.png")));
-			cardImages.put("Candlestick", ImageIO.read(new File("./images/card_candlestick.png")));
-
-			//Load character pictures
-			cardImages.put("Colonel Mustard", ImageIO.read(new File("./images/card_colonel_mustard.png")));
-			cardImages.put("Miss Scarlett", ImageIO.read(new File("./images/card_miss_scarlett.png")));
-			cardImages.put("Mrs Peacock", ImageIO.read(new File("./images/card_mrs_peacock.png")));
-			cardImages.put("Mrs White", ImageIO.read(new File("./images/card_mrs_white.png")));
-			cardImages.put("Professor Plum", ImageIO.read(new File("./images/card_professor_plum.png")));
-			cardImages.put("Rev. Green", ImageIO.read(new File("./images/card_rev_green.png")));
-
-			//Load room pictures
-			cardImages.put("Ballroom", ImageIO.read(new File("./images/card_ballroom.png")));
-			cardImages.put("Billiard Room", ImageIO.read(new File("./images/card_billiard_room.png")));
-			cardImages.put("Conservatory", ImageIO.read(new File("./images/card_conservatory.png")));
-			cardImages.put("Dining Room", ImageIO.read(new File("./images/card_dining_room.png")));
-			cardImages.put("Hall", ImageIO.read(new File("./images/card_hall.png")));
-			cardImages.put("Kitchen", ImageIO.read(new File("./images/card_kitchen.png")));
-			cardImages.put("Library", ImageIO.read(new File("./images/card_library.png")));
-			cardImages.put("Lounge", ImageIO.read(new File("./images/card_lounge.png")));
-			cardImages.put("Study", ImageIO.read(new File("./images/card_study.png")));
+			//Load Character images
+			JsonObject character = (JsonObject) def.get("characters");
+			for (String key : character.keys()){
+				cardImages.put(key, ImageIO.read(
+						new File(((JsonString)((JsonObject) character.get(key)).get("card")).value())));
+			}
+			
+			//Load Room images
+			JsonObject rooms = (JsonObject) def.get("rooms");
+			for (String key : rooms.keys()){
+				cardImages.put(key, ImageIO.read(
+						new File(((JsonString)((JsonObject) rooms.get(key)).get("card")).value())));
+			}
 		} catch (IOException e) {
 		}
 	}
