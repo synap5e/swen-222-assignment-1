@@ -117,19 +117,7 @@ public class GameMaster {
 		int networkPlayers = input.getNetworkPlayerCount();
 		assert humanNames.size() + networkPlayers <= numberOfPlayers;
 
-		List<ServerGameChannel> networkChannels = new ArrayList<ServerGameChannel>();
-		if (networkPlayers > 0){
-			for (int i=0;i<networkPlayers;i++){
-				for (GameListener listener : listeners){
-					listener.waitingForNetworkPlayers(networkPlayers-i);
-				}
-
-				ServerGameChannel chanel = networkPlayerHandler.getRemoteInput();
-				networkChannels.add(chanel);
-				listeners.add(chanel);
-				
-			}
-		}
+		List<ServerGameChannel> networkChannels = waitForNetworkPlayers(networkPlayers);
 
 		for (int i=0;i<humanNames.size();i++) playerTypes.add(PlayerType.LocalHuman);
 		for (int i=0;i<networkPlayers;i++) playerTypes.add(PlayerType.RemoteHuman);
@@ -140,7 +128,7 @@ public class GameMaster {
 		Collections.shuffle(humanNames);
 		Collections.shuffle(playerTypes);
 
-		// don't favour the first connected network players
+		// don't favor the first connected network players
 		Collections.shuffle(networkChannels);
 
 		// create the players
@@ -180,7 +168,26 @@ public class GameMaster {
 				listener.onCharacterJoinedGame(players.get(playerNumber).getName(), playingAs.get(players.get(playerNumber)), playerTypes.get(playerNumber));
 			}
 		}
+
 	}
+
+	private List<ServerGameChannel> waitForNetworkPlayers(int networkPlayers) throws IOException {
+		List<ServerGameChannel> networkChannels = new ArrayList<ServerGameChannel>();
+		if (networkPlayers > 0){
+			for (int i=0;i<networkPlayers;i++){
+				for (GameListener listener : listeners){
+					listener.waitingForNetworkPlayers(networkPlayers-i);
+				}
+
+				ServerGameChannel chanel = networkPlayerHandler.getRemoteInput();
+				networkChannels.add(chanel);
+				listeners.add(chanel);
+				
+			}
+		}
+		return networkChannels;
+	}
+
 
 	/** Start the game loop, going through all players and asking for their
 	 * moves until a player has won, or there is only one player left active.
@@ -201,7 +208,6 @@ public class GameMaster {
 				listener.onTurnBegin(player.getName(), playersCharacter);
 			}
 
-
 			int dice1 = random.nextInt(6)+1;
 			int dice2 = random.nextInt(6)+1;
 
@@ -211,116 +217,120 @@ public class GameMaster {
 				listener.onDiceRolled(dice1, dice2);
 			}
 
-			// TODO accusation can go here too
-
-			List<Location> possibleLocations = board.getPossibleDestinations(board.getLocationOf(playersCharacter), dice1+dice2, false);
-
-			if (possibleLocations.size() == 0){
-				// player trapped in the corridor
-				possibleLocations = board.getPossibleDestinations(board.getLocationOf(playersCharacter), dice1+dice2, true);
-			}
-			
-			Location destination = player.getDestination(possibleLocations);
-
-			// TODO, what if not in passed in list - should we complain here always, or only in assert mode
-			// TODO this needs to kick the player - otherwise a remote user could cheat
-			
-			assert possibleLocations.contains(destination) : "assert "+ possibleLocations + ".contains(" + destination + ")";
-
-			board.moveCharacter(playersCharacter, destination);
-
-			for (GameListener listener : listeners){
-				listener.onCharacterMove(playersCharacter, destination);
-			}
+			handlePlayerMove(player, playersCharacter, dice1+dice2);
 
 			if(board.getLocationOf(playersCharacter) instanceof Room && player.hasSuggestion()){
-				Suggestion suggestion = player.getSuggestion();
-				Room room = (Room) board.getLocationOf(playersCharacter);
-
-				board.moveWeapon(suggestion.getWeapon(), room);
-				for (GameListener listener : listeners){
-					listener.onWeaponMove(suggestion.getWeapon(), room);
-				}
-
-				board.moveCharacter(suggestion.getCharacter(), room);
-				for (GameListener listener : listeners){
-					listener.onCharacterMove(suggestion.getCharacter(), room);
-				}
-
-				boolean disproved = false;
-				for (Player p : getPlayersClockwiseOf(player)){
-					if (p.canDisprove(suggestion.getCharacter(), suggestion.getWeapon(), room)){
-						Card disprovingCard = p.selectDisprovingCard(suggestion.getCharacter(), suggestion.getWeapon(), room);
-
-						// TODO should we complain here always, or only in assert mode?
-						assert 	disprovingCard == suggestion.getCharacter() ||
-								disprovingCard == suggestion.getWeapon() ||
-								disprovingCard == room;
-
-						for (GameListener listener : listeners){
-							if (listener != player){
-								listener.onSuggestionDisproved(playersCharacter, suggestion, room, playingAs.get(p));
-							}
-						}
-						player.suggestionDisproved(suggestion, playingAs.get(p), disprovingCard);
-						disproved = true;
-
-						break;
-					}
-				}
-
-				if (!disproved){
-					for (GameListener listener : listeners){
-						listener.onSuggestionUndisputed(playersCharacter, suggestion, room);
-					}
-				}
+				handleSuggestion(player, playersCharacter);
 			}
 
 			if (player.hasAccusation()){
-				Accusation accusation = player.getAccusation();
-				boolean correct = accusation.equals(correctAccusation);
-				for (GameListener listener : listeners){
-					listener.onAccusation(playersCharacter, accusation, correct);
-				}
-
-				if (correct){
-					for (GameListener listener : listeners){
-						listener.onGameWon(player.getName(), playersCharacter);
-					}
-					break;
-				} else {
-					activePlayers.remove(player);
-					for (GameListener listener : listeners){
-						listener.onLostGame(player.getName(), playersCharacter);
-					}
-					
-					// if player is blocking the entrance to a room, move them in
-					parentloop: for (Room r : board.getRooms()){
-						for (Location l : r.getNeighbours()){
-							if (l instanceof Tile && l.getTokens().contains(player)){
-								board.moveCharacter(playersCharacter, r);
-								for (GameListener listener : listeners){
-									listener.onCharacterMove(playersCharacter, r);
-								}
-								break parentloop;
-							}
-						}
-					}
-					
-					if (activePlayers.size() == 1){
-						break;
-					}
-				}
-
+				handleAccusation(player, playersCharacter, activePlayers);
 			}
 		}
 	}
 
-	/** Get a list of all other players clockwise of the current player
-	 * 
-	 * @param p the current players 
-	 * @return [ I just said what it did in the description, do I really need to repeat it here? ]
-	 */
+	private void handleAccusation(Player player, Character playersCharacter, List<Player> activePlayers) {
+		Accusation accusation = player.getAccusation();
+		boolean correct = accusation.equals(correctAccusation);
+		for (GameListener listener : listeners){
+			listener.onAccusation(playersCharacter, accusation, correct);
+		}
+
+		if (correct){
+			for (GameListener listener : listeners){
+				listener.onGameWon(player.getName(), playersCharacter);
+			}
+			activePlayers.clear();
+		} else {
+			activePlayers.remove(player);
+			for (GameListener listener : listeners){
+				listener.onLostGame(player.getName(), playersCharacter);
+			}
+			
+			// if player is blocking the entrance to a room, move them in
+			parentloop: for (Room r : board.getRooms()){
+				for (Location l : r.getNeighbours()){
+					if (l instanceof Tile && l.getTokens().contains(player)){
+						board.moveCharacter(playersCharacter, r);
+						for (GameListener listener : listeners){
+							listener.onCharacterMove(playersCharacter, r);
+						}
+						break parentloop;
+					}
+				}
+			}
+			
+			if (activePlayers.size() == 1){
+				for (GameListener listener : listeners){
+					listener.onGameWon(activePlayers.get(0).getName(), playingAs.get(activePlayers.get(0)));
+				}
+				activePlayers.clear();
+			}
+		}
+	}
+
+	private void handleSuggestion(Player player, Character playersCharacter) {
+		Suggestion suggestion = player.getSuggestion();
+		Room room = (Room) board.getLocationOf(playersCharacter);
+
+		board.moveWeapon(suggestion.getWeapon(), room);
+		for (GameListener listener : listeners){
+			listener.onWeaponMove(suggestion.getWeapon(), room);
+		}
+
+		board.moveCharacter(suggestion.getCharacter(), room);
+		for (GameListener listener : listeners){
+			listener.onCharacterMove(suggestion.getCharacter(), room);
+		}
+
+		boolean disproved = false;
+		for (Player p : getPlayersClockwiseOf(player)){
+			if (p.canDisprove(suggestion.getCharacter(), suggestion.getWeapon(), room)){
+				Card disprovingCard = p.selectDisprovingCard(suggestion.getCharacter(), suggestion.getWeapon(), room);
+
+				// TODO should we complain here always, or only in assert mode?
+				assert 	disprovingCard == suggestion.getCharacter() ||
+						disprovingCard == suggestion.getWeapon() ||
+						disprovingCard == room;
+
+				for (GameListener listener : listeners){
+					if (listener != player){
+						listener.onSuggestionDisproved(playersCharacter, suggestion, room, playingAs.get(p));
+					}
+				}
+				player.suggestionDisproved(suggestion, playingAs.get(p), disprovingCard);
+				disproved = true;
+
+				break;
+			}
+		}
+
+		if (!disproved){
+			for (GameListener listener : listeners){
+				listener.onSuggestionUndisputed(playersCharacter, suggestion, room);
+			}
+		}
+	}
+
+	private void handlePlayerMove(Player player, Character playersCharacter, int rollTotal) {
+		List<Location> possibleLocations = board.getPossibleDestinations(board.getLocationOf(playersCharacter), rollTotal, false);
+
+		if (possibleLocations.size() == 0){
+			// player trapped in the corridor
+			possibleLocations = board.getPossibleDestinations(board.getLocationOf(playersCharacter), rollTotal, true);
+		}
+		
+		Location destination = player.getDestination(possibleLocations);
+
+		assert possibleLocations.contains(destination) : "assert "+ possibleLocations + ".contains(" + destination + ")";
+
+		board.moveCharacter(playersCharacter, destination);
+
+		for (GameListener listener : listeners){
+			listener.onCharacterMove(playersCharacter, destination);
+		}
+	}
+
 	private List<Player> getPlayersClockwiseOf(Player p) {
 		List<Player> r = new ArrayList<Player>(players);
 		Collections.rotate(r, players.indexOf(p));
