@@ -166,7 +166,7 @@ public class NetworkConsistencyTests implements GameListener {
 	
 	private GameMaster master;
 	
-	private boolean showgames = true;
+	private boolean showgames = false;
 
 	@Test
 	/**
