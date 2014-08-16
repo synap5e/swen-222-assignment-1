@@ -29,7 +29,9 @@ import cluedo.model.cardcollection.Accusation;
 import cluedo.model.cardcollection.Hand;
 import cluedo.model.cardcollection.Suggestion;
 
-/**
+/** This class serves as the channel of communication between a GameMaster and GameSlave.
+ * ServerGameChannel implmented both GameInput and GameListener and as such is used
+ * for both querying input from a remote player and sending events to remote players
  *
  * @author Simon Pinfold
  *
@@ -54,21 +56,24 @@ public class ServerGameChannel implements GameInput, GameListener {
 		}
 	}
 
+	
+	// documentation imported from interfaces
 
 	@Override
 	public synchronized int getNumberOfPlayers(int min, int max) {
+		// not required for network players
 		throw new UnsupportedOperationException();
 	}
 
 
 	@Override
 	public synchronized List<String> getHumanNames() {
+		// not required for network players
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public synchronized String getSingleName() {
-
 		write(new MessageBuilder().
 					type("pull").
 					name("getSingleName").
@@ -214,22 +219,24 @@ public class ServerGameChannel implements GameInput, GameListener {
 	}
 
 	@Override
-	public synchronized void onSuggestionUndisputed(Character suggester, Suggestion suggestion) {
+	public synchronized void onSuggestionUndisputed(Character suggester, Suggestion suggestion, Room room) {
 		write(new MessageBuilder().
 				type("push").
 				name("onSuggestionUndisputed").
 					parameter("suggester", ModelToJson.cardToJson(suggester)).
 					parameter("suggestion", ModelToJson.suggestionToJson(suggestion)).
+					parameter("room", ModelToJson.cardToJson(room)).
 			build());
 	}
 
 	@Override
-	public synchronized void onSuggestionDisproved(Character suggester,	Suggestion suggestion, Character disprover) {
+	public synchronized void onSuggestionDisproved(Character suggester,	Suggestion suggestion, Room room, Character disprover) {
 		write(new MessageBuilder().
 				type("push").
 				name("onSuggestionDisproved").
 					parameter("suggester", ModelToJson.cardToJson(suggester)).
 					parameter("suggestion", ModelToJson.suggestionToJson(suggestion)).
+					parameter("room", ModelToJson.cardToJson(room)).
 					parameter("disprover", ModelToJson.cardToJson(disprover)).
 			build());
 	}
@@ -238,7 +245,7 @@ public class ServerGameChannel implements GameInput, GameListener {
 	public synchronized void onAccusation(Character accuser, Accusation accusation,	boolean correct) {
 		write(new MessageBuilder().
 				type("push").
-				name("onSuggestionDisproved").
+				name("onAccusation").
 					parameter("accuser", ModelToJson.cardToJson(accuser)).
 					parameter("accusation", ModelToJson.accusationToJson(accusation)).
 					parameter("correct", correct).

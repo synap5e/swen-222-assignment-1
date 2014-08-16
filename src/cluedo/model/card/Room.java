@@ -43,6 +43,10 @@ public class Room  extends Location implements Card{
 		tokens.remove(token);
 	}
 	
+	@Override
+	public String toString() {
+		return name;
+	}
 	
 	
 }

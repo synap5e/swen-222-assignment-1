@@ -382,6 +382,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 	}
 
 	@Override
+
 	public void mouseMoved(MouseEvent arg0) {
 		double x = ((double) (arg0.getX()-xOffset))/tileWidth;
 		double y = ((double) (arg0.getY()-yOffset-TITLE_HEIGHT-10))/tileWidth;

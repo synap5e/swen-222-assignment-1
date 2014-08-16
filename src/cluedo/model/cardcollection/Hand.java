@@ -30,6 +30,11 @@ public class Hand implements Iterable<Card> {
 	public Iterator<Card> iterator() {
 		return cards.iterator();
 	}
+	
+	@Override
+	public String toString() {
+		return cards.toString();
+	}
 
 
 

@@ -28,5 +28,10 @@ public class Accusation extends Suggestion {
 		Accusation other = (Accusation)obj;
 		return this.weapon == other.weapon && this.character == other.character && this.room == other.room;
 	}
+	
+	@Override
+	public String toString() {
+		return "{ " + weapon +", " + character + ", " + room + "}";
+	}
 
 }

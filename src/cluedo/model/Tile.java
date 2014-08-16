@@ -58,4 +58,9 @@ public class Tile extends Location{
 		return token;
 	}
 	
+	@Override
+	public String toString() {
+		return "Tile(" + x + ", " + y + ")";
+	}
+	
 }

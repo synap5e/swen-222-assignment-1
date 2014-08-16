@@ -76,6 +76,10 @@
 			[99, "Hall"],
 			[91, "Study"]
 	],
+	"passages" : [
+			["Kitchen", "Study"],
+			["Conservatory", "Lounge"]
+	],
 	"characters": {
 			"Colonel Mustard"		: {
 				"start" 	: 56,

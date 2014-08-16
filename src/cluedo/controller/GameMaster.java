@@ -13,13 +13,14 @@ import cluedo.controller.interaction.GameInput;
 import cluedo.controller.interaction.GameListener;
 import cluedo.controller.network.ServerGameChannel;
 import cluedo.controller.network.NetworkPlayerHandler;
-import cluedo.controller.player.AIPlayer;
+import cluedo.controller.player.BasicAIPlayer;
 import cluedo.controller.player.GameStateFacade;
 import cluedo.controller.player.HumanPlayer;
 import cluedo.controller.player.Player;
 import cluedo.controller.player.Player.PlayerType;
 import cluedo.model.Board;
 import cluedo.model.Location;
+import cluedo.model.Tile;
 import cluedo.model.card.Card;
 import cluedo.model.card.Character;
 import cluedo.model.card.Room;
@@ -35,16 +36,16 @@ import cluedo.view.GUIGameInput;
  */
 public class GameMaster {
 
-	private List<Player> players;
-	private Map<Player, Character> playingAs;
+	protected List<Player> players;
+	protected Map<Player, Character> playingAs;
 
-	private Accusation correctAccusation;
-	private List<GameListener> listeners;
-	private Random random = new Random();
-	private int turn;
-	private Board board;
-	private GameInput input;
-	private NetworkPlayerHandler networkPlayerHandler;
+	protected Accusation correctAccusation;
+	protected List<GameListener> listeners;
+	protected Random random = new Random();
+	protected int turn;
+	protected Board board;
+	protected GameInput input;
+	protected NetworkPlayerHandler networkPlayerHandler;
 
 	public GameMaster(Board board, GameInput input) {
 		this.board = board;
@@ -93,7 +94,7 @@ public class GameMaster {
 					listener.waitingForNetworkPlayers(networkPlayers-i);
 				}
 
-				ServerGameChannel chanel = networkPlayerHandler.getRemoteInput(30);
+				ServerGameChannel chanel = networkPlayerHandler.getRemoteInput();
 				networkChannels.add(chanel);
 				listeners.add(chanel);
 				
@@ -132,7 +133,7 @@ public class GameMaster {
 				remoteChannel.sendHand(hand);
 			} else {
 				character = pickableCharacters.get(random.nextInt(pickableCharacters.size()));
-				AIPlayer rp = new AIPlayer(hands.remove(0), character, new GameStateFacade(board, character, this));
+				BasicAIPlayer rp = new BasicAIPlayer(hands.remove(0), character, new GameStateFacade(board, character, this));
 				listeners.add(rp);
 				player = rp;
 			}
@@ -155,7 +156,10 @@ public class GameMaster {
 	public void startGame(){
 		ArrayList<Player> activePlayers = new ArrayList<Player>(players);
 		while (true){
-			Player player = activePlayers.get(turn++ % activePlayers.size());
+			Player player = players.get(turn++ % players.size());
+			
+			if (!activePlayers.contains(player)) continue; // skip players who have lost
+			
 			Character playersCharacter = playingAs.get(player);
 
 			for (GameListener listener : listeners){
@@ -174,13 +178,19 @@ public class GameMaster {
 
 			// TODO accusation can go here too
 
-			List<Location> possibleLocations = board.getPossibleDestinations(board.getLocationOf(playersCharacter), dice1+dice2);
+			List<Location> possibleLocations = board.getPossibleDestinations(board.getLocationOf(playersCharacter), dice1+dice2, false);
 
+			if (possibleLocations.size() == 0){
+				// player trapped in the corridor
+				possibleLocations = board.getPossibleDestinations(board.getLocationOf(playersCharacter), dice1+dice2, true);
+			}
+			
 			Location destination = player.getDestination(possibleLocations);
 
 			// TODO, what if not in passed in list - should we complain here always, or only in assert mode
 			// TODO this needs to kick the player - otherwise a remote user could cheat
-			assert possibleLocations.contains(destination);
+			
+			assert possibleLocations.contains(destination) : "assert "+ possibleLocations + ".contains(" + destination + ")";
 
 			board.moveCharacter(playersCharacter, destination);
 
@@ -214,7 +224,7 @@ public class GameMaster {
 
 						for (GameListener listener : listeners){
 							if (listener != player){
-								listener.onSuggestionDisproved(playersCharacter, suggestion, playingAs.get(p));
+								listener.onSuggestionDisproved(playersCharacter, suggestion, room, playingAs.get(p));
 							}
 						}
 						player.suggestionDisproved(suggestion, playingAs.get(p), disprovingCard);
@@ -226,7 +236,7 @@ public class GameMaster {
 
 				if (!disproved){
 					for (GameListener listener : listeners){
-						listener.onSuggestionUndisputed(playersCharacter, suggestion);
+						listener.onSuggestionUndisputed(playersCharacter, suggestion, room);
 					}
 				}
 			}
@@ -242,10 +252,28 @@ public class GameMaster {
 					for (GameListener listener : listeners){
 						listener.onGameWon(player.getName(), playersCharacter);
 					}
+					break;
 				} else {
 					activePlayers.remove(player);
 					for (GameListener listener : listeners){
 						listener.onLostGame(player.getName(), playersCharacter);
+					}
+					
+					// if player is blocking the entrance to a room, move them in
+					parentloop: for (Room r : board.getRooms()){
+						for (Location l : r.getNeighbours()){
+							if (l instanceof Tile && l.getTokens().contains(player)){
+								board.moveCharacter(playersCharacter, r);
+								for (GameListener listener : listeners){
+									listener.onCharacterMove(playersCharacter, r);
+								}
+								break parentloop;
+							}
+						}
+					}
+					
+					if (activePlayers.size() == 1){
+						break;
 					}
 				}
 
@@ -256,7 +284,7 @@ public class GameMaster {
 	private List<Player> getPlayersClockwiseOf(Player p) {
 		List<Player> r = new ArrayList<Player>(players);
 		Collections.rotate(r, players.indexOf(p));
-		r.remove(0);
+		r.remove(p);
 		return r;
 	}
 

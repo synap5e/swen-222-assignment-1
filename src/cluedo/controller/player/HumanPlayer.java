@@ -11,7 +11,11 @@ import cluedo.model.cardcollection.Accusation;
 import cluedo.model.cardcollection.Hand;
 import cluedo.model.cardcollection.Suggestion;
 
-/**
+/** This class defines a Human player, that is, a player who's decisions come from
+ * human input. The GameInput interface defines all required interaction methods
+ * and HumanPlayer is simply a player that delegates all decisions to this 
+ * interface (with minimal adaption - e.g. passing in the hand, or working out
+ * what cards are possible to be selected, then asking for which of these cards)
  * 
  * @author Simon Pinfold
  *
@@ -25,11 +29,12 @@ public class HumanPlayer extends Player {
 		this.input = input;
 	}
 
+	// documentation imported from interface
+	
 	@Override
 	public void waitForDiceRollOK() {
 		input.startTurn(hand);
 	}
-
 	
 	@Override
 	public Location getDestination(List<Location> possibleLocations) {

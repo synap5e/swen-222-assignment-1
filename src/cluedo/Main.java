@@ -50,7 +50,7 @@ public class Main {
 							} else {
 								startClientGame(gc);
 							}
-						} catch (Exception e) {
+						} catch (IOException e) {
 							e.printStackTrace();
 						}
 					}

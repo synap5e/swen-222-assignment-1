@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -116,6 +117,18 @@ public class Board {
 		}
 
 		createBoard(rows, roomsDef, kestToRooms, startLocations, doorways);
+		
+		for (JsonEntity je : (JsonList)defs.get("passages")){
+			JsonList tuple = (JsonList) je;
+			JsonString r1 = (JsonString) tuple.get(0);
+			JsonString r2 = (JsonString) tuple.get(1);
+			
+			String n1 = r1.value();
+			String n2 = r2.value();
+			
+			roomNames.get(n1).addNeighbour(roomNames.get(n2));
+			roomNames.get(n2).addNeighbour(roomNames.get(n1));
+		}
 	}
 
 	public Board(JsonObject defs){
@@ -213,8 +226,9 @@ public class Board {
 	}
 
 
-	public List<Location> getPossibleDestinations(Location start, int allowedMoves) {
+	public List<Location> getPossibleDestinations(Location start, int allowedMoves, boolean allowMoveThroughPlayers) {
 		List<Location> allowed = new ArrayList<Location>();
+		if (start instanceof Room) allowed.add(start);
 
 		Queue<Location> q = new LinkedList<Location>();
 		Map<Location, Integer> depths = new HashMap<Location, Integer>();
@@ -228,7 +242,7 @@ public class Board {
 				allowed.add(l);
 			} else {
 				for (Location n : l.getNeighbours()){
-					if (!depths.containsKey(n)){
+					if (!depths.containsKey(n) && (n instanceof Room || allowMoveThroughPlayers || ((Tile)n).getTokens().size() == 0)){
 						q.offer(n);
 						depths.put(n, depth+1);
 					}
@@ -237,6 +251,28 @@ public class Board {
 		}
 
 		return allowed;
+	}
+	
+	public int distanceBetween(Location l1, Location l2) {
+		Queue<Location> q = new LinkedList<Location>();
+		Map<Location, Integer> depths = new HashMap<Location, Integer>();
+		
+		q.offer(l1);
+		depths.put(l1, 0);
+		while (!q.isEmpty()){
+			Location l = q.poll();
+			int depth = depths.get(l);
+			if (l == l2) return depth;
+			
+			for (Location n : l.getNeighbours()){
+				if (!depths.containsKey(n)){
+					q.offer(n);
+					depths.put(n, depth+1);
+				}
+			}
+			
+		}
+		return -1;
 	}
 
 

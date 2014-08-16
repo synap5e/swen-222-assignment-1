@@ -35,6 +35,7 @@ import cluedo.model.Board;
 import cluedo.model.Location;
 import cluedo.model.card.Card;
 import cluedo.model.card.Character;
+import cluedo.model.card.Room;
 import cluedo.model.card.Token;
 import cluedo.model.card.Weapon;
 import cluedo.model.cardcollection.Accusation;
@@ -347,15 +348,14 @@ public class CluedoFrame extends JFrame implements GameListener {
 	}
 
 	@Override
-	public void onSuggestionUndisputed(Character suggester,	Suggestion suggestion) {
+	public void onSuggestionUndisputed(Character suggester,	Suggestion suggestion, Room room) {
 		//TODO add room
 		log.append(String.format("> %s suggested that %s killed Dr Black with a %s and no-one could disprove that\n",
 				suggester.getName(), suggestion.getCharacter().getName(), suggestion.getWeapon().getName()));
-	
 	}
 
 	@Override
-	public void onSuggestionDisproved(Character suggester, Suggestion suggestion, Character disprover) {
+	public void onSuggestionDisproved(Character suggester, Suggestion suggestion, Room room, Character disprover) {
 		//TODO add room
 		log.append(String.format("> %s suggested that %s killed Dr Black with a %s but %s proved that could not be\n",
 				suggester.getName(), suggestion.getCharacter().getName(), suggestion.getWeapon().getName(), disprover.getName()));
