@@ -1,5 +1,6 @@
 package cluedo.view;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -12,13 +13,16 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
@@ -388,10 +392,41 @@ public class CluedoFrame extends JFrame implements GameListener {
 		log.append(String.format("> %s (%s) lost the game due to an incorrect accusation\n", name, playersCharacter.getName()));
 	}
 
+	
 	@Override
-	public void onSuggestion(String suggesterPlayerName, Character suggester,
-			Suggestion suggestion, Room room) {
-		// TODO Auto-generated method stub
+	public void onSuggestion(String suggesterPlayerName, Character suggester, Suggestion suggestion, Room room) {
+		final JDialog alertDialog = new JDialog(this);
+		alertDialog.setSize(400, 300);
+		alertDialog.setResizable(false);
+		alertDialog.setAlwaysOnTop(true);
+		
+		alertDialog.setLayout(new BorderLayout());
+		alertDialog.add(new JLabel(suggesterPlayerName + " (" + suggester.getName() + ") made a suggestion"), BorderLayout.NORTH);
+		CardListPanel cardsPanel = new CardListPanel(getCardImages());
+		cardsPanel.setCards(Arrays.asList(suggestion.getWeapon(), suggestion.getCharacter(), room));
+		alertDialog.add(cardsPanel, BorderLayout.CENTER);
+		
+		JButton ok = new JButton();
+		ok.setAction(new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				alertDialog.setVisible(false);
+			}
+		});
+		ok.setText("OK");
+		alertDialog.add(ok, BorderLayout.SOUTH);
+		
+		//alertDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+		alertDialog.setVisible(true);
+		while (alertDialog.isVisible()){
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		alertDialog.dispose();
 		
 	}
 
