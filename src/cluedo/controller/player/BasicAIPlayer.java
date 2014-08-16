@@ -6,11 +6,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
-import util.Tuple2;
 import cluedo.controller.interaction.GameListener;
-import cluedo.model.Board;
 import cluedo.model.Location;
 import cluedo.model.card.Card;
 import cluedo.model.card.Character;
@@ -20,7 +17,12 @@ import cluedo.model.cardcollection.Accusation;
 import cluedo.model.cardcollection.Hand;
 import cluedo.model.cardcollection.Suggestion;
 
-/**
+/** This class defines a basic AI that keeps track of cards that it thinks may be possible 
+ * and progressively works through that list until it has a suggestion that is not disproved,
+ * then makes an accusation. If there are multiple possible rooms it will favor checking the 
+ * closest room.
+ * 
+ * It should never make an incorrect accusation.
  *
  * @author Simon Pinfold
  *
@@ -44,6 +46,11 @@ public class BasicAIPlayer extends Player implements GameListener{
 		"Totally Not A Bot", "trigger_hurt", "WITCH", "ZAWMBEEZ", "Ze Ubermensch", "Zepheniah Mann", "0xDEADBEEF", "10001011101"};
 	private static LinkedList<String> names = null;
 	
+	/** Gets another random name for the AI, if possible, choosing one that has
+	 * not been taken yet.
+	 * 
+	 * @return the new name
+	 */
 	private static String getNextName() {
 		if (names == null || names.size() == 0){
 			names = new LinkedList<String>(Arrays.asList(AI_NAMES));
@@ -53,6 +60,11 @@ public class BasicAIPlayer extends Player implements GameListener{
 	}
 	
 	private static boolean enableThinkWait = true;
+	
+	/** Pause for a short amount of time so the AI does
+	 * not make it's turns instantaneously. 
+	 * 
+	 */
 	public static void thinkWait() {
 		if (!enableThinkWait) return;
 		try {
@@ -61,6 +73,10 @@ public class BasicAIPlayer extends Player implements GameListener{
 			e.printStackTrace();
 		}
 	}
+	
+	/** Disable the wait time on all AI players
+	 * 
+	 */
 	public static void disableThinkWait() {
 		enableThinkWait = false;
 	}
@@ -91,6 +107,9 @@ public class BasicAIPlayer extends Player implements GameListener{
 		createPossibleAccusation();
 	}
 
+	/** Create a new possible accusation, favoring the closest possible room.
+	 * 
+	 */
 	private void createPossibleAccusation() {
 		List<Room> posRoomsClone = new ArrayList<Room>(possibleRooms);
 		Collections.sort(posRoomsClone, new Comparator<Room>() {
@@ -103,7 +122,9 @@ public class BasicAIPlayer extends Player implements GameListener{
 		this.possibleAccusation = new Accusation(possibleWeapons.get(0), possibleCharacters.get(0), closestPossibleRoom);
 	}
 	
-
+	
+	// javadoc inherited from interfaces
+	
 	@Override
 	public void onCharacterJoinedGame(String playerName, Character character, PlayerType type) {
 	}
@@ -135,6 +156,9 @@ public class BasicAIPlayer extends Player implements GameListener{
 
 	@Override
 	public Location getDestination(List<Location> possibleLocations) {
+		// get the closest location to the room we want to go to
+		// this is not quite optimal pathing, as it does not consider that
+		// passing through a room ends a turn, but is good enough for a basic AI
 		return gameView.getClosestLocation(possibleLocations, possibleAccusation.getRoom());
 	}
 
@@ -163,11 +187,15 @@ public class BasicAIPlayer extends Player implements GameListener{
 	@Override
 	protected Card selectDisprovingCardToShow(Character character, List<Card> possibleShow) {
 		thinkWait();
+		
+		// no tricky buisness, just show the fist possible card
 		return possibleShow.get(0);
 	}
 
 	@Override
 	public void suggestionDisproved(Suggestion suggestion, Character character, Card disprovingCard) {
+		// the card shown is not possible to be one of the cards in the correct
+		// accusation as it is in a player's hand
 		possibleRooms.remove(disprovingCard);
 		possibleWeapons.remove(disprovingCard);
 		possibleCharacters.remove(disprovingCard);
@@ -192,10 +220,13 @@ public class BasicAIPlayer extends Player implements GameListener{
 		if (suggester == character){
 			this.sure = true;
 		}
+		// this would also tell us that each player other than suggester does not have the cards \
+		// in suggestion, or the room but this is too complex for our basic AI
 	}
 
 	@Override
 	public void onSuggestionDisproved(Character suggester, Suggestion suggestion, Room room, Character disprover) {
+		// agian this could be used, but is too complex for a basic AI
 	}
 
 }
