@@ -437,7 +437,7 @@ public class NetworkConsistencyTests implements GameListener {
 						
 						GameSlave gc = new GameSlave(board, new ScriptedInput(playerScripts[ing]));
 						
-						gc.addGameListener(pthis);
+						gc.setGameListener(pthis);
 						
 						gc.startGame(reader, connection.getOutputStream());
 						
