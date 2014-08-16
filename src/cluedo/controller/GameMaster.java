@@ -178,8 +178,13 @@ public class GameMaster {
 
 			// TODO accusation can go here too
 
-			List<Location> possibleLocations = board.getPossibleDestinations(board.getLocationOf(playersCharacter), dice1+dice2);
+			List<Location> possibleLocations = board.getPossibleDestinations(board.getLocationOf(playersCharacter), dice1+dice2, false);
 
+			if (possibleLocations.size() == 0){
+				// player trapped in the corridor
+				possibleLocations = board.getPossibleDestinations(board.getLocationOf(playersCharacter), dice1+dice2, true);
+			}
+			
 			Location destination = player.getDestination(possibleLocations);
 
 			// TODO, what if not in passed in list - should we complain here always, or only in assert mode
@@ -253,6 +258,20 @@ public class GameMaster {
 					for (GameListener listener : listeners){
 						listener.onLostGame(player.getName(), playersCharacter);
 					}
+					
+					// if player is blocking the entrance to a room, move them in
+					parentloop: for (Room r : board.getRooms()){
+						for (Location l : r.getNeighbours()){
+							if (l instanceof Tile && l.getTokens().contains(player)){
+								board.moveCharacter(playersCharacter, r);
+								for (GameListener listener : listeners){
+									listener.onCharacterMove(playersCharacter, r);
+								}
+								break parentloop;
+							}
+						}
+					}
+					
 					if (activePlayers.size() == 1){
 						break;
 					}
