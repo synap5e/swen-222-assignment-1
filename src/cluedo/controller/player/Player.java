@@ -93,6 +93,11 @@ public abstract class Player{
 		return selectDisprovingCardToShow(character, possibleShow);
 	}
 
+	@Override
+	public String toString() {
+		return name + " (" + character + ")";
+	}
+	
 	protected abstract Card selectDisprovingCardToShow(Character character, List<Card> possibleShow);
 
 	public abstract void suggestionDisproved(Suggestion suggestion, Character character, Card disprovingCard);
