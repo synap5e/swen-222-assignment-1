@@ -16,8 +16,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Random;
+
 import javax.swing.JOptionPane;
+
 import org.junit.Test;
+
 import util.json.JsonEntity;
 import util.json.JsonObject;
 import util.json.JsonParseException;
@@ -451,7 +454,6 @@ public class NetworkConsistencyTests implements GameListener {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -519,27 +521,23 @@ public class NetworkConsistencyTests implements GameListener {
 
 	@Override
 	public void onCharacterJoinedGame(String playerName, Character character, PlayerType playerType) {
-		// TODO Auto-generated method stub
-		
+				
 	}
 
 	@Override
 	public void onTurnBegin(String name, Character playersCharacter) {
-		// TODO Auto-generated method stub
-		
+				
 	}
 
 	@Override
 	public void onAccusation(Character accuser, Accusation accusation,
 			boolean correct) {
-		// TODO Auto-generated method stub
-		
+				
 	}
 
 	@Override
 	public void onWeaponMove(Weapon weapon, Location newLocation) {
-		// TODO Auto-generated method stub
-		
+				
 	}
 
 	@Override
@@ -550,40 +548,40 @@ public class NetworkConsistencyTests implements GameListener {
 
 	@Override
 	public void onDiceRolled(int dice1, int dice2) {
-		// TODO Auto-generated method stub
-		
+				
 	}
 
 	@Override
 	public void onGameWon(String name, Character playersCharacter) {
-		// TODO Auto-generated method stub
-		
+				
 	}
 
 	@Override
 	public void waitingForNetworkPlayers(int i) {
-		// TODO Auto-generated method stub
-		
+				
 	}
 
 	@Override
 	public void onLostGame(String name, Character playersCharacter) {
-		// TODO Auto-generated method stub
-		
+				
 	}
 
 	@Override
 	public void onSuggestionUndisputed(Character suggester,
 			Suggestion suggestion, Room room) {
-		// TODO Auto-generated method stub
-		
+				
 	}
 
 	@Override
 	public void onSuggestionDisproved(Character suggester,
 			Suggestion suggestion, Room room, Character disprover) {
-		// TODO Auto-generated method stub
-		
+				
+	}
+
+	@Override
+	public void onSuggestion(String suggesterPlayerName, Character suggester,
+			Suggestion suggestion, Room room) {
+				
 	}
 
 }

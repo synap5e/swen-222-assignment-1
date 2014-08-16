@@ -319,4 +319,16 @@ public class ServerGameChannel implements GameInput, GameListener {
 			build());
 	}
 
+	@Override
+	public void onSuggestion(String suggesterPlayerName, Character suggester, Suggestion suggestion, Room room) {
+		write(new MessageBuilder().
+				type("push").
+				name("onSuggestion").
+					parameter("suggesterPlayerName", suggesterPlayerName).
+					parameter("suggester", ModelToJson.cardToJson(suggester)).
+					parameter("suggestion", ModelToJson.suggestionToJson(suggestion)).
+					parameter("room", ModelToJson.cardToJson(room)).
+			build());
+	}
+
 }

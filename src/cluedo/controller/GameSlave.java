@@ -204,6 +204,14 @@ public class GameSlave {
 			);
 			return;
 					
+		case "onSuggestion":
+			listener.onSuggestion(
+					((JsonString)parameters.get("suggesterPlayerName")).value(),
+					jsonToModel.<Character>jsonToCard(parameters.get("suggester")),
+					jsonToModel.jsonToSuggestion(parameters.get("suggestion")),
+					jsonToModel.<Room>jsonToCard(parameters.get("room"))
+			);
+			return;
 					
 		default:
 			//System.err.println("Game Slave could not handle push for \"" + methodName + "\"");
