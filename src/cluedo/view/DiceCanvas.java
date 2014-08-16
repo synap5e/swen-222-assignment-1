@@ -51,7 +51,7 @@ public class DiceCanvas extends JPanel{
 		g.setColor(Color.BLACK);
 		g.drawRect(x, y, DIE_WIDTH, DIE_WIDTH);
 		g.setColor(Color.BLACK);
-		if (num % 3 == 1){
+		if (num % 2 == 1){
 			g.fillOval(x+DIE_WIDTH/2-2, y+DIE_WIDTH/2-2, 4, 4);
 		}
 		if (num >= 2){

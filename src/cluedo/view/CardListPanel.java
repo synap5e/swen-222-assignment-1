@@ -82,15 +82,21 @@ public class CardListPanel extends JPanel implements MouseListener{
 		int y = arg0.getY();
 		
 		if (cards != null){
-			int xp = (getWidth()-cards.size()*(CARD_WIDTH+5)+5)/2;
-			int yp = (getHeight()-cards.size()*CARD_HEIGHT)/2;
+			int step = CARD_WIDTH+5;
+			int xp = (getWidth()-cards.size()*(step)+5)/2;
+			int yp = (getHeight()-CARD_HEIGHT)/2;
+			
+			if (x < 5){
+				x = 5;
+				step = (this.getWidth()-5)/cards.size();
+			}
 			
 			for (Card c : cards){
-				if (xp < x && x < xp+CARD_WIDTH && yp < y && y < yp+CARD_HEIGHT){
+				if (xp < x && x < xp+step && yp < y && y < yp+CARD_HEIGHT){
 					for (CardListener lis : listeners) lis.onCardSelected(c);
 					break;
 				}
-				xp+=CARD_WIDTH+5;
+				xp+=step;
 			}
 		}
 	}

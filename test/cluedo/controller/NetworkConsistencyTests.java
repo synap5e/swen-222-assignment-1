@@ -16,12 +16,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Random;
-
 import javax.swing.JOptionPane;
-
 import org.junit.Test;
-
-import sun.org.mozilla.javascript.tools.debugger.GuiCallback;
 import util.json.JsonEntity;
 import util.json.JsonObject;
 import util.json.JsonParseException;

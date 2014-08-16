@@ -29,31 +29,40 @@
 	],
 	"rooms"   	: {
 			"Kitchen" : {
-				"key"	: 12
+				"key"	: 12,
+				"card"	: "./images/card_kitchen.png"
 			},
 			"Ballroom" : {
-				"key"	: 13
+				"key"	: 13,
+				"card"	: "./images/card_ballroom.png"
 			},
 			"Conservatory" : {
-				"key"	: 14
+				"key"	: 14,
+				"card"	: "./images/card_conservatory.png"
 			},
 			"Dining Room" : {
-				"key"	: 15
+				"key"	: 15,
+				"card"	: "./images/card_dining_room.png"
 			},
 			"Billiard Room" : {
-				"key"	: 16
+				"key"	: 16,
+				"card"	: "./images/card_billiard_room.png"
 			},
 			"Library" : {
-				"key"	: 17
+				"key"	: 17,
+				"card"	: "./images/card_library.png"
 			},
 			"Lounge" : {
-				"key"	: 18
+				"key"	: 18,
+				"card"	: "./images/card_lounge.png"
 			},
 			"Hall" : {
-				"key"	: 19
+				"key"	: 19,
+				"card"	: "./images/card_hall.png"
 			},
 			"Study" : {
-				"key"	: 21
+				"key"	: 21,
+				"card"	: "./images/card_study.png"
 			}
 	},
 	"doorways" : [
@@ -73,34 +82,86 @@
 	],
 	"characters": {
 			"Colonel Mustard"		: {
-				"start" : 56
+				"start" 	: 56,
+				"card"	: "./images/card_colonel_mustard.png",
+				"colour" 	: {
+						"red" 	: 224,
+						"green"	: 220,
+						"blue"	: 6
+				}
 			},
-			"Miss Scarlett" : { "start" : 55},
-			"Mrs Peacock"   : { "start" : 53},
-			"Mrs White" : { "start" : 51},
-			"Professor Plum" : { "start" : 54},
-			"Rev. Green" : { "start" : 52}
+			"Miss Scarlett" : { 
+				"start"		: 55,
+				"card"	: "./images/card_miss_scarlett.png",
+				"colour" 	: {
+						"red" 	: 197,
+						"green"	: 25,
+						"blue"	: 51
+				}
+			},
+			"Mrs Peacock"   : { 
+				"start"		: 53,
+				"card"	: "./images/card_mrs_peacock.png",
+				"colour" 	: {
+						"red" 	: 0,
+						"green"	: 106,
+						"blue"	: 160
+				}
+			},
+			"Mrs White" 	: { 
+				"start"		: 51,
+				"card"	: "./images/card_mrs_white.png",
+				"colour" 	: {
+						"red" 	: 255,
+						"green"	: 255,
+						"blue"	: 255
+				}
+			},
+			"Professor Plum": { 
+				"start"		: 54,
+				"card"	: "./images/card_professor_plum.png",
+				"colour" 	: {
+						"red" 	: 84,
+						"green"	: 34,
+						"blue"	: 85
+				}
+			},
+			"Rev. Green" 	: { 
+				"start"		: 52,
+				"card"	: "./images/card_rev_green.png",
+				"colour" 	: {
+						"red" 	: 2,
+						"green"	: 101,
+						"blue"	: 72
+				}
+			}
 	},
 	"weapons"	: {
 			"Candlestick" 		: {
-				
+				"token"	: "./images/token_candlestick.png",
+				"card"	: "./images/card_candlestick.png"
 			},	
 			"Dagger" 	: {
-
+				"token"	: "./images/token_knife.png",
+				"card"	: "./images/card_dagger.png"
 			},
 			"Lead Piping" : {
-
+				"token"	: "./images/token_lead_piping.png",
+				"card"	: "./images/card_lead_piping.png"
 			},
 			"Revolver"	: {
-
+				"token"	: "./images/token_revolver.png",
+				"card"	: "./images/card_revolver.png"
 			},
 			"Rope"	: {
-
+				"token"	: "./images/token_rope.png",
+				"card"	: "./images/card_rope.png"
 			},
 			"Spanner"	: {
-
+				"token"	: "./images/token_spanner.png",
+				"card"	: "./images/card_spanner.png"
 			}
-	}
-	
+	},
+	"card back"	: "./images/card_back.png"
 }
 
