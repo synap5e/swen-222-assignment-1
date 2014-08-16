@@ -33,6 +33,10 @@ public class Dealer {
 		weapons = new ArrayList<Weapon>(board.getWeapons());
 		characters = new ArrayList<Character>(board.getCharacters());
 		rooms = new ArrayList<Room>(board.getRooms());
+		
+		Collections.shuffle(weapons);
+		Collections.shuffle(characters);
+		Collections.shuffle(rooms);
 	}
 
 	/** Create a random accusation.
