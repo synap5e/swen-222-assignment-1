@@ -349,16 +349,14 @@ public class CluedoFrame extends JFrame implements GameListener {
 
 	@Override
 	public void onSuggestionUndisputed(Character suggester,	Suggestion suggestion, Room room) {
-		//TODO add room
-		log.append(String.format("> %s suggested that %s killed Dr Black with a %s and no-one could disprove that\n",
-				suggester.getName(), suggestion.getCharacter().getName(), suggestion.getWeapon().getName()));
+		log.append(String.format("> %s suggested that %s killed Dr Black in the %s with a %s and no-one could disprove that\n",
+				suggester.getName(), suggestion.getCharacter().getName(), room.getName(), suggestion.getWeapon().getName()));
 	}
 
 	@Override
 	public void onSuggestionDisproved(Character suggester, Suggestion suggestion, Room room, Character disprover) {
-		//TODO add room
-		log.append(String.format("> %s suggested that %s killed Dr Black with a %s but %s proved that could not be\n",
-				suggester.getName(), suggestion.getCharacter().getName(), suggestion.getWeapon().getName(), disprover.getName()));
+		log.append(String.format("> %s suggested that %s killed Dr Black in the %s with a %s but %s proved that could not be\n",
+				suggester.getName(), suggestion.getCharacter().getName(), room.getName(), suggestion.getWeapon().getName(), disprover.getName()));
 	}
 
 	@Override
