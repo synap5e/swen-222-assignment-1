@@ -322,12 +322,11 @@ public class GameMaster {
 					disprovingCard = p.selectDisprovingCard(suggestion.getCharacter(), suggestion.getWeapon(), room);
 				} while(disprovingCard != suggestion.getCharacter() && disprovingCard != suggestion.getWeapon() && disprovingCard != room);
 
-				for (GameListener listener : listeners){
-					if (listener != player){
-						listener.onSuggestionDisproved(playersCharacter, suggestion, room, playingAs.get(p));
-					}
-				}
 				player.suggestionDisproved(suggestion, playingAs.get(p), disprovingCard);
+				for (GameListener listener : listeners){
+					listener.onSuggestionDisproved(playersCharacter, suggestion, room, playingAs.get(p));
+				}
+				
 				
 				// we're done here
 				return;
