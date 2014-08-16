@@ -10,7 +10,13 @@ import cluedo.model.Location;
 import cluedo.model.Tile;
 import cluedo.model.card.Character;
 import cluedo.model.card.Room;
-/** NOTE: instance-specific to each player using an instance (generally will be AI players)
+/** This class defines a player-specific view into the game state, combining 
+ * reading from the board and the GameMaster and using the specific character 
+ * of the player.
+ * 
+ * This allows an AI player to read game state without keeping a reference to 
+ * the board and game master, and serves to simplify (and restrict) access to 
+ * the state.
  * 
  * @author Simon Pinfold
  *
@@ -21,6 +27,8 @@ public class GameStateFacade {
 	private Board board;
 	private GameMaster gameMaster;
 
+	// method names document themselves
+	
 	public GameStateFacade(Board board, Character playersToken, GameMaster gameMaster){
 		this.board = board;
 		this.playersToken = playersToken;

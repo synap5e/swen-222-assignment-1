@@ -13,7 +13,7 @@ import cluedo.controller.interaction.GameInput;
 import cluedo.controller.interaction.GameListener;
 import cluedo.controller.network.ServerGameChannel;
 import cluedo.controller.network.NetworkPlayerHandler;
-import cluedo.controller.player.AIPlayer;
+import cluedo.controller.player.BasicAIPlayer;
 import cluedo.controller.player.GameStateFacade;
 import cluedo.controller.player.HumanPlayer;
 import cluedo.controller.player.Player;
@@ -94,7 +94,7 @@ public class GameMaster {
 					listener.waitingForNetworkPlayers(networkPlayers-i);
 				}
 
-				ServerGameChannel chanel = networkPlayerHandler.getRemoteInput(30);
+				ServerGameChannel chanel = networkPlayerHandler.getRemoteInput();
 				networkChannels.add(chanel);
 				listeners.add(chanel);
 				
@@ -133,7 +133,7 @@ public class GameMaster {
 				remoteChannel.sendHand(hand);
 			} else {
 				character = pickableCharacters.get(random.nextInt(pickableCharacters.size()));
-				AIPlayer rp = new AIPlayer(hands.remove(0), character, new GameStateFacade(board, character, this));
+				BasicAIPlayer rp = new BasicAIPlayer(hands.remove(0), character, new GameStateFacade(board, character, this));
 				listeners.add(rp);
 				player = rp;
 			}
@@ -265,7 +265,7 @@ public class GameMaster {
 	private List<Player> getPlayersClockwiseOf(Player p) {
 		List<Player> r = new ArrayList<Player>(players);
 		Collections.rotate(r, players.indexOf(p));
-		r.remove(0);
+		r.remove(p);
 		return r;
 	}
 
