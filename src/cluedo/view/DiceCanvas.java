@@ -28,10 +28,12 @@ public class DiceCanvas extends JPanel{
 		leftDie = left;
 		rightDie = right;
 		show = true;
+		repaint();
 	}
 	
 	public void hideDice(){
 		show = false;
+		repaint();
 	}
 	
 	@Override
