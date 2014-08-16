@@ -61,6 +61,8 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 
 	private static final int TITLE_HEIGHT = 40;
 	private static final int TITLE_WIDTH = 400;
+	
+	private static final int ARROW_INSET = 5;
 
 	private final Board board;
 
@@ -82,6 +84,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 
 	private Map<Room, Point2D> roomCorner;
 	private Map<Room, Point2D> roomCenter;
+	private Map<String, Point2D> passageWay;
 
 	private Character currentPlayer;
 
@@ -131,6 +134,18 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 									(int) ((JsonNumber) colorDefinition.get("green")).value(),
 									(int) ((JsonNumber) colorDefinition.get("blue")).value());
 			characterColors.put(key, color);
+		}
+		
+		
+		//Load passage way data
+		passageWay = new HashMap<String, Point2D>();
+		JsonObject rooms = (JsonObject) def.get("rooms");
+		for (String key : rooms.keys()){
+			if (((JsonObject) rooms.get(key)).containsKey("passage")){
+				JsonObject passage = (JsonObject) ((JsonObject) rooms.get(key)).get("passage");
+				passageWay.put(key, new Point((int)((JsonNumber) passage.get("x")).value(),
+											  (int)((JsonNumber) passage.get("y")).value()));
+			}
 		}
 
 		setBackground(BACKGROUND);
@@ -215,6 +230,42 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 						if (focusCharacters){
 							g2d.setColor(SELECTION_COLOR);
 							g2d.drawOval(x*tileWidth+3, y*tileWidth+3, tileWidth-5, tileWidth-5);
+						}
+					}
+				} else if (passageWay.containsKey(((Room) loc).getName())){
+					Room room = (Room) loc;
+					if (x == (int) (roomCorner.get(loc).getX()+passageWay.get(room.getName()).getX())
+							&& y == (int) (roomCorner.get(loc).getY()+passageWay.get(room.getName()).getY())){
+						g2d.setColor(Color.GRAY);
+						g2d.fillRect(x*tileWidth, y*tileWidth, tileWidth, tileWidth);
+						g2d.setColor(Color.BLACK);
+						g2d.drawRect(x*tileWidth, y*tileWidth, tileWidth-1, tileWidth-1);
+						Room otherEnd = null;
+						for (Location neighbour : room.getNeighbours()){
+							if (neighbour instanceof Room){
+								otherEnd = (Room) neighbour;
+								break;
+							}
+						}
+						int dx = (int) (roomCenter.get(room).getX()-roomCorner.get(otherEnd).getX());
+						int dy = (int) (roomCenter.get(room).getY()-roomCorner.get(otherEnd).getY());
+						g2d.setColor(Color.ORANGE);
+						if (dx > 0 && dy > 0){
+							g2d.drawLine((x)*tileWidth+ARROW_INSET, (y)*tileWidth+ARROW_INSET, (x+1)*tileWidth-ARROW_INSET, (y)*tileWidth+ARROW_INSET); //top
+							g2d.drawLine((x)*tileWidth+ARROW_INSET, (y)*tileWidth+ARROW_INSET, (x)*tileWidth+ARROW_INSET, (y+1)*tileWidth-ARROW_INSET); //left
+							g2d.drawLine((x)*tileWidth+ARROW_INSET, (y)*tileWidth+ARROW_INSET, (x+1)*tileWidth-ARROW_INSET, (y+1)*tileWidth-ARROW_INSET); 
+						} else if (dx < 0 && dy < 0){
+							g2d.drawLine((x)*tileWidth+ARROW_INSET, (y+1)*tileWidth-ARROW_INSET, (x+1)*tileWidth-ARROW_INSET, (y+1)*tileWidth-ARROW_INSET); //bottom
+							g2d.drawLine((x+1)*tileWidth-ARROW_INSET, (y)*tileWidth+ARROW_INSET, (x+1)*tileWidth-ARROW_INSET, (y+1)*tileWidth-ARROW_INSET); //right
+							g2d.drawLine((x)*tileWidth+ARROW_INSET, (y)*tileWidth+ARROW_INSET, (x+1)*tileWidth-ARROW_INSET, (y+1)*tileWidth-ARROW_INSET);
+						} else if (dx < 0 && dy > 0){
+							g2d.drawLine((x)*tileWidth+ARROW_INSET, (y)*tileWidth+ARROW_INSET, (x+1)*tileWidth-ARROW_INSET, (y)*tileWidth+ARROW_INSET); //top
+							g2d.drawLine((x+1)*tileWidth-ARROW_INSET, (y)*tileWidth+ARROW_INSET, (x+1)*tileWidth-ARROW_INSET, (y+1)*tileWidth-ARROW_INSET); //right
+							g2d.drawLine((x)*tileWidth+ARROW_INSET, (y+1)*tileWidth-ARROW_INSET, (x+1)*tileWidth-ARROW_INSET, (y)*tileWidth+ARROW_INSET);
+						} else {
+							g2d.drawLine((x)*tileWidth+ARROW_INSET, (y+1)*tileWidth-ARROW_INSET, (x+1)*tileWidth-ARROW_INSET, (y+1)*tileWidth-ARROW_INSET); //bottom
+							g2d.drawLine((x)*tileWidth+ARROW_INSET, (y)*tileWidth+ARROW_INSET, (x)*tileWidth+ARROW_INSET, (y+1)*tileWidth-ARROW_INSET); //left
+							g2d.drawLine((x)*tileWidth+ARROW_INSET, (y+1)*tileWidth-ARROW_INSET, (x+1)*tileWidth-ARROW_INSET, (y)*tileWidth+ARROW_INSET);
 						}
 					}
 				}
