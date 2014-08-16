@@ -109,7 +109,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 		pane.add(buttonPanel, con);
 		
 		//Setup the board canvas
-		canvas = new BoardCanvas(this, board, def, cardImages, tokenImages);
+		canvas = new BoardCanvas(this, board, def, tokenImages);
 		setConstraints(con, 1, 0, true, true);
 		con.gridheight = 2;
 		pane.add(canvas, con);
@@ -337,7 +337,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 	}
 
 	public void onTurnBegin(String name, Character playersCharacter) {
-		canvas.onTurnBegin(name, playersCharacter);
+		canvas.setCurrentPlayer(playersCharacter);
 		log.append(String.format("> Its %s's (%s) turn\n", name, playersCharacter.getName()));
 	}
 

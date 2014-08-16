@@ -18,7 +18,13 @@ import cluedo.model.card.Card;
 *
 */
 public class CardListPanel extends JPanel implements MouseListener{
+	/**
+	 * The width of the cards
+	 */
 	private static final int CARD_WIDTH = 100;
+	/**
+	 * The height of the cards
+	 */
 	private static final int CARD_HEIGHT = 150;
 	
 	private static final Color ROOM = new Color(212,196,173);
