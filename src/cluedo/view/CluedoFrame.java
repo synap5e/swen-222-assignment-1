@@ -362,7 +362,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 
 	@Override
 	public void onAccusation(Character accuser, Accusation accusation, boolean correct) {
-		log.append(String.format("%s accused %s of killing Dr Black in the %s with a %s\n" +
+		log.append(String.format("> %s accused %s of killing Dr Black in the %s with a %s\n" +
 				(correct ? "This was magically verified as true" : "They were wrong and got killed") + "\n",
 				accuser.getName(), accusation.getCharacter().getName(), accusation.getRoom().getName(), accusation.getWeapon().getName()));
 	}
