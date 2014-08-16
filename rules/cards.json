@@ -29,40 +29,56 @@
 	],
 	"rooms"   	: {
 			"Kitchen" : {
-				"key"	: 12,
-				"card"	: "./images/card_kitchen.png"
+				"key"		: 12,
+				"card"		: "./images/card_kitchen.png",
+				"passage"	: {
+					"x" : 5,
+					"y" : 0
+				}
 			},
 			"Ballroom" : {
-				"key"	: 13,
-				"card"	: "./images/card_ballroom.png"
+				"key"		: 13,
+				"card"		: "./images/card_ballroom.png"
 			},
 			"Conservatory" : {
-				"key"	: 14,
-				"card"	: "./images/card_conservatory.png"
+				"key"		: 14,
+				"card"		: "./images/card_conservatory.png",
+				"passage"	: {
+					"x" : 4,
+					"y" : 4
+				}
 			},
 			"Dining Room" : {
-				"key"	: 15,
-				"card"	: "./images/card_dining_room.png"
+				"key"		: 15,
+				"card"		: "./images/card_dining_room.png"
 			},
 			"Billiard Room" : {
-				"key"	: 16,
-				"card"	: "./images/card_billiard_room.png"
+				"key"		: 16,
+				"card"		: "./images/card_billiard_room.png"
 			},
 			"Library" : {
-				"key"	: 17,
-				"card"	: "./images/card_library.png"
+				"key"		: 17,
+				"card"		: "./images/card_library.png"
 			},
 			"Lounge" : {
-				"key"	: 18,
-				"card"	: "./images/card_lounge.png"
+				"key"		: 18,
+				"card"		: "./images/card_lounge.png",
+				"passage"	: {
+					"x" : 0,
+					"y" : 0
+				}
 			},
 			"Hall" : {
-				"key"	: 19,
-				"card"	: "./images/card_hall.png"
+				"key"		: 19,
+				"card"		: "./images/card_hall.png"
 			},
 			"Study" : {
-				"key"	: 21,
-				"card"	: "./images/card_study.png"
+				"key"		: 21,
+				"card"		: "./images/card_study.png",
+				"passage"	: {
+					"x" : 6,
+					"y" : 0
+				}
 			}
 	},
 	"doorways" : [
