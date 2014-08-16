@@ -99,4 +99,14 @@ public interface GameListener {
 	 */
 	public void onLostGame(String name, Character playersCharacter);
 
+	/** Called when a suggestion has been made, but no action has been taken yet - 
+	 * i.e. no tokens have been moved.
+	 * 
+	 * @param suggesterPlayerName the name of the player making the suggestion
+	 * @param suggester the suggester
+	 * @param suggestion the suggestion
+	 * @param room the room the suggestion was made in
+	 */
+	public void onSuggestion(String suggesterPlayerName, Character suggester, Suggestion suggestion, Room room);
+
 }

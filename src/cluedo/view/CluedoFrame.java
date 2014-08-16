@@ -388,5 +388,12 @@ public class CluedoFrame extends JFrame implements GameListener {
 		log.append(String.format("> %s (%s) lost the game due to an incorrect accusation\n", name, playersCharacter.getName()));
 	}
 
+	@Override
+	public void onSuggestion(String suggesterPlayerName, Character suggester,
+			Suggestion suggestion, Room room) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }

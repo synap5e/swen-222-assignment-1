@@ -111,6 +111,13 @@ public class AITest {
 			public void onAccusation(Character accuser, Accusation accusation, boolean correct) {
 				assertTrue("Bots should not make incorrect accusations", correct);
 			}
+
+			@Override
+			public void onSuggestion(String suggesterPlayerName,
+					Character suggester, Suggestion suggestion, Room room) {
+				// TODO Auto-generated method stub
+				
+			}
 		};
 	}
 

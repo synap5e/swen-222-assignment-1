@@ -229,4 +229,11 @@ public class BasicAIPlayer extends Player implements GameListener{
 		// agian this could be used, but is too complex for a basic AI
 	}
 
+	@Override
+	public void onSuggestion(String suggesterPlayerName, Character suggester,
+			Suggestion suggestion, Room room) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -294,6 +294,10 @@ public class GameMaster {
 	private void handleSuggestion(Player player, Character playersCharacter) {
 		Suggestion suggestion = player.getSuggestion();
 		Room room = (Room) board.getLocationOf(playersCharacter);
+		for (GameListener listener : listeners){
+			listener.onSuggestion(player.getName(), playersCharacter, suggestion, room);
+		}
+		
 
 		// move the suggested weapon to the suggested room
 		board.moveWeapon(suggestion.getWeapon(), room);
