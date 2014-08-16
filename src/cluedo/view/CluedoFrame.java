@@ -27,6 +27,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -352,6 +353,8 @@ public class CluedoFrame extends JFrame implements GameListener {
 
 	@Override
 	public void onSuggestionUndisputed(Character suggester,	Suggestion suggestion, Room room) {
+		JOptionPane.showMessageDialog(this, suggester.getName() + "'s suggestion was undisputed");
+		
 		canvas.setCurrentAction("Suggestion Succeeded");
 		log.append(String.format("> %s suggested that %s killed Dr Black in the %s with a %s and no-one could disprove that\n",
 				suggester.getName(), suggestion.getCharacter().getName(), room.getName(), suggestion.getWeapon().getName()));
@@ -359,6 +362,8 @@ public class CluedoFrame extends JFrame implements GameListener {
 
 	@Override
 	public void onSuggestionDisproved(Character suggester, Suggestion suggestion, Room room, Character disprover) {
+		JOptionPane.showMessageDialog(this, suggester.getName() + "'s suggestion was disproved by " + disprover.getName());
+		
 		canvas.setCurrentAction("Suggestion Disproved");
 		log.append(String.format("> %s suggested that %s killed Dr Black in the %s with a %s but %s proved that could not be\n",
 				suggester.getName(), suggestion.getCharacter().getName(), room.getName(), suggestion.getWeapon().getName(), disprover.getName()));
@@ -366,6 +371,10 @@ public class CluedoFrame extends JFrame implements GameListener {
 
 	@Override
 	public void onAccusation(Character accuser, Accusation accusation, boolean correct) {
+		String message = accuser.getName() + " made an accusation which proved to be " + correct;
+		List<Card> cards = Arrays.asList(accusation.getWeapon(), accusation.getCharacter(), accusation.getRoom());
+		showCards(message, cards);
+		
 		log.append(String.format("> %s accused %s of killing Dr Black in the %s with a %s\n" +
 				(correct ? "This was magically verified as true" : "They were wrong and got killed") + "\n",
 				accuser.getName(), accusation.getCharacter().getName(), accusation.getRoom().getName(), accusation.getWeapon().getName()));
@@ -378,6 +387,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 
 	@Override
 	public void onGameWon(String name, Character playersCharacter) {
+		JOptionPane.showMessageDialog(this, name + " (" + playersCharacter.getName() + ") won the game");
 		canvas.setCurrentAction("Game Over");
 		log.append(String.format("> %s (%s) won the game!\n", name, playersCharacter.getName()));
 	}
@@ -389,21 +399,30 @@ public class CluedoFrame extends JFrame implements GameListener {
 
 	@Override
 	public void onLostGame(String name, Character playersCharacter) {
+		JOptionPane.showMessageDialog(this, name + " (" + playersCharacter.getName() + ") lost the game");
 		log.append(String.format("> %s (%s) lost the game due to an incorrect accusation\n", name, playersCharacter.getName()));
 	}
 
 	
 	@Override
 	public void onSuggestion(String suggesterPlayerName, Character suggester, Suggestion suggestion, Room room) {
+		String message = suggesterPlayerName + " (" + suggester.getName() + ") made a suggestion";
+		List<Card> cards = Arrays.asList(suggestion.getWeapon(), suggestion.getCharacter(), room);
+		
+		showCards(message, cards);
+		
+	}
+
+	private void showCards(String message, List<Card> cards) {
 		final JDialog alertDialog = new JDialog(this);
-		alertDialog.setSize(400, 300);
+		alertDialog.setSize(500, 300);
 		alertDialog.setResizable(false);
 		alertDialog.setAlwaysOnTop(true);
 		
 		alertDialog.setLayout(new BorderLayout());
-		alertDialog.add(new JLabel(suggesterPlayerName + " (" + suggester.getName() + ") made a suggestion"), BorderLayout.NORTH);
+		alertDialog.add(new JLabel(message), BorderLayout.NORTH);
 		CardListPanel cardsPanel = new CardListPanel(getCardImages());
-		cardsPanel.setCards(Arrays.asList(suggestion.getWeapon(), suggestion.getCharacter(), room));
+		cardsPanel.setCards(cards);
 		alertDialog.add(cardsPanel, BorderLayout.CENTER);
 		
 		JButton ok = new JButton();
@@ -416,7 +435,6 @@ public class CluedoFrame extends JFrame implements GameListener {
 		ok.setText("OK");
 		alertDialog.add(ok, BorderLayout.SOUTH);
 		
-		//alertDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		alertDialog.setVisible(true);
 		while (alertDialog.isVisible()){
 			try {
@@ -427,7 +445,6 @@ public class CluedoFrame extends JFrame implements GameListener {
 			}
 		}
 		alertDialog.dispose();
-		
 	}
 
 
