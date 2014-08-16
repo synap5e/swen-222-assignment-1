@@ -29,7 +29,12 @@ import cluedo.model.cardcollection.Hand;
 import cluedo.model.cardcollection.Suggestion;
 import cluedo.view.GUIGameInput;
 
-/**
+/** This class is the controller for a game. It creates a game using the 
+ * provided GameInput for how the game is to be played, hosts that  
+ * game, asking each player for their moves. 
+ * 
+ * It is also capable of using a NetworkPlayerHandler to communicate with 
+ * one or more GameSlaves allowing clients to connect to the game being run.
  *
  * @author Simon Pinfold
  *
@@ -47,6 +52,11 @@ public class GameMaster {
 	protected GameInput input;
 	protected NetworkPlayerHandler networkPlayerHandler;
 
+	/** Create a new GameMaster
+	 * 
+	 * @param board the board for this game
+	 * @param input the input from the UI/user
+	 */
 	public GameMaster(Board board, GameInput input) {
 		this.board = board;
 		this.input = input;
@@ -54,17 +64,37 @@ public class GameMaster {
 		listeners = new ArrayList<GameListener>();
 	}
 	
+	/** Create a new GameMaster with capabilities to accept networked players
+	 * joiining the game, depending on the settings specified in input
+	 * 
+	 * @param board the board for the game to run
+	 * @param netHandler the provider of channels to client game
+	 * @param input the input from the hosting user
+	 */
 	public GameMaster(Board board, NetworkPlayerHandler netHandler, GameInput input) {
 		this(board, input);
 		this.networkPlayerHandler = netHandler;
 	}
 
-
-
+	/** Add a listener to the events going on in the game
+	 * 
+	 * @param listener the listenr
+	 */
 	public void addGameListener(GameListener listener) {
 		listeners.add(listener);
 	}
 
+	/** Create a new game, using the options provided by the GameInput.
+	 * This creates the players objects, and will block until all network
+	 * players have connected and all players have selected names and characters.
+	 * 
+	 * Network players will be sent the starting state of the game, handled by the NetworkPlayerHandler
+	 * 
+	 * GameListers will be informed of whether the GameMaster is waiting for network
+	 * players and who the players are once all have joined the game. 
+	 * 
+	 * @throws IOException on network error
+	 */
 	public void createGame() throws IOException{
 		turn = 0;
 		players = new ArrayList<Player>();
@@ -150,9 +180,14 @@ public class GameMaster {
 				listener.onCharacterJoinedGame(players.get(playerNumber).getName(), playingAs.get(players.get(playerNumber)), playerTypes.get(playerNumber));
 			}
 		}
-
 	}
 
+	/** Start the game loop, going through all players and asking for their
+	 * moves until a player has won, or there is only one player left active.
+	 * 
+	 * This will fire events to all GameListeners as events occur. 
+	 * 
+	 */
 	public void startGame(){
 		ArrayList<Player> activePlayers = new ArrayList<Player>(players);
 		while (true){
@@ -281,6 +316,11 @@ public class GameMaster {
 		}
 	}
 
+	/** Get a list of all other players clockwise of the current player
+	 * 
+	 * @param p the current players 
+	 * @return [ I just said what it did in the description, do I really need to repeat it here? ]
+	 */
 	private List<Player> getPlayersClockwiseOf(Player p) {
 		List<Player> r = new ArrayList<Player>(players);
 		Collections.rotate(r, players.indexOf(p));
@@ -288,6 +328,11 @@ public class GameMaster {
 		return r;
 	}
 
+	/** Return a list of characters clockwise of the current character
+	 * 
+	 * @param character the character of the player
+	 * @return the list of characters of the players clockwise of the player playing as <i>character</i>
+	 */
 	public List<Character> getCharactersClockwiseOf(Character character) {
 		// where are my list comprehensions :'(
 		// r = [ playingAs[p] for p in players ]
