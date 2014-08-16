@@ -28,7 +28,11 @@ import cluedo.model.cardcollection.Hand;
 import cluedo.view.CluedoFrame;
 import cluedo.view.GUIGameInput;
 
-/**
+/** This class is the controller for a client game. Because the client/server
+ * architecture used makes all client dumb, this class simply listens for events
+ * from the Master and responds to queries from the master.
+ * 
+ * GameSlave also updates the model with any events fired from the master
  *
  * @author Simon Pinfold
  *
@@ -43,18 +47,31 @@ public class GameSlave {
 	private Hand hand;
 	private JsonToModel jsonToModel;
 
-
+	/** Create a new GameSlavem using the board as the starting state, and 
+	 * the provided GameInput to answer pulls from the GameMaster that 
+	 * this GameSlave will be connected to.
+	 * 
+	 * @param board the board to use
+	 * @param input the user input
+	 */
 	public GameSlave(Board board, GameInput input) {
 		this.board = board;
 		this.input = input;
 		this.jsonToModel = new JsonToModel(board);
 	}
 
-	public void addGameListener(GameListener listener) {
-		assert this.listener == null : "GameSlave only supports one GameListener";
+	/** Set the GameListener for the events from the remote game. 
+	 * 
+	 * @param listener the GameListener
+	 */
+	public void setGameListener(GameListener listener) {
 		this.listener = listener;
 	}
 
+	/** Convenience method to send a json object back to the GameMaster
+	 * 
+	 * @param ob
+	 */
 	private void write(JsonObject ob) {
 		try {
 			os.write(ob.toString().getBytes());
@@ -63,6 +80,11 @@ public class GameSlave {
 		}
 	}
 
+	/** Connect to a remote and start receiving messages.
+	 * 
+	 * @param reader the provider of json messages
+	 * @param outputStream the stream to send responses to pulls on
+	 */
 	public void startGame(JsonStreamReader reader, OutputStream outputStream) {
 		this.os = outputStream;
 		while (true){
@@ -90,6 +112,12 @@ public class GameSlave {
 		}
 	}
 
+	/** Handle a push message from the remote GameMaster.
+	 * Push messages are events sent to the GameSlave's GameListeners and
+	 * used to update the mode.
+	 * 
+	 * @param message the message
+	 */
 	private void handlePush(JsonObject message) {
 		String methodName = ((JsonString) message.get("name")).value();
 		JsonObject parameters = (JsonObject)message.get("parameters");
@@ -184,6 +212,14 @@ public class GameSlave {
 		}
 	}
 
+	/** Handle a pull message from the remote GameMaster.
+	 * Pull messages are a request for user input, and require the GameSlave
+	 * to respond with an appropriate response message after querying the desired 
+	 * information from a user.
+	 * 
+	 * @param message the pull message
+	 * @return the response to send back to the GameMaster
+	 */
 	private JsonEntity handlePull(JsonObject message) {
 		String methodName = ((JsonString) message.get("name")).value();
 		JsonObject parameters = (JsonObject)message.get("parameters");
@@ -249,9 +285,6 @@ public class GameSlave {
 				);
 				return new JsonObject();
 				
-			
-
-
 		default:
 			throw new RuntimeException("Game Slave could not answer pull for \"" + methodName + "\"");
 		}

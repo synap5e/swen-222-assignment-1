@@ -70,7 +70,7 @@ public class Main {
 		CluedoFrame frame = new CluedoFrame(board, defs);
 		
 		GameSlave gs = new GameSlave(board, new GUIGameInput(frame, gc));
-		gs.addGameListener(frame);
+		gs.setGameListener(frame);
 		
 		gs.startGame(reader, connection.getOutputStream());
 		
