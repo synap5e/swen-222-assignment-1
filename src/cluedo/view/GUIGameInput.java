@@ -187,6 +187,9 @@ public class GUIGameInput implements GameInput, FrameListener, CardListener{
 			}
 		}
 		frame.displayTurnButtons(false);
+		if (endingTurn){
+			frame.getCanvas().setCurrentAction("Waiting for player");
+		}
 		return accusing;
 	}
 
@@ -217,8 +220,8 @@ public class GUIGameInput implements GameInput, FrameListener, CardListener{
 			} catch (InterruptedException e1) {
 			}
 		}
-		frame.getCanvas().setCurrentAction("Suggestion Succeeded");
 		frame.getCanvas().focusCharacters(false);
+		frame.getCanvas().setCurrentAction("Waiting for player");
 		return (Character) selectedToken;
 	}
 
@@ -236,6 +239,7 @@ public class GUIGameInput implements GameInput, FrameListener, CardListener{
 			}
 		}
 		frame.getCanvas().focusRooms(false);
+		frame.getCanvas().setCurrentAction("Waiting for player");
 		return (Room) selectedLocation;
 	}
 
@@ -312,9 +316,6 @@ public class GUIGameInput implements GameInput, FrameListener, CardListener{
 			}
 		}
 		dialog.dispose();
-		
-		System.out.printf("Psst [message only shown to current player]. %s disproved your suggestion by showing they hold %s\n", characterDisproved.getName(), disprovingCard.getName());
-
 	}
 
 	@Override
@@ -334,17 +335,14 @@ public class GUIGameInput implements GameInput, FrameListener, CardListener{
 
 	@Override
 	public void onNumberOfPlayers(int num) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void onPlayerSelection(List<String> names, int numberAI, int numberNetwork) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void onSinglePlayerName(String name) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
