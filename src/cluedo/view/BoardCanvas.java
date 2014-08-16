@@ -22,9 +22,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+
+import util.json.JsonNumber;
 import util.json.JsonObject;
+import util.json.JsonString;
 import cluedo.controller.player.Player.PlayerType;
 import cluedo.model.Board;
 import cluedo.model.Location;
@@ -87,7 +91,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 
 	
 	
-	public BoardCanvas(CluedoFrame fram, Board brd, JsonObject def, Map<String, Image> cardImages){
+	public BoardCanvas(CluedoFrame fram, Board brd, JsonObject def, Map<String, Image> cardImages, Map<String, Image> tokenImages){
 		frame = fram;
 		board = brd;
 		endLocations = Collections.emptyList();
@@ -115,26 +119,19 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 			roomCorner.put(r, new Point(minX, minY));
 			roomCenter.put(r, new Point2D.Double((minX+maxX)/2, (minY+maxY)/2));
 		}
-		tokenImages = new HashMap<String, Image>();
+		this.tokenImages = tokenImages;
 		this.cardImages = cardImages;
-		try {
-			//Load token images
-			tokenImages.put("Spanner", ImageIO.read(new File("./images/token_spanner.png")));
-			tokenImages.put("Lead Piping", ImageIO.read(new File("./images/token_lead_piping.png")));
-			tokenImages.put("Dagger", ImageIO.read(new File("./images/token_knife.png")));
-			tokenImages.put("Candlestick", ImageIO.read(new File("./images/token_candlestick.png")));
-			tokenImages.put("Rope", ImageIO.read(new File("./images/token_rope.png")));
-			tokenImages.put("Revolver", ImageIO.read(new File("./images/token_revolver.png")));
-		} catch (IOException e) {
-		}
 		
+		//Load Character colours
 		characterColors = new HashMap<String, Color>();
-		characterColors.put("Colonel Mustard", new Color(224, 220, 6));
-		characterColors.put("Miss Scarlett", new Color(197, 25, 51));
-		characterColors.put("Mrs Peacock", new Color(0, 106, 160));
-		characterColors.put("Mrs White", Color.WHITE);
-		characterColors.put("Professor Plum", new Color(84, 34, 85));
-		characterColors.put("Rev. Green", new Color(2, 101, 72));
+		JsonObject character = (JsonObject) def.get("characters");
+		for (String key : character.keys()){
+			JsonObject colorDefinition = (JsonObject) ((JsonObject) character.get(key)).get("colour");
+			Color color = new Color((int) ((JsonNumber) colorDefinition.get("red")).value(),
+									(int) ((JsonNumber) colorDefinition.get("green")).value(),
+									(int) ((JsonNumber) colorDefinition.get("blue")).value());
+			characterColors.put(key, color);
+		}
 
 		setBackground(BACKGROUND);
 		addMouseListener(this);
@@ -338,17 +335,9 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 		action = act;
 		frame.repaint();
 	}
-
-	@Override
-	public void mouseClicked(MouseEvent arg0) {
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent arg0) {
-	}
-
-	@Override
-	public void mouseExited(MouseEvent arg0) {
+	
+	public void onTurnBegin(String name, Character playersCharacter) {
+		currentPlayer = playersCharacter;
 	}
 
 	@Override
@@ -393,64 +382,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 	}
 
 	@Override
-	public void mouseReleased(MouseEvent arg0) {
-	}
 
-
-	public void onCharacterMove(Character character, Location destination) {
-		frame.repaint();
-	}
-
-	public void onWeaponMove(Weapon weapon, Location room) {
-		frame.repaint();
-	}
-
-
-
-	public void onCharacterJoinedGame(String playerName, Character character, PlayerType type) {
-		System.out.printf("%s (%s) joind the game as %s\n", playerName, character.getName(), type == PlayerType.LocalHuman? "human" : "AI");
-	}
-
-
-	public void onTurnBegin(String name, Character playersCharacter) {
-		currentPlayer = playersCharacter;
-		System.out.printf("Its %s's (%s) turn\n", name, playersCharacter.getName());
-	}
-
-
-	public void onDiceRolled(int dice1, int dice2) {
-		System.out.printf("A %d and a %d was rolled\n", dice1, dice2);
-	}
-
-
-	public void onSuggestionUndisputed(Character suggester,	Suggestion suggestion, Room room) {
-		System.out.printf("%s suggested that %s killed Dr Black with a %s and no-one could disprove that\n",
-				suggester.getName(), suggestion.getCharacter().getName(), suggestion.getWeapon().getName());
-	}
-
-
-	public void onSuggestionDisproved(Character suggester, Suggestion suggestion, Room room, Character disprover) {
-		System.out.printf("%s suggested that %s killed Dr Black with a %s but %s proved that could not be\n",
-				suggester.getName(), suggestion.getCharacter().getName(), suggestion.getWeapon().getName(), disprover.getName());
-	}
-
-
-	public void onAccusation(Character accussuer, Accusation accusation, boolean correct) {
-		System.out.printf(	"%s accused %s of killing Dr Black in the %s with a %s\n" +
-							(correct ? "This was magically verified as true" : "They were wrong and got killed") + "\n",
-							accussuer.getName(), accusation.getCharacter().getName(), accusation.getRoom().getName(), accusation.getWeapon().getName());
-	}
-
-	public void onGameWon(String name, Character playersCharacter) {
-		System.out.printf("%s (%s) won the game!\n", name, playersCharacter.getName());
-	}
-
-
-	@Override
-	public void mouseDragged(MouseEvent arg0) {}
-
-
-	@Override
 	public void mouseMoved(MouseEvent arg0) {
 		double x = ((double) (arg0.getX()-xOffset))/tileWidth;
 		double y = ((double) (arg0.getY()-yOffset-TITLE_HEIGHT-10))/tileWidth;
@@ -478,15 +410,19 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 			}
 		}
 	}
+	
+	@Override
+	public void mouseClicked(MouseEvent arg0) {}
 
+	@Override
+	public void mouseEntered(MouseEvent arg0) {}
 
-	public void waitingForNetworkPlayers(int i) {
-		System.out.printf("Still waiting for %d network players\n", i);
-	}
+	@Override
+	public void mouseExited(MouseEvent arg0) {}
+	
+	@Override
+	public void mouseReleased(MouseEvent arg0) {}
 
-
-	public void onLostGame(String name, Character playersCharacter) {
-		// TODO Auto-generated method stub
-		System.out.printf("%s (%s) lost the game due to an incorrect accusation\n", name, playersCharacter.getName());
-	}
+	@Override
+	public void mouseDragged(MouseEvent arg0) {}
 }

@@ -7,12 +7,15 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
+
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
+
 import cluedo.controller.interaction.GameInput;
 import cluedo.model.Location;
 import cluedo.model.Tile;
@@ -243,7 +246,6 @@ public class GUIGameInput implements GameInput, FrameListener, CardListener{
 		dialog.setResizable(false);
 		dialog.setAlwaysOnTop(true);
 		
-		dialog.setLayout(new GridLayout(2, 1));
 		dialog.setLayout(new GridBagLayout());
 		GridBagConstraints con = new GridBagConstraints();
 		con.fill = GridBagConstraints.BOTH;
@@ -271,8 +273,46 @@ public class GUIGameInput implements GameInput, FrameListener, CardListener{
 	@Override
 	public void suggestionDisproved(Character characterDisproved, Card disprovingCard) {
 		frame.getCanvas().setCurrentAction("Suggestion Disproved");
-		// TODO: Show card to the user
 
+		JDialog dialog = new JDialog(frame);
+		dialog.setSize(250, 300);
+		dialog.setResizable(false);
+		dialog.setAlwaysOnTop(true);
+		dialog.setLayout(new GridBagLayout());
+		GridBagConstraints con = new GridBagConstraints();
+		con.anchor = GridBagConstraints.CENTER;
+		setConstraints(con, 1, 0, 1, false, false);
+		dialog.add(new JLabel(characterDisproved.getName() + " disproved your suggestion"), con);
+		setConstraints(con, 0, 1, 3, true, true);
+		CardListPanel disprovePanel = new CardListPanel(frame.getCardImages());
+		List<Card> card = new ArrayList<Card>();
+		card.add(disprovingCard);
+		disprovePanel.setCards(card);
+		disprovePanel.addListener(this);
+		con.fill = GridBagConstraints.BOTH;
+		dialog.add(disprovePanel, con);
+		con.fill = GridBagConstraints.NONE;
+		JButton close = new JButton("Return");
+		close.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				wait = false;
+			}
+		});
+		setConstraints(con, 1, 3, 1, false, false);
+		dialog.add(close, con);
+		
+		dialog.setVisible(true);
+		
+		wait = true;
+		while (wait){
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e1) {
+			}
+		}
+		dialog.dispose();
+		
 		System.out.printf("Psst [message only shown to current player]. %s disproved your suggestion by showing they hold %s\n", characterDisproved.getName(), disprovingCard.getName());
 
 	}

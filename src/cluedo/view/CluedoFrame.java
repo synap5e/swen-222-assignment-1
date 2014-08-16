@@ -24,8 +24,11 @@ import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 import util.json.JsonObject;
+import util.json.JsonString;
 import cluedo.controller.interaction.GameListener;
 import cluedo.controller.player.Player.PlayerType;
 import cluedo.model.Board;
@@ -52,10 +55,13 @@ public class CluedoFrame extends JFrame implements GameListener {
 	private List<FrameListener> listeners;
 
 	private Map<String, Image> cardImages;
+	private Map<String, Image> tokenImages;
 	
 	private CardListPanel hand;
 	private CardListPanel cardDisplay;
 	private DiceCanvas dice;
+	
+	private JTextArea log;
 	
 	private JButton suggestion;
 	private JButton accusation;
@@ -66,7 +72,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 		listeners = new ArrayList<FrameListener>();
 
 		setTitle("Cluedo");
-		setMinimumSize(new Dimension(700, 850));
+		setMinimumSize(new Dimension(950, 850));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		menu = new JMenuBar();
 		menu.add(new JMenuItem("File"));
@@ -75,26 +81,96 @@ public class CluedoFrame extends JFrame implements GameListener {
 		setJMenuBar(menu);
 
 		//Load images
-		loadImages();
+		loadImages(def);
 		
 		Container pane = getContentPane();
 		pane.setLayout(new GridBagLayout());
 		GridBagConstraints con = createConstraints();
 
+		//Setup card display
 		cardDisplay = new CardListPanel(cardImages);
-		setConstraints(con, 0, 0, 1, false, false);
-		cardDisplay.setMinimumSize(new Dimension(110, 175));
+		setConstraints(con, 0, 0, false, false);
+		cardDisplay.setPreferredSize(new Dimension(110, 175));
 		pane.add(cardDisplay, con);
 		
+		//Setup the dice canvas
 		dice = new DiceCanvas();
-		setConstraints(con, 0, 1, 1, false, true);
+		setConstraints(con, 0, 1, false, true);
 		pane.add(dice, con);
 
+		//Setup the button panel
+		JPanel buttonPanel = createButtonPanel();
+		setConstraints(con, 0, 2, false, false);
+		pane.add(buttonPanel, con);
+		
+		//Setup the board canvas
+		canvas = new BoardCanvas(this, board, def, cardImages, tokenImages);
+		setConstraints(con, 1, 0, true, true);
+		con.gridheight = 2;
+		pane.add(canvas, con);
+		
+		//Setup the hand panel
+		hand = new CardListPanel(cardImages);
+		hand.setPreferredSize(new Dimension(200, 200));
+		setConstraints(con, 1, 2, true, false);
+		con.gridheight = 1;
+		pane.add(hand, con);
+		
+		//Setup log
+		
+		log = new JTextArea();
+		log.setLineWrap(true);
+		log.setWrapStyleWord(true);
+		log.setEditable(false);
+		JScrollPane logBox = new JScrollPane(log, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		logBox.setPreferredSize(new Dimension(250, 10));
+		setConstraints(con, 2, 0, false, false);
+		con.gridheight = 3;
+		pane.add(logBox, con);
+		
+		setVisible(true);
+	}
+	
+	private void loadImages(JsonObject def){
+		cardImages = new HashMap<String, Image>();
+		tokenImages = new HashMap<String, Image>();
+		try {
+			//Load card back
+			cardImages.put("back", ImageIO.read(new File(((JsonString) def.get("card back")).value())));
+
+			//Load Weapon images
+			JsonObject weapon = (JsonObject) def.get("weapons");
+			for (String key : weapon.keys()){
+				cardImages.put(key, ImageIO.read(
+						new File(((JsonString)((JsonObject) weapon.get(key)).get("card")).value())));
+				tokenImages.put(key, ImageIO.read(
+						new File(((JsonString)((JsonObject) weapon.get(key)).get("token")).value())));
+			}
+			
+			//Load Character images
+			JsonObject character = (JsonObject) def.get("characters");
+			for (String key : character.keys()){
+				cardImages.put(key, ImageIO.read(
+						new File(((JsonString)((JsonObject) character.get(key)).get("card")).value())));
+			}
+			
+			//Load Room images
+			JsonObject rooms = (JsonObject) def.get("rooms");
+			for (String key : rooms.keys()){
+				cardImages.put(key, ImageIO.read(
+						new File(((JsonString)((JsonObject) rooms.get(key)).get("card")).value())));
+			}
+		} catch (IOException e) {
+		}
+	}
+	
+	private JPanel createButtonPanel(){
 		JPanel buttonPanel = new JPanel(new GridBagLayout());
 		buttonPanel.setBackground(new Color(212,196,173));
-		buttonPanel.setMinimumSize(new Dimension(110, 200));
+		buttonPanel.setPreferredSize(new Dimension(110, 200));
+		GridBagConstraints con = createConstraints();
 		
-		suggestion = createButton(buttonPanel, "Suggest", 0, 0, 1, new ActionListener() {
+		suggestion = createButton(buttonPanel, "Suggest", 0, 0, new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -103,7 +179,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 				}
 			}
 		}, con);
-		accusation = createButton(buttonPanel, "Accuse", 0, 1, 1, new ActionListener() {
+		accusation = createButton(buttonPanel, "Accuse", 0, 1, new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -112,7 +188,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 				}
 			}
 		}, con);
-		endTurn = createButton(buttonPanel, "End Turn", 0, 2, 1, new ActionListener() {
+		endTurn = createButton(buttonPanel, "End Turn", 0, 2, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				for (FrameListener l : listeners){
@@ -120,7 +196,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 				}
 			}
 		}, con);
-		rollDice = createButton(buttonPanel, "Roll Dice", 0, 3, 1, new ActionListener() {
+		rollDice = createButton(buttonPanel, "Roll Dice", 0, 3, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				for (FrameListener l : listeners){
@@ -129,7 +205,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 			}
 		}, con);
 		//Add Gap
-		setConstraints(con, 0, 4, 1, false, true);
+		setConstraints(con, 0, 4, false, true);
 		JLabel gap = new JLabel("");
 		gap.setMinimumSize(new Dimension(110, 5));
 		buttonPanel.add(gap, con);
@@ -138,61 +214,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 		suggestion.setVisible(false);
 		displayRollDice(false);
 		
-		setConstraints(con, 0, 2, 1, false, false);
-		pane.add(buttonPanel, con);
-		
-		//Setup the board canvas
-		canvas = new BoardCanvas(this, board, def, cardImages);
-		setConstraints(con, 1, 0, 1, true, true);
-		con.gridheight = 2;
-		con.insets = new Insets(0,0,0,0);
-		pane.add(canvas, con);
-		
-		//Setup the hand panel
-		hand = new CardListPanel(cardImages);
-		hand.setPreferredSize(new Dimension(2000, 200));
-		setConstraints(con, 1, 2, 1, true, false);
-		con.gridheight = 1;
-		con.insets = new Insets(0,0,0,0);
-		pane.add(hand, con);
-		
-		setVisible(true);
-	}
-	
-	private void loadImages(){
-		cardImages = new HashMap<String, Image>();
-		try {
-			//Load card back
-			cardImages.put("back", ImageIO.read(new File("./images/card_back.png")));
-			
-			//Load weapon pictures
-			cardImages.put("Dagger", ImageIO.read(new File("./images/card_dagger.png")));
-			cardImages.put("Revolver", ImageIO.read(new File("./images/card_revolver.png")));
-			cardImages.put("Rope", ImageIO.read(new File("./images/card_rope.png")));
-			cardImages.put("Spanner", ImageIO.read(new File("./images/card_spanner.png")));
-			cardImages.put("Lead Piping", ImageIO.read(new File("./images/card_lead_piping.png")));
-			cardImages.put("Candlestick", ImageIO.read(new File("./images/card_candlestick.png")));
-
-			//Load character pictures
-			cardImages.put("Colonel Mustard", ImageIO.read(new File("./images/card_colonel_mustard.png")));
-			cardImages.put("Miss Scarlett", ImageIO.read(new File("./images/card_miss_scarlett.png")));
-			cardImages.put("Mrs Peacock", ImageIO.read(new File("./images/card_mrs_peacock.png")));
-			cardImages.put("Mrs White", ImageIO.read(new File("./images/card_mrs_white.png")));
-			cardImages.put("Professor Plum", ImageIO.read(new File("./images/card_professor_plum.png")));
-			cardImages.put("Rev. Green", ImageIO.read(new File("./images/card_rev_green.png")));
-
-			//Load room pictures
-			cardImages.put("Ballroom", ImageIO.read(new File("./images/card_ballroom.png")));
-			cardImages.put("Billiard Room", ImageIO.read(new File("./images/card_billiard_room.png")));
-			cardImages.put("Conservatory", ImageIO.read(new File("./images/card_conservatory.png")));
-			cardImages.put("Dining Room", ImageIO.read(new File("./images/card_dining_room.png")));
-			cardImages.put("Hall", ImageIO.read(new File("./images/card_hall.png")));
-			cardImages.put("Kitchen", ImageIO.read(new File("./images/card_kitchen.png")));
-			cardImages.put("Library", ImageIO.read(new File("./images/card_library.png")));
-			cardImages.put("Lounge", ImageIO.read(new File("./images/card_lounge.png")));
-			cardImages.put("Study", ImageIO.read(new File("./images/card_study.png")));
-		} catch (IOException e) {
-		}
+		return buttonPanel;
 	}
 	
 	public void setDisplayedCard(Card card){
@@ -256,17 +278,16 @@ public class CluedoFrame extends JFrame implements GameListener {
 	 * @param text - the text of the button
 	 * @param x - the column to add at
 	 * @param y - the row to add at
-	 * @param width - how many columns should the button be in
 	 * @param listener - the listener for the button
 	 * @param con - the constraints to use
 	 *
 	 * @return the created button
 	 */
-	private JButton createButton(Container pane, String text, int x, int y, int width, ActionListener listener, GridBagConstraints con){
+	private JButton createButton(Container pane, String text, int x, int y, ActionListener listener, GridBagConstraints con){
 		JButton button = new JButton(text);
 		button.setOpaque(false);
 		button.addActionListener(listener);
-		setConstraints(con, x, y, width, false, false);
+		setConstraints(con, x, y, false, false);
 		con.insets = new Insets(5, 0, 0, 0);
 		pane.add(button, con);
 		return button;
@@ -282,10 +303,9 @@ public class CluedoFrame extends JFrame implements GameListener {
 	 * @param expandX - whether components should try fill as much horizontal space
 	 * @param expandY - whether components should try fill as much vertical space
 	 */
-	private void setConstraints(GridBagConstraints con, int x, int y, int width, boolean expandX, boolean expandY){
+	private void setConstraints(GridBagConstraints con, int x, int y, boolean expandX, boolean expandY){
 		con.gridy = y;
 		con.gridx = x;
-		con.gridwidth = width;
 		con.insets = new Insets(0, 0, 0, 0);
 		con.weightx = (expandX) ? 1 : 0;
 		con.weighty = (expandY) ? 1 : 0;
@@ -309,11 +329,12 @@ public class CluedoFrame extends JFrame implements GameListener {
 
 	@Override
 	public void onCharacterJoinedGame(String playerName, Character character, PlayerType type) {
-		canvas.onCharacterJoinedGame(playerName, character, type);
+		log.append(String.format("> %s (%s) joined the game as %s\n", playerName, character.getName(), type == PlayerType.LocalHuman? "human" : "AI"));
 	}
 
 	public void onTurnBegin(String name, Character playersCharacter) {
 		canvas.onTurnBegin(name, playersCharacter);
+		log.append(String.format("> Its %s's (%s) turn\n", name, playersCharacter.getName()));
 	}
 
 	@Override
@@ -323,42 +344,49 @@ public class CluedoFrame extends JFrame implements GameListener {
 
 	@Override
 	public void onCharacterMove(Character character, Location destination) {
-		canvas.onCharacterMove(character, destination);
+		canvas.repaint();
 	}
 
 	@Override
 	public void onSuggestionUndisputed(Character suggester,	Suggestion suggestion, Room room) {
-		canvas.onSuggestionUndisputed(suggester, suggestion, room);
+		//TODO add room
+		log.append(String.format("> %s suggested that %s killed Dr Black with a %s and no-one could disprove that\n",
+				suggester.getName(), suggestion.getCharacter().getName(), suggestion.getWeapon().getName()));
 	}
 
 	@Override
 	public void onSuggestionDisproved(Character suggester, Suggestion suggestion, Room room, Character disprover) {
-		canvas.onSuggestionDisproved(suggester, suggestion, room, disprover);
+		//TODO add room
+		log.append(String.format("> %s suggested that %s killed Dr Black with a %s but %s proved that could not be\n",
+				suggester.getName(), suggestion.getCharacter().getName(), suggestion.getWeapon().getName(), disprover.getName()));
 	}
 
 	@Override
 	public void onAccusation(Character accuser, Accusation accusation, boolean correct) {
-		canvas.onAccusation(accuser, accusation, correct);
+		log.append(String.format("%s accused %s of killing Dr Black in the %s with a %s\n" +
+				(correct ? "This was magically verified as true" : "They were wrong and got killed") + "\n",
+				accuser.getName(), accusation.getCharacter().getName(), accusation.getRoom().getName(), accusation.getWeapon().getName()));
 	}
 
 	@Override
 	public void onWeaponMove(Weapon weapon, Location room) {
-		canvas.onWeaponMove(weapon, room);
+		canvas.repaint();
 	}
 
 	@Override
 	public void onGameWon(String name, Character playersCharacter) {
-		canvas.onGameWon(name, playersCharacter);
+		canvas.setCurrentAction("Game Over");
+		log.append(String.format("> %s (%s) won the game!\n", name, playersCharacter.getName()));
 	}
 
 	@Override
 	public void waitingForNetworkPlayers(int i) {
-		canvas.waitingForNetworkPlayers(i);
+		log.append(String.format("> Still waiting for %d network players\n", i));
 	}
 
 	@Override
 	public void onLostGame(String name, Character playersCharacter) {
-		canvas.onLostGame(name, playersCharacter);
+		log.append(String.format("> %s (%s) lost the game due to an incorrect accusation\n", name, playersCharacter.getName()));
 	}
 
 
