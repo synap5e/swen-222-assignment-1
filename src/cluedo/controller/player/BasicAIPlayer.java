@@ -68,7 +68,7 @@ public class BasicAIPlayer extends Player implements GameListener{
 	public static void thinkWait() {
 		if (!enableThinkWait) return;
 		try {
-			Thread.sleep(200);
+			Thread.sleep(300);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
