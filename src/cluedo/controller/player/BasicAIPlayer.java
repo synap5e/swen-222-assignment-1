@@ -66,7 +66,6 @@ public class BasicAIPlayer extends Player implements GameListener{
 	}
 	
 	
-	private List<Tuple2<String, Character>> players = new ArrayList<Tuple2<String, Character>>();
 	private List<Weapon> possibleWeapons;
 	private List<Character> possibleCharacters;
 	private List<Room> possibleRooms;
@@ -104,29 +103,18 @@ public class BasicAIPlayer extends Player implements GameListener{
 		this.possibleAccusation = new Accusation(possibleWeapons.get(0), possibleCharacters.get(0), closestPossibleRoom);
 	}
 	
-	private void checkPossibleAccusation() {
-		boolean charPossible = possibleCharacters.contains(possibleAccusation.getCharacter());
-		boolean roomPossible = possibleRooms.contains(possibleAccusation.getRoom());
-		boolean weapPossible = possibleWeapons.contains(possibleAccusation.getWeapon());
-		
-		if (!(charPossible && roomPossible && weapPossible)){
-			createPossibleAccusation();
-		}
-	}
 
 	@Override
 	public void onCharacterJoinedGame(String playerName, Character character, PlayerType type) {
-		players.add(new Tuple2<String, Character>(playerName, character));
 	}
 
 	@Override
 	public void onTurnBegin(String name, Character playersCharacter) {
-		if (playersCharacter != character) return;
 	}
 
 	@Override
 	public void onAccusation(Character accuser, Accusation accusation, boolean correct) {
-		// know not (a.w ^ a.c ^ a.r)
+		// we now know !(a.w ^ a.c ^ a.r), but this is too complex for a basic AI
 	}
 
 	@Override
@@ -183,13 +171,12 @@ public class BasicAIPlayer extends Player implements GameListener{
 		possibleRooms.remove(disprovingCard);
 		possibleWeapons.remove(disprovingCard);
 		possibleCharacters.remove(disprovingCard);
-		
-		checkPossibleAccusation();
 	}
 
 	@Override
 	public void waitForDiceRollOK() {
 		thinkWait();
+		createPossibleAccusation();
 	}
 
 	@Override
@@ -202,7 +189,9 @@ public class BasicAIPlayer extends Player implements GameListener{
 
 	@Override
 	public void onSuggestionUndisputed(Character suggester,	Suggestion suggestion, Room room) {
-		this.sure = true;
+		if (suggester == character){
+			this.sure = true;
+		}
 	}
 
 	@Override
