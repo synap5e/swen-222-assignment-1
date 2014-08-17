@@ -25,7 +25,7 @@ import javax.swing.event.ChangeListener;
 /**
  * GameConfig allows the user to configure the game before it is started.
  * 
- * @author Simon Pinfold
+ * @author Simon Pinfold, James Greenwood-Thessman
  *
  */
 public class GameConfig extends JFrame{

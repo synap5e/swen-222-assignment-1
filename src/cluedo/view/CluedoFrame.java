@@ -225,6 +225,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 						new File(((JsonString)((JsonObject) rooms.get(key)).get("card")).value())));
 			}
 		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -428,7 +429,6 @@ public class CluedoFrame extends JFrame implements GameListener {
 			l.onLocationSelect(loc);
 		}
 	}
-
 	/**
 	 * Alerts the frame listeners that a token has been selected.
 	 * 
