@@ -11,7 +11,7 @@ participant CardCanvas
 actor User
 
 activate GameMaster
-GameMaster -> HumanPlayer: waitForDiceRollOK
+GameMaster -> HumanPlayer: waitForDiceRollOK()
 activate HumanPlayer
 HumanPlayer -> GUIGameInput : startTurn(Hand)
 activate GUIGameInput
@@ -40,7 +40,7 @@ GameMaster -> HumanPlayer : getDestination(List<Location>)
 activate HumanPlayer
 HumanPlayer -> GUIGameInput : getDestination(List<Location>)
 activate GUIGameInput
-GUIGameInput -> CluedoFrame : unselectLocation
+GUIGameInput -> CluedoFrame : unselectLocations
 activate CluedoFrame
 deactivate CluedoFrame
 GUIGameInput -> CluedoFrame : setPosibleLocations
@@ -80,17 +80,202 @@ opt currentLocation isntanceof Room
 	activate GUIGameInput
 	User -> CluedoFrame : press button
 	activate CluedoFrame
-	CluedoFrame --> GUIGameInput : whether suggestion button pressed
+	CluedoFrame --> GUIGameInput : boolean: suggestion button pressed
 	deactivate CluedoFrame
-	GUIGameInput --> HumanPlayer : whether suggestion button pressed
+	GUIGameInput --> HumanPlayer : boolean: suggestion button pressed
 	deactivate GUIGameInput
-	HumanPlayer --> GameMaster : whether suggestion button pressed
+	HumanPlayer --> GameMaster : boolean: suggestion button pressed
 	deactivate HumanPlayer
+
+	opt suggestion button pressed
+
+		GameMaster -> HumanPlayer : getSuggestion()
+		activate HumanPlayer
+
+		HumanPlayer -> GUIGameInput : pickWeapon()
+		activate GUIGameInput
+		GUIGameInput -> BoardCanvas : setCurrentAction("Pick a weapon")
+		activate BoardCanvas
+		deactivate BoardCanvas
+		GUIGameInput -> BoardCanvas : focusWeapons(true)
+		activate BoardCanvas
+		deactivate BoardCanvas
+		User -> BoardCanvas : weapon selected
+		activate BoardCanvas
+		BoardCanvas -> CluedoFrame : onTokenSelect(Weapon)
+		activate CluedoFrame
+		CluedoFrame -> GUIGameInput : onTokenSelect(Weapon)
+		deactivate CluedoFrame
+		deactivate BoardCanvas
+		GUIGameInput -> BoardCanvas : focusWeapons(false)
+		activate BoardCanvas
+		deactivate BoardCanvas
+		GUIGameInput --> HumanPlayer : Weapon
+		deactivate GUIGameInput
+
+		HumanPlayer -> GUIGameInput : pickCharacter()
+		activate GUIGameInput
+		GUIGameInput -> BoardCanvas : setCurrentAction("Pick the murderer")
+		activate BoardCanvas
+		deactivate BoardCanvas
+		GUIGameInput -> BoardCanvas : focusCharacters(true)
+		activate BoardCanvas
+		deactivate BoardCanvas
+		User -> BoardCanvas : character selected
+		activate BoardCanvas
+		BoardCanvas -> CluedoFrame : onTokenSelect(Character)
+		activate CluedoFrame
+		CluedoFrame -> GUIGameInput : onTokenSelect(Character)
+		deactivate CluedoFrame
+		deactivate BoardCanvas
+		GUIGameInput -> BoardCanvas : focusCharacters(false)
+		activate BoardCanvas
+		deactivate BoardCanvas
+		GUIGameInput -> BoardCanvas : setCurrentAction("Waiting for player")
+		activate BoardCanvas
+		deactivate BoardCanvas
+		GUIGameInput --> HumanPlayer : Character
+		deactivate GUIGameInput
+		HumanPlayer --> GameMaster : Suggestion
+		deactivate HumanPlayer
+
+		loop each other Player
+			GameMaster -> HumanPlayer : canDisprove(character, weapon, room)
+			activate HumanPlayer
+			HumanPlayer --> GameMaster : boolean : can disprove
+			deactivate HumanPlayer
+
+			opt can disprove
+
+				GameMaster -> HumanPlayer : getDisprovingCardToShow(character, weapon, room)
+				activate HumanPlayer
+				HumanPlayer -> GUIGameInput : getDisprovingCardToShow(possibleShow)
+				activate GUIGameInput 
+				User -> CardCanvas : select card
+				activate CardCanvas
+				CardCanvas -> GUIGameInput : onCardSelected(Card)
+				deactivate CardCanvas
+
+				GUIGameInput --> HumanPlayer : Card
+				deactivate GUIGameInput
+				HumanPlayer --> GameMaster : Card
+				deactivate HumanPlayer
+
+
+				GameMaster -> HumanPlayer : suggestionDisproved(Suggestion)
+				activate HumanPlayer
+				HumanPlayer -> GUIGameInput : suggestionDisproved(Suggestion)
+				activate GUIGameInput
+				User -> GUIGameInput : click OK 
+				GUIGameInput --> HumanPlayer
+				deactivate GUIGameInput
+				HumanPlayer --> GameMaster
+				deactivate HumanPlayer
+
+				break
+
+			end
+
+		end
+
+
+	end
 end
-opt suggestion button presseds
+
+GameMaster -> HumanPlayer: hasAccusation()
+activate HumanPlayer
+HumanPlayer -> GUIGameInput : hasAccusation()
+activate GUIGameInput
+User -> CluedoFrame : press button
+activate CluedoFrame
+CluedoFrame --> GUIGameInput : boolean: Accusation button pressed
+deactivate CluedoFrame
+GUIGameInput --> HumanPlayer : boolean: Accusation button pressed
+deactivate GUIGameInput
+HumanPlayer --> GameMaster : boolean: Accusation button pressed
+deactivate HumanPlayer
+
+opt accusation button pressed
+
+	GameMaster -> HumanPlayer : getAccusation()
+	activate HumanPlayer
+
+	HumanPlayer -> GUIGameInput : pickWeapon()
+	activate GUIGameInput
+	GUIGameInput -> BoardCanvas : setCurrentAction("Pick a weapon")
+	activate BoardCanvas
+	deactivate BoardCanvas
+	GUIGameInput -> BoardCanvas : focusWeapons(true)
+	activate BoardCanvas
+	deactivate BoardCanvas
+	User -> BoardCanvas : weapon selected
+	activate BoardCanvas
+	BoardCanvas -> CluedoFrame : onTokenSelect(Weapon)
+	activate CluedoFrame
+	CluedoFrame -> GUIGameInput : onTokenSelect(Weapon)
+	deactivate CluedoFrame
+	deactivate BoardCanvas
+	GUIGameInput -> BoardCanvas : focusWeapons(false)
+	activate BoardCanvas
+	deactivate BoardCanvas
+	GUIGameInput --> HumanPlayer : Weapon
+	deactivate GUIGameInput
+
+	HumanPlayer -> GUIGameInput : pickCharacter()
+	activate GUIGameInput
+	GUIGameInput -> BoardCanvas : setCurrentAction("Pick the murderer")
+	activate BoardCanvas
+	deactivate BoardCanvas
+	GUIGameInput -> BoardCanvas : focusCharacters(true)
+	activate BoardCanvas
+	deactivate BoardCanvas
+	User -> BoardCanvas : character selected
+	activate BoardCanvas
+	BoardCanvas -> CluedoFrame : onTokenSelect(Character)
+	activate CluedoFrame
+	CluedoFrame -> GUIGameInput : onTokenSelect(Character)
+	deactivate CluedoFrame
+	deactivate BoardCanvas
+	GUIGameInput -> BoardCanvas : focusCharacters(false)
+	activate BoardCanvas
+	deactivate BoardCanvas
+	GUIGameInput -> BoardCanvas : setCurrentAction("Waiting for player")
+	activate BoardCanvas
+	deactivate BoardCanvas
+	GUIGameInput --> HumanPlayer : Character
+	deactivate GUIGameInput
+
+	HumanPlayer -> GUIGameInput : pickRoom()
+	activate GUIGameInput
+	GUIGameInput -> BoardCanvas : setCurrentAction("Pick a room")
+	activate BoardCanvas
+	deactivate BoardCanvas
+	GUIGameInput -> BoardCanvas : focusRooms(true)
+	activate BoardCanvas
+	deactivate BoardCanvas
+	User -> BoardCanvas : room selected
+	activate BoardCanvas
+	BoardCanvas -> CluedoFrame : onTokenSelect(Room)
+	activate CluedoFrame
+	CluedoFrame -> GUIGameInput : onTokenSelect(Room)
+	deactivate CluedoFrame
+	deactivate BoardCanvas
+	GUIGameInput -> BoardCanvas : focusRooms(false)
+	activate BoardCanvas
+	deactivate BoardCanvas
+	GUIGameInput -> BoardCanvas : setCurrentAction("Waiting for player")
+	activate BoardCanvas
+	deactivate BoardCanvas
+	GUIGameInput --> HumanPlayer : Room
+	deactivate GUIGameInput
+	HumanPlayer --> GameMaster : Accusation
+	deactivate HumanPlayer
+
 end
 
-
-
+opt accusation correct || all but 1 players have made incorrect accusations
+<-- GameMaster 
+destroy GameMaster
+end
 
 @enduml
