@@ -5,8 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.URL;
-
 import util.json.JsonObject;
 import util.json.JsonParseException;
 import util.json.JsonStreamReader;
