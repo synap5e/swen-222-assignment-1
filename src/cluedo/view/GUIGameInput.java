@@ -334,18 +334,6 @@ public class GUIGameInput implements GameInput, FrameListener, CardListener{
 	}
 
 	@Override
-	public void onNumberOfPlayers(int num) {
-	}
-
-	@Override
-	public void onPlayerSelection(List<String> names, int numberAI, int numberNetwork) {
-	}
-
-	@Override
-	public void onSinglePlayerName(String name) {
-	}
-
-	@Override
 	public void onRollDice() {
 		waitForDiceRoll = false;
 	}

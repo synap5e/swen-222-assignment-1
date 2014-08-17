@@ -1,39 +1,51 @@
 package cluedo.view;
 
-import java.util.List;
 import cluedo.model.Location;
 import cluedo.model.card.Token;
 
 /**
+ * FrameListener listens for events from the CluedoFrame
  * 
  * @author James Greenwood-Thessman
- *
  */
 public interface FrameListener {
 	/*
 	 * Events related to the canvas
 	 */
+	/**
+	 * A location was selected
+	 * 
+	 * @param loc the location selected
+	 */
 	public void onLocationSelect(Location loc);
 	
-	public void onTokenSelect(Token token);
-	
-	/*
-	 * Events related to game setup (as part of the frame)
+	/**
+	 * A token was selected 
+	 * 
+	 * @param token the token selected
 	 */
-	public void onNumberOfPlayers(int num);
-	
-	public void onPlayerSelection(List<String> names, int numberAI, int numberNetwork);
-	
-	public void onSinglePlayerName(String name);
+	public void onTokenSelect(Token token);
 	
 	/*
 	 * Events related to users 'initiating' sequences
 	 */
+	/**
+	 * The user decided to roll the dice
+	 */
 	public void onRollDice();
 	
+	/**
+	 * The user decided to make a suggestion
+	 */
 	public void onSuggest();
 	
+	/**
+	 * The user decided to make an accusation
+	 */
 	public void onAccuse();
 	
+	/**
+	 * The user decided to end their turn
+	 */
 	public void onEndTurn();
 }
