@@ -36,8 +36,6 @@ public class AITest {
 	public void aiNeverIncorrect() throws JsonParseException, IOException{
 		int numberOfTrials = 10000;
 		BasicAIPlayer.disableThinkWait();
-		System.setOut(new PrintStream("/dev/null"));
-		
 		JsonObject defs = MinimalJson.parseJson(new File("./rules.json"));
 		
 		int c = 0;
