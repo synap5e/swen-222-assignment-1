@@ -5,20 +5,8 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketAddress;
-import java.net.UnknownHostException;
-import java.util.List;
-
 import util.json.JsonObject;
-import cluedo.controller.interaction.GameInput;
-import cluedo.controller.interaction.GameListener;
-import cluedo.controller.player.Player.PlayerType;
 import cluedo.model.Board;
-import cluedo.model.Location;
-import cluedo.model.card.Character;
-import cluedo.model.card.Weapon;
-import cluedo.model.cardcollection.Accusation;
-import cluedo.model.cardcollection.Suggestion;
 
 /** This class provides a way of getting a  bidirectional channel to a client game, so
  * that input can be requested from them and evnets can be sent.

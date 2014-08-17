@@ -3,25 +3,19 @@ package cluedo.controller;
 import static org.junit.Assert.*;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Random;
 
-import javax.swing.JOptionPane;
-
 import org.junit.Test;
 
-import util.json.JsonEntity;
 import util.json.JsonObject;
 import util.json.JsonParseException;
 import util.json.JsonStreamReader;
@@ -168,6 +162,7 @@ public class NetworkConsistencyTests implements GameListener {
 	
 	private boolean showgames = false;
 
+	@SuppressWarnings("unchecked")
 	@Test
 	/**
 	 * A simple game between 2 players. They move around, make some suggestions
@@ -216,6 +211,7 @@ public class NetworkConsistencyTests implements GameListener {
 		runGame(masterBoard, player0Moves, player1Moves);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Test
 	/** Among other things this tests ServerGameChannel.waitingForNetworkPlayers
 	 * 
@@ -254,6 +250,7 @@ public class NetworkConsistencyTests implements GameListener {
 		runGame(masterBoard, player0Moves, player1Moves, player2Moves);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testRemotePlayerShowHand() throws IOException, JsonParseException{
 		JsonObject defs = MinimalJson.parseJson(new File("./rules.json"));
@@ -315,6 +312,7 @@ public class NetworkConsistencyTests implements GameListener {
 	 * @param masterBoard The board used by the GameMaster (and therefore the local player)
 	 * @param playerScripts the "scripts" for the players to follow.
 	 */
+	@SuppressWarnings("unchecked")
 	private void runGame(final Board masterBoard, final Queue<Object[]> ... playerScripts) throws IOException, JsonParseException {
 		JsonObject defs = MinimalJson.parseJson(new File("./rules.json"));
 		
@@ -327,6 +325,8 @@ public class NetworkConsistencyTests implements GameListener {
 			@Override
 			public void createGame() throws IOException {
 				this.random = new Random(){
+					private static final long serialVersionUID = 1L;
+
 					@Override
 					public int nextInt(int n) {
 						return 2; // always roll a 3 on the dice

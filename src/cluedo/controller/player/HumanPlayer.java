@@ -6,7 +6,6 @@ import cluedo.controller.interaction.GameInput;
 import cluedo.model.Location;
 import cluedo.model.card.Card;
 import cluedo.model.card.Character;
-import cluedo.model.card.Weapon;
 import cluedo.model.cardcollection.Accusation;
 import cluedo.model.cardcollection.Hand;
 import cluedo.model.cardcollection.Suggestion;

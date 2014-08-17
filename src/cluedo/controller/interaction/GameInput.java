@@ -8,7 +8,6 @@ import cluedo.model.card.Character;
 import cluedo.model.card.Room;
 import cluedo.model.card.Weapon;
 import cluedo.model.cardcollection.Hand;
-import cluedo.model.cardcollection.Suggestion;
 
 /** This interface defines the methods used by the GameMaster to get input from 
  * whatever is providing input.

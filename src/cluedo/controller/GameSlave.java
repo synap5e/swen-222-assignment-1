@@ -2,12 +2,8 @@ package cluedo.controller;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
-
 import util.json.JsonBoolean;
 import util.json.JsonEntity;
-import util.json.JsonList;
 import util.json.JsonNumber;
 import util.json.JsonObject;
 import util.json.JsonStreamReader;
@@ -25,8 +21,6 @@ import cluedo.model.card.Character;
 import cluedo.model.card.Room;
 import cluedo.model.card.Weapon;
 import cluedo.model.cardcollection.Hand;
-import cluedo.view.CluedoFrame;
-import cluedo.view.GUIGameInput;
 
 /** This class is the controller for a client game. Because the client/server
  * architecture used makes all client dumb, this class simply listens for events
@@ -43,7 +37,6 @@ public class GameSlave {
 	private GameInput input;
 	private GameListener listener = null;
 	private OutputStream os;
-	private String playerName;
 	private Hand hand;
 	private JsonToModel jsonToModel;
 

@@ -4,14 +4,12 @@ import java.util.List;
 
 import util.json.JsonEntity;
 import util.json.JsonList;
-import util.json.JsonNumber;
 import util.json.JsonObject;
 import util.json.JsonString;
 import cluedo.model.Board;
 import cluedo.model.Location;
 import cluedo.model.Tile;
 import cluedo.model.card.Card;
-import cluedo.model.card.Character;
 import cluedo.model.card.Room;
 import cluedo.model.card.Weapon;
 import cluedo.model.cardcollection.Accusation;

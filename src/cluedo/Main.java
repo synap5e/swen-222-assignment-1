@@ -4,26 +4,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import javax.swing.JOptionPane;
-
 import util.json.JsonObject;
 import util.json.JsonParseException;
 import util.json.JsonStreamReader;
 import util.json.MinimalJson;
 import cluedo.controller.GameMaster;
 import cluedo.controller.GameSlave;
-import cluedo.controller.interaction.GameInput;
-import cluedo.controller.interaction.GameListener;
 import cluedo.controller.network.NetworkPlayerHandler;
-import cluedo.controller.player.Player;
 import cluedo.model.Board;
 import cluedo.view.CluedoFrame;
 import cluedo.view.ConfigListener;

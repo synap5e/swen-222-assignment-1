@@ -1,19 +1,12 @@
 package cluedo.model;
 
-import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
-import java.util.Set;
-
 import cluedo.model.card.Card;
 import cluedo.model.card.Character;
 import cluedo.model.card.Room;
@@ -88,7 +81,6 @@ public class Board {
 
 		List<Double> roomKeyList = new ArrayList<Double>(kestToRooms.keySet());
 		for (String name : weaponsDef.keys()){
-			JsonObject weaponDef = ((JsonObject) weaponsDef.get(name));
 
 			Weapon w = new Weapon(name);
 			weapons.add(w);

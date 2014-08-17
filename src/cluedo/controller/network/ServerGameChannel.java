@@ -3,15 +3,9 @@ package cluedo.controller.network;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
 
-import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
-
 import util.json.JsonBoolean;
-import util.json.JsonEntity;
-import util.json.JsonList;
-import util.json.JsonNumber;
 import util.json.JsonObject;
 import util.json.JsonStreamReader;
 import util.json.JsonString;
@@ -20,7 +14,6 @@ import cluedo.controller.interaction.GameListener;
 import cluedo.controller.player.Player.PlayerType;
 import cluedo.model.Board;
 import cluedo.model.Location;
-import cluedo.model.Tile;
 import cluedo.model.card.Card;
 import cluedo.model.card.Character;
 import cluedo.model.card.Room;
