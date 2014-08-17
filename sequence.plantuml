@@ -1,0 +1,96 @@
+@startuml
+
+participant GameMaster
+participant Board
+participant HumanPlayer
+participant GUIGameInput
+participant CluedoFrame
+participant CluedoFrame
+participant BoardCanvas
+participant CardCanvas
+actor User
+
+activate GameMaster
+GameMaster -> HumanPlayer: waitForDiceRollOK
+activate HumanPlayer
+HumanPlayer -> GUIGameInput : startTurn(Hand)
+activate GUIGameInput
+GUIGameInput -> BoardCanvas : setCurrentAction("roll dice")
+activate BoardCanvas
+deactivate BoardCanvas
+GUIGameInput -> CluedoFrame : displayRollDice(true)
+activate CluedoFrame
+deactivate CluedoFrame
+GUIGameInput -> CluedoFrame : setHand(Hand)
+activate CluedoFrame
+CluedoFrame -> CardCanvas : setCards(List<Card>)
+activate CardCanvas
+deactivate CardCanvas
+deactivate CluedoFrame
+User -> CluedoFrame : press roll dice button
+activate CluedoFrame
+CluedoFrame -> GUIGameInput : onDiceRoll()
+deactivate CluedoFrame
+GUIGameInput --> HumanPlayer
+deactivate GUIGameInput
+HumanPlayer --> GameMaster
+deactivate HumanPlayer
+
+GameMaster -> HumanPlayer : getDestination(List<Location>)
+activate HumanPlayer
+HumanPlayer -> GUIGameInput : getDestination(List<Location>)
+activate GUIGameInput
+GUIGameInput -> CluedoFrame : unselectLocation
+activate CluedoFrame
+deactivate CluedoFrame
+GUIGameInput -> CluedoFrame : setPosibleLocations
+activate CluedoFrame
+deactivate CluedoFrame
+GUIGameInput -> BoardCanvas : setCurrentAction("Choose Move")
+activate BoardCanvas
+deactivate BoardCanvas
+User -> BoardCanvas : click on highlighted location
+activate BoardCanvas
+BoardCanvas -> CluedoFrame : onLocationSelected(Location)
+activate CluedoFrame
+CluedoFrame -> GUIGameInput : onLocationSelected(Location)
+deactivate CluedoFrame
+deactivate BoardCanvas
+alt location isntanceof Room
+	GUIGameInput -> BoardCanvas : setCurrentAction("Make a Suggestion")
+	activate BoardCanvas
+	deactivate BoardCanvas
+else
+	GUIGameInput -> BoardCanvas : setCurrentAction("Make an Accusation?")
+	activate BoardCanvas
+	deactivate BoardCanvas
+end
+GUIGameInput --> HumanPlayer : Location
+deactivate GUIGameInput
+HumanPlayer --> GameMaster : Location
+deactivate HumanPlayer
+GameMaster -> Board : moveCharacter(Character, Location)
+activate Board
+deactivate Board
+
+opt currentLocation isntanceof Room
+	GameMaster -> HumanPlayer: hasSuggestion()
+	activate HumanPlayer
+	HumanPlayer -> GUIGameInput : hasSuggestion()
+	activate GUIGameInput
+	User -> CluedoFrame : press button
+	activate CluedoFrame
+	CluedoFrame --> GUIGameInput : whether suggestion button pressed
+	deactivate CluedoFrame
+	GUIGameInput --> HumanPlayer : whether suggestion button pressed
+	deactivate GUIGameInput
+	HumanPlayer --> GameMaster : whether suggestion button pressed
+	deactivate HumanPlayer
+end
+opt suggestion button presseds
+end
+
+
+
+
+@enduml
