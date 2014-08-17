@@ -8,16 +8,33 @@ import cluedo.model.card.Token;
 
 
 /**
+ * Represents a tile in the corridor.
  * 
  * @author James Greenwood-Thessman, Simon Pinfold
  *
  */
 public class Tile extends Location{
 
+	/**
+	 * The character currently occupying the tile
+	 */
 	private Character occupant;
+	
+	/**
+	 * The x location in the grid
+	 */
 	private final int x;
+	
+	/**
+	 * The y location in the grid
+	 */
 	private  final int y;
 	
+	/**
+	 * Create a tile at the given position in the grid
+	 * @param x the x location in the grid
+	 * @param y the y location in the grid
+	 */
 	public Tile(int x, int y) {
 		this.x = x;
 		this.y = y;
@@ -28,10 +45,20 @@ public class Tile extends Location{
 		return occupant == null;
 	}
 	
+	/**
+	 * Get the x location in the grid
+	 * 
+	 * @return the x location
+	 */
 	public int getX() {
 		return x;
 	}
 	
+	/**
+	 * Get the y location in the grid
+	 * 
+	 * @return the y location
+	 */
 	public int getY() {
 		return y;
 	}
