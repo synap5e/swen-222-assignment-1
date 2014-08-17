@@ -14,13 +14,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.imageio.ImageIO;
-import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -31,7 +28,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-
 import util.json.JsonObject;
 import util.json.JsonString;
 import cluedo.controller.interaction.GameListener;
@@ -48,46 +44,104 @@ import cluedo.model.cardcollection.Hand;
 import cluedo.model.cardcollection.Suggestion;
 
 /**
+ * CluedoFrame is the main window in the GUI. 
+ * It contains displays for the current hand and the board, 
+ * while also providing buttons to make turn related decisions (for example, making a suggestion). 
+ * It also acts a subject, alerting listeners of different events related to GUI interaction.
  *
  * @author James Greenwood-Thessman, Simon Pinfold
  *
  */
 public class CluedoFrame extends JFrame implements GameListener {
 
-	private JMenuBar menu;
+	private static final long serialVersionUID = 1L;
+	
+	private JMenuBar menu; //TODO: Document  and use
+	
+	/**
+	 * The board display
+	 */
 	private BoardCanvas canvas;
 
+	/**
+	 * The list of listeners listening for events from the frame
+	 */
 	private List<FrameListener> listeners;
 
+	/**
+	 * The images for all the cards
+	 */
 	private Map<String, Image> cardImages;
+	
+	/**
+	 * The images for the tokens
+	 */
 	private Map<String, Image> tokenImages;
 	
+	/**
+	 * The display for the current hand
+	 */
 	private CardListPanel hand;
+	
+	/**
+	 * The display that shows the card last hovered over in the board display
+	 */
 	private CardListPanel cardDisplay;
+	
+	/**
+	 * The display showing the last dice roll
+	 */
 	private DiceCanvas dice;
 	
+	/**
+	 * The shared log that shows when things happened
+	 */
 	private JTextArea log;
 	
+	/**
+	 * The button for making a suggestion
+	 */
 	private JButton suggestion;
+	
+	/**
+	 * The button for making an accusation
+	 */
 	private JButton accusation;
+	
+	/**
+	 * The button for rolling the dice
+	 */
 	private JButton rollDice;
+	
+	/**
+	 * The button to end the turn
+	 */
 	private JButton endTurn;
 
+	/**
+	 * Creates the frame representing the board.
+	 * 
+	 * @param board - the board the frame's interaction is based around
+	 * @param def - the JSON definition which includes how parts of the model should be represented
+	 */
 	public CluedoFrame(Board board, JsonObject def){
 		listeners = new ArrayList<FrameListener>();
 
+		//Setup the frame itself
 		setTitle("Cluedo");
 		setMinimumSize(new Dimension(950, 850));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		//Setup the menu bar
 		menu = new JMenuBar();
 		menu.add(new JMenuItem("File"));
 		menu.add(new JMenuItem("Game"));
-
 		setJMenuBar(menu);
 
 		//Load images
 		loadImages(def);
 		
+		//Get the pane
 		Container pane = getContentPane();
 		pane.setLayout(new GridBagLayout());
 		GridBagConstraints con = createConstraints();
@@ -121,7 +175,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 		con.gridheight = 1;
 		pane.add(hand, con);
 		
-		//Setup log
+		//Setup log inside of a scroll pane
 		log = new JTextArea();
 		log.setLineWrap(true);
 		log.setWrapStyleWord(true);
@@ -132,9 +186,15 @@ public class CluedoFrame extends JFrame implements GameListener {
 		con.gridheight = 3;
 		pane.add(logBox, con);
 		
+		//Finish off by making the frame visible
 		setVisible(true);
 	}
 	
+	/**
+	 * Loads the card and token images from a JSON definition.
+	 * 
+	 * @param def - the JSON defining where the images are
+	 */
 	private void loadImages(JsonObject def){
 		cardImages = new HashMap<String, Image>();
 		tokenImages = new HashMap<String, Image>();
@@ -142,7 +202,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 			//Load card back
 			cardImages.put("back", ImageIO.read(new File(((JsonString) def.get("card back")).value())));
 
-			//Load Weapon images
+			//Load Weapon images (Tokens and Cards)
 			JsonObject weapon = (JsonObject) def.get("weapons");
 			for (String key : weapon.keys()){
 				cardImages.put(key, ImageIO.read(
@@ -151,14 +211,14 @@ public class CluedoFrame extends JFrame implements GameListener {
 						new File(((JsonString)((JsonObject) weapon.get(key)).get("token")).value())));
 			}
 			
-			//Load Character images
+			//Load Character images (Cards only)
 			JsonObject character = (JsonObject) def.get("characters");
 			for (String key : character.keys()){
 				cardImages.put(key, ImageIO.read(
 						new File(((JsonString)((JsonObject) character.get(key)).get("card")).value())));
 			}
 			
-			//Load Room images
+			//Load Room images (Cards only)
 			JsonObject rooms = (JsonObject) def.get("rooms");
 			for (String key : rooms.keys()){
 				cardImages.put(key, ImageIO.read(
@@ -168,14 +228,22 @@ public class CluedoFrame extends JFrame implements GameListener {
 		}
 	}
 	
+	/**
+	 * Create the panel that holds the buttons for rolling the dice, 
+	 * starting suggestions or accusations, and ending the current players turn
+	 * 
+	 * @return the panel created
+	 */
 	private JPanel createButtonPanel(){
+		//Setup the panel
 		JPanel buttonPanel = new JPanel(new GridBagLayout());
 		buttonPanel.setBackground(new Color(212,196,173));
 		buttonPanel.setPreferredSize(new Dimension(110, 200));
 		GridBagConstraints con = createConstraints();
+		con.insets = new Insets(5, 0, 0, 0);
 		
+		//Create the button for starting suggestions
 		suggestion = createButton(buttonPanel, "Suggest", 0, 0, new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				for (FrameListener l : listeners){
@@ -183,8 +251,8 @@ public class CluedoFrame extends JFrame implements GameListener {
 				}
 			}
 		}, con);
+		//Create the button for making accusations
 		accusation = createButton(buttonPanel, "Accuse", 0, 1, new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				for (FrameListener l : listeners){
@@ -192,6 +260,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 				}
 			}
 		}, con);
+		//Create the button for ending the current player's turn
 		endTurn = createButton(buttonPanel, "End Turn", 0, 2, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -200,6 +269,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 				}
 			}
 		}, con);
+		//Create the button for rolling the dice
 		rollDice = createButton(buttonPanel, "Roll Dice", 0, 3, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -208,71 +278,18 @@ public class CluedoFrame extends JFrame implements GameListener {
 				}
 			}
 		}, con);
-		//Add Gap
+		//Add spacing to make sure the panel keeps it's size
 		setConstraints(con, 0, 4, false, true);
-		JLabel gap = new JLabel("");
-		gap.setMinimumSize(new Dimension(110, 5));
-		buttonPanel.add(gap, con);
+		JLabel spacing = new JLabel("");
+		spacing.setMinimumSize(new Dimension(110, 5));
+		buttonPanel.add(spacing, con);
 		
+		//By default, hide the buttons
 		displayTurnButtons(false);
 		suggestion.setVisible(false);
 		displayRollDice(false);
 		
 		return buttonPanel;
-	}
-	
-	public void setDisplayedCard(Card card){
-		List<Card> cards = new ArrayList<Card>();
-		cards.add(card);
-		cardDisplay.setCards(cards);
-		cardDisplay.repaint();
-	}
-	
-	public void setHand(Hand hand){
-		List<Card> cards = null;
-		if (hand != null){
-			cards = new ArrayList<Card>();
-			for (Card c : hand){
-				cards.add(c);
-			}
-		}
-		this.hand.setCards(cards);
-	}
-	
-	public Map<String, Image> getCardImages(){
-		return cardImages;
-	}
-
-	public void displayTurnButtons(boolean visible){
-		accusation.setVisible(visible);
-		endTurn.setVisible(visible);
-		repaint();
-	}
-
-	public void displaySuggestion(boolean visible){
-		suggestion.setVisible(visible);
-		repaint();
-	}
-
-	public void displayRollDice(boolean visible){
-		rollDice.setVisible(visible);
-		repaint();
-	}
-
-	public boolean addFrameListener(FrameListener listener){
-		return listeners.add(listener);
-	}
-
-	public void onLocationSelect(Location loc){
-		for (FrameListener l : listeners){
-			l.onLocationSelect(loc);
-		}
-	}
-
-	public void onTokenSelect(Token token){
-		for (FrameListener l : listeners){
-			l.onTokenSelect(token);
-		}
 	}
 
 	/**
@@ -292,9 +309,20 @@ public class CluedoFrame extends JFrame implements GameListener {
 		button.setOpaque(false);
 		button.addActionListener(listener);
 		setConstraints(con, x, y, false, false);
-		con.insets = new Insets(5, 0, 0, 0);
 		pane.add(button, con);
 		return button;
+	}
+	
+	/**
+	 * Create the constraints with a predefined insets and set to fill both directions.
+	 *
+	 * @return the created constraints
+	 */
+	private GridBagConstraints createConstraints(){
+		GridBagConstraints con = new GridBagConstraints();
+		con.insets = new Insets(0, 0, 0, 0);
+		con.fill = GridBagConstraints.BOTH;
+		return con;
 	}
 
 	/**
@@ -303,40 +331,133 @@ public class CluedoFrame extends JFrame implements GameListener {
 	 * @param con - the constraints to set
 	 * @param row - the row
 	 * @param col - the column
-	 * @param width - how many positions in the grid to span horizontally
 	 * @param expandX - whether components should try fill as much horizontal space
 	 * @param expandY - whether components should try fill as much vertical space
 	 */
 	private void setConstraints(GridBagConstraints con, int x, int y, boolean expandX, boolean expandY){
 		con.gridy = y;
 		con.gridx = x;
-		con.insets = new Insets(0, 0, 0, 0);
 		con.weightx = (expandX) ? 1 : 0;
 		con.weighty = (expandY) ? 1 : 0;
 	}
 
 	/**
-	 * Create the constraints with a predefined insets and set to fill both directions.
-	 *
-	 * @return The created constraints
+	 * Set the card to be displayed
+	 * @param card the card to be displayed
 	 */
-	private GridBagConstraints createConstraints(){
-		GridBagConstraints con = new GridBagConstraints();
-		con.insets = new Insets(1, 2, 2, 1);
-		con.fill = GridBagConstraints.BOTH;
-		return con;
+	public void setDisplayedCard(Card card){
+		List<Card> cards = new ArrayList<Card>();
+		cards.add(card);
+		cardDisplay.setCards(cards);
+		cardDisplay.repaint();
+	}
+	
+	/**
+	 * Set the hand of the current player
+	 * @param hand the hand to display
+	 */
+	public void setHand(Hand hand){
+		//Transform the hand into a list of cards
+		List<Card> cards = null;
+		if (hand != null){
+			cards = new ArrayList<Card>();
+			for (Card c : hand){
+				cards.add(c);
+			}
+		}
+		this.hand.setCards(cards);
+	}
+	
+	/**
+	 * Get the map of images for the cards
+	 * 
+	 * @return the card images
+	 */
+	public Map<String, Image> getCardImages(){
+		return cardImages;
 	}
 
+	/**
+	 * Set whether to display the buttons to accuse or end turn.
+	 * 
+	 * @param visible whether the buttons should be displayed
+	 */
+	public void displayTurnButtons(boolean visible){
+		accusation.setVisible(visible);
+		endTurn.setVisible(visible);
+		repaint();
+	}
+
+	/**
+	 * Set whether to display the button to start a suggestion.
+	 * 
+	 * @param visible whether the button should be displayed
+	 */
+	public void displaySuggestion(boolean visible){
+		suggestion.setVisible(visible);
+		repaint();
+	}
+
+	/**
+	 * Set whether to display the button to roll the dice
+	 * 
+	 * @param visible whether the button should be displayed
+	 */
+	public void displayRollDice(boolean visible){
+		rollDice.setVisible(visible);
+		repaint();
+	}
+
+	/**
+	 * Add a listener for frame events
+	 * 
+	 * @param listener the listener
+	 * @return whether the listener was successfully added
+	 */
+	public boolean addFrameListener(FrameListener listener){
+		return listeners.add(listener);
+	}
+
+	/**
+	 * Alerts the frame listeners that a location has been selected.
+	 * 
+	 * @param loc the location selected
+	 */
+	public void onLocationSelect(Location loc){
+		for (FrameListener l : listeners){
+			l.onLocationSelect(loc);
+		}
+	}
+
+	/**
+	 * Alerts the frame listeners that a token has been selected.
+	 * 
+	 * @param token the token selected
+	 */
+	public void onTokenSelect(Token token){
+		for (FrameListener l : listeners){
+			l.onTokenSelect(token);
+		}
+	}
+	
+	/**
+	 * Returns the board canvas
+	 * 
+	 * @return the board canvas
+	 */
 	public BoardCanvas getCanvas(){
 		return canvas;
 	}
 
 	@Override
 	public void onCharacterJoinedGame(String playerName, Character character, PlayerType type) {
-		log.append(String.format("> %s (%s) joined the game as %s\n", playerName, character.getName(), type == PlayerType.LocalHuman? "human" : "AI"));
+		//Log that a player joined the game
+		log.append(String.format("> %s (%s) joined the game as %s\n", playerName, character.getName(), type == PlayerType.LocalAI? "AI" : "human"));
 	}
 
+	@Override
 	public void onTurnBegin(String name, Character playersCharacter) {
+		//Set and log that a new player's turn has started
 		canvas.setCurrentPlayer(playersCharacter);
 		log.append(String.format("> Its %s's (%s) turn\n", name, playersCharacter.getName()));
 	}
@@ -348,11 +469,13 @@ public class CluedoFrame extends JFrame implements GameListener {
 
 	@Override
 	public void onCharacterMove(Character character, Location destination) {
+		//Makes sure when a character is moved that the canvas displays it
 		canvas.repaint();
 	}
 
 	@Override
 	public void onSuggestionUndisputed(Character suggester,	Suggestion suggestion, Room room) {
+		//Display and log that a suggestion was undisputed
 		JOptionPane.showMessageDialog(this, suggester.getName() + "'s suggestion was undisputed");
 		
 		canvas.setCurrentAction("Suggestion Succeeded");
@@ -362,6 +485,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 
 	@Override
 	public void onSuggestionDisproved(Character suggester, Suggestion suggestion, Room room, Character disprover) {
+		//Display and log that a suggestion was disproved
 		JOptionPane.showMessageDialog(this, suggester.getName() + "'s suggestion was disproved by " + disprover.getName());
 		
 		canvas.setCurrentAction("Suggestion Disproved");
@@ -371,6 +495,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 
 	@Override
 	public void onAccusation(Character accuser, Accusation accusation, boolean correct) {
+		//Display and log that an accusation was made and whether it was correct
 		String message = accuser.getName() + " made an accusation which proved to be " + correct;
 		List<Card> cards = Arrays.asList(accusation.getWeapon(), accusation.getCharacter(), accusation.getRoom());
 		showCards(message, cards);
@@ -382,11 +507,13 @@ public class CluedoFrame extends JFrame implements GameListener {
 
 	@Override
 	public void onWeaponMove(Weapon weapon, Location room) {
+		//Makes sure when a weapon is moved that the canvas displays it
 		canvas.repaint();
 	}
 
 	@Override
 	public void onGameWon(String name, Character playersCharacter) {
+		//Display and log that the game was won
 		JOptionPane.showMessageDialog(this, name + " (" + playersCharacter.getName() + ") won the game");
 		canvas.setCurrentAction("Game Over");
 		log.append(String.format("> %s (%s) won the game!\n", name, playersCharacter.getName()));
@@ -394,11 +521,13 @@ public class CluedoFrame extends JFrame implements GameListener {
 
 	@Override
 	public void waitingForNetworkPlayers(int i) {
+		//Log that the game is still waiting
 		log.append(String.format("> Still waiting for %d network players\n", i));
 	}
 
 	@Override
 	public void onLostGame(String name, Character playersCharacter) {
+		//Display and log the given character lost the game
 		JOptionPane.showMessageDialog(this, name + " (" + playersCharacter.getName() + ") lost the game");
 		log.append(String.format("> %s (%s) lost the game due to an incorrect accusation\n", name, playersCharacter.getName()));
 	}
@@ -406,6 +535,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 	
 	@Override
 	public void onSuggestion(String suggesterPlayerName, Character suggester, Suggestion suggestion, Room room) {
+		//Display the suggestion, regardless of whether it will be disproved
 		String message = suggesterPlayerName + " (" + suggester.getName() + ") made a suggestion";
 		List<Card> cards = Arrays.asList(suggestion.getWeapon(), suggestion.getCharacter(), room);
 		
@@ -413,37 +543,47 @@ public class CluedoFrame extends JFrame implements GameListener {
 		
 	}
 
+	/**
+	 * Opens a dialog box, displaying the given cards
+	 * 
+	 * @param message the message to accompany the cards
+	 * @param cards the cards to display
+	 */
 	private void showCards(String message, List<Card> cards) {
+		//Setup the dialog box
 		final JDialog alertDialog = new JDialog(this);
 		alertDialog.setSize(500, 300);
 		alertDialog.setResizable(false);
 		alertDialog.setAlwaysOnTop(true);
-		
 		alertDialog.setLayout(new BorderLayout());
+		
+		//Add the message
 		alertDialog.add(new JLabel(message), BorderLayout.NORTH);
+		
+		//Add the card display
 		CardListPanel cardsPanel = new CardListPanel(getCardImages());
 		cardsPanel.setCards(cards);
 		alertDialog.add(cardsPanel, BorderLayout.CENTER);
 		
-		JButton ok = new JButton();
-		ok.setAction(new AbstractAction() {
+		//Add the button to close
+		JButton ok = new JButton("OK");
+		ok.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				alertDialog.setVisible(false);
 			}
 		});
-		ok.setText("OK");
 		alertDialog.add(ok, BorderLayout.SOUTH);
 		
+		//Wait for OK to be pressed
 		alertDialog.setVisible(true);
 		while (alertDialog.isVisible()){
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 		}
+
 		alertDialog.dispose();
 	}
 
