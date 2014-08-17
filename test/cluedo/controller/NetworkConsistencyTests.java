@@ -48,7 +48,7 @@ import cluedo.view.CluedoFrame;
 
 /** This test suite tests that 2 (or more) boards across a networked game
  * end up in an identical state. In doing so this tests a large portion of 
- * the network code
+ * the network code (coverage of all message types/names sent and receive)
  * 
  * @author Simon Pinfold
  *
@@ -175,7 +175,7 @@ public class NetworkConsistencyTests implements GameListener {
 	 * 
 	 */
 	public void testGameScript1() throws IOException, JsonParseException{
-		JsonObject defs = MinimalJson.parseJson(new File("./rules/cards.json"));
+		JsonObject defs = MinimalJson.parseJson(new File("./rules.json"));
 		JsonObject starts = MinimalJson.parseJson("{ \"Rope\" : \"Library\",\"Dagger\" : \"Ballroom\",\"Spanner\" : \"Conservatory\",\"Revolver\" : \"Kitchen\",\"Candlestick\" : \"Lounge\",\"Lead Piping\" : \"Billiard Room\"}");
 				
 		Board masterBoard = new Board(defs, starts);
@@ -221,7 +221,7 @@ public class NetworkConsistencyTests implements GameListener {
 	 * 
 	 */
 	public void testMultipleRemotePlayers() throws JsonParseException, IOException{
-		JsonObject defs = MinimalJson.parseJson(new File("./rules/cards.json"));
+		JsonObject defs = MinimalJson.parseJson(new File("./rules.json"));
 		JsonObject starts = MinimalJson.parseJson("{ \"Rope\" : \"Library\",\"Dagger\" : \"Ballroom\",\"Spanner\" : \"Conservatory\",\"Revolver\" : \"Kitchen\",\"Candlestick\" : \"Lounge\",\"Lead Piping\" : \"Billiard Room\"}");
 				
 		Board masterBoard = new Board(defs, starts);
@@ -256,7 +256,7 @@ public class NetworkConsistencyTests implements GameListener {
 
 	@Test
 	public void testRemotePlayerShowHand() throws IOException, JsonParseException{
-		JsonObject defs = MinimalJson.parseJson(new File("./rules/cards.json"));
+		JsonObject defs = MinimalJson.parseJson(new File("./rules.json"));
 		JsonObject starts = MinimalJson.parseJson("{ \"Rope\" : \"Library\",\"Dagger\" : \"Ballroom\",\"Spanner\" : \"Conservatory\",\"Revolver\" : \"Kitchen\",\"Candlestick\" : \"Lounge\",\"Lead Piping\" : \"Billiard Room\"}");
 				
 		Board masterBoard = new Board(defs, starts);
@@ -316,7 +316,7 @@ public class NetworkConsistencyTests implements GameListener {
 	 * @param playerScripts the "scripts" for the players to follow.
 	 */
 	private void runGame(final Board masterBoard, final Queue<Object[]> ... playerScripts) throws IOException, JsonParseException {
-		JsonObject defs = MinimalJson.parseJson(new File("./rules/cards.json"));
+		JsonObject defs = MinimalJson.parseJson(new File("./rules.json"));
 		
 		NetworkPlayerHandler net;
 		this.master = new GameMaster(

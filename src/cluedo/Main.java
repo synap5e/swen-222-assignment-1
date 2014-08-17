@@ -80,7 +80,7 @@ public class Main {
 	private static void startServerGame(GameConfig gc) throws IOException {
 		JsonObject defs = null;
 		try {
-			defs = MinimalJson.parseJson(new File("./rules/cards.json"));
+			defs = MinimalJson.parseJson(new File("./rules.json"));
 		} catch (FileNotFoundException | JsonParseException e) {
 			System.err.println("Could not load card definitions");
 			e.printStackTrace();

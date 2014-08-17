@@ -38,7 +38,7 @@ public class AITest {
 		BasicAIPlayer.disableThinkWait();
 		System.setOut(new PrintStream("/dev/null"));
 		
-		JsonObject defs = MinimalJson.parseJson(new File("./rules/cards.json"));
+		JsonObject defs = MinimalJson.parseJson(new File("./rules.json"));
 		
 		int c = 0;
 		for (int playerCount=2; playerCount <= 6; playerCount++){
