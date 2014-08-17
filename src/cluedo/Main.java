@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.URL;
+
 import util.json.JsonObject;
 import util.json.JsonParseException;
 import util.json.JsonStreamReader;
@@ -68,8 +70,13 @@ public class Main {
 	private static void startServerGame(GameConfig gc) throws IOException {
 		JsonObject defs = null;
 		try {
+			try {
 			defs = MinimalJson.parseJson(new File("./rules.json"));
-		} catch (FileNotFoundException | JsonParseException e) {
+			} catch (FileNotFoundException fnfe){
+				// allow loading from jar file
+				defs = MinimalJson.parseJson(Main.class.getClassLoader().getResource("rules.json").openStream());
+			}
+		} catch (JsonParseException e) {
 			System.err.println("Could not load card definitions");
 			e.printStackTrace();
 			// TODO: GUI display?
