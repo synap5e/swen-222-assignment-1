@@ -1,0 +1,140 @@
+@startuml
+
+package cluedo.model {
+	interface Card {
+		getName() : String
+	}
+	abstract Token
+	abstract Location {
+		abstract addToken(Token)
+		abstract getTokens() : List<Token>
+	}
+	class Hand{
+		addCard(Card)
+	}
+	class Card
+	class Room
+	class Token
+	class Tile
+	class Accusation{
+		equals(Accusation) : boolean
+	}
+	class Suggestion
+	class Board{
+		getLocation(Card): Location
+		moveCharacter(Character, Location)
+		moveWeapon(Character, Weapon)
+	}
+	class Character
+
+	Card <|-- Token
+	Card <|-- Room
+	
+	Location <|-- Room
+	Location <|-- Tile
+	Location "*" -- "*" Location : neighbors
+
+
+	Token <|-- Weapon
+	Token <|-- Character
+	Token "*" -- "0..1" Room : < contains
+
+	Tile "0..1" -- "0..1" Character
+
+	Weapon "1" -- "*" Accusation
+	Room "1" -- "*" Accusation
+	Character "1" -- "*" Accusation
+
+	Character "1" -- "*" Suggestion
+	Weapon "1" -- "*" Suggestion
+
+	Board "1" -- "9" Room
+	Tile "1" -- "*" Board
+
+	Hand "0..1" -- "1..*" Card : cards
+}
+package cluedo.controller{
+	class GameMaster{
+		turn : int
+		startGame()
+	}
+	abstract Player {
+		getDestination() : Location
+		getSuggestion() : Suggestion
+		getAccusation() : Accusation
+		selectDisprovingCardToShow() : Card
+		...()
+	}
+	class AIPlayer
+	class HumanPlayer
+	class NetworkPlayerHandler{
+		server : ServerSocket
+		getRemoteInput() : ServerGameChanel
+	}
+	interface GameInput{
+		chooseCharacter() : Character
+		getDestination() : Location
+		getSuggestion() : Suggestion
+		getAccusation() : Accusation
+		selectDisprovingCardToShow() : Card
+		getNumberOfPlayers()
+		...()
+	}
+	interface GameListener{
+		onDiceRolled(int, int)
+		onSuggestion(Suggestion)
+		onSuggestionDisproved(Suggestion)
+		onCharacterMoved(Character, Location)
+		onWeaponMoved(Weapon, Location)
+		...()
+	}
+	class GameSlave{
+		startGame(InputStream, OutputStream)
+	}
+	class ServerGameChanel{
+		inputStream : InputStream
+		outputStream: OutputStream
+	}
+
+	Player <|-- AIPlayer
+	Player <|-- HumanPlayer
+	Player "1" -- "1" Hand 
+
+	GameMaster "1" -- "2..6" Player
+	GameMaster "0..1" -- "1" Board
+	GameMaster "1" -- "0..1" GameInput
+	GameMaster "1" -- "0..1" NetworkPlayerHandler
+	GameMaster "0..1" -- "*" GameListener
+
+	GameInput <|-- ServerGameChanel
+	GameInput "1" -- "0..*" HumanPlayer
+
+	GameSlave "0..1" -- "1" Board
+	GameSlave "0..1" -- "1" GameInput
+
+	Character "1" -- "0..1" Player
+}
+
+package cluedo.view{
+	class BoardCavas
+	class CardCanvas
+	class GameConfig
+	class GUIGameInput
+	class CluedoFrame
+
+	CardCanvas "*" -- "*" Card
+	
+	BoardCavas "0..1" -- "1" Board
+
+	CluedoFrame --|> GameListener
+	GUIGameInput --|> GameInput
+
+	GUIGameInput "1" -- "1" GameConfig
+	CardCanvas "*" -- "0..1" CluedoFrame
+	GUIGameInput "1" -- "1" CluedoFrame 
+	CluedoFrame "1" -- "1" BoardCavas
+
+}
+
+
+@enduml
