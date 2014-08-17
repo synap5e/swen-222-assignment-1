@@ -6,7 +6,7 @@ package cluedo.model.card;
  * @author James Greenwood-Thessman
  *
  */
-public class Token implements Card{
+public abstract class Token implements Card{
 
 	protected String name;
 
