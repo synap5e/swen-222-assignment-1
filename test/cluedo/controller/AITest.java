@@ -26,6 +26,13 @@ import util.json.JsonObject;
 import util.json.JsonParseException;
 import util.json.JsonParser;
 
+/** Tests that the AI does not get stuck, or make a move that causes it to loose.
+ * This tests runs 10000 games, which means that many corner cases of game logic can be picked up.
+ * e.g. what happens when a player is surrounded by player tokens so can't move anywhere.
+ * 
+ * @author Simon Pinfold
+ *
+ */
 public class AITest {
 	
 	private int turns = 0;

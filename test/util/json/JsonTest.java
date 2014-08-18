@@ -8,6 +8,11 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+/** Test the json parser
+ * 
+ * @author Simon Pinfold
+ *
+ */
 public class JsonTest {
 	
 	@Test
