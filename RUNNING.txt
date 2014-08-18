@@ -1,0 +1,23 @@
+======= How to run =======
+
+Make sure that the following asset files/folders are in the running directory of the .jar file:
+	- rules.json
+	- images/
+	- rule_description.txt
+
+Run the .jar file with
+	java -jar cluedo.jar
+
+Host a game/play single player
+	Use the current tab to select the number of players, and the type of player.
+	Human players should specify names in the textfield provided beside human player.
+	If any network players are enabled the bind address and port may be specified.
+	Click start.
+
+	Note that while it is possible to run with no local humans, messages must still
+	be acknowledged by a person at times for the game to run. 
+
+Connect to a server
+	Use the "Run as client" tab to select a name and enter the IP address and port of
+	the server.
+	Click start
