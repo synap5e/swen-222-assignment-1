@@ -16,7 +16,6 @@ public class JsonStreamReader{
 		try {
 			return MinimalJson.parseJson(scan, true);
 		} catch (JsonParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
