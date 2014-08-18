@@ -10,24 +10,29 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+
 import util.json.JsonObject;
 import util.json.JsonString;
 import cluedo.controller.interaction.GameListener;
@@ -55,8 +60,6 @@ import cluedo.model.cardcollection.Suggestion;
 public class CluedoFrame extends JFrame implements GameListener {
 
 	private static final long serialVersionUID = 1L;
-	
-	private JMenuBar menu; //TODO: Document  and use
 	
 	/**
 	 * The board display
@@ -117,6 +120,11 @@ public class CluedoFrame extends JFrame implements GameListener {
 	 * The button to end the turn
 	 */
 	private JButton endTurn;
+	
+	/**
+	 * The text describing the rules
+	 */
+	private String ruleText;
 
 	/**
 	 * Creates the frame representing the board.
@@ -133,11 +141,49 @@ public class CluedoFrame extends JFrame implements GameListener {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		//Setup the menu bar
-		menu = new JMenuBar();
-		menu.add(new JMenuItem("File"));
-		menu.add(new JMenuItem("Game"));
+		JMenuBar menu = new JMenuBar();
+		JMenu dropdown = new JMenu("Menu");
+		
+		//Add the rules button to the menu
+		JMenuItem rules = new JMenuItem("Rules");
+		rules.addActionListener(new ActionListener() {			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				openRules();
+			}
+		});
+		dropdown.add(rules);
+		
+		//Add the exit button to the menu
+		JMenuItem exit = new JMenuItem("Exit");
+		exit.addActionListener(new ActionListener() {			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
+		dropdown.add(exit);
+		
+		//Add the menu to the frame
+		menu.add(dropdown);
 		setJMenuBar(menu);
 
+		//Load the rule text
+		ruleText = "";
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(new File(((JsonString) def.get("rule text")).value())));
+			
+			String line;
+			while ((line = reader.readLine()) != null){
+				ruleText += line + "\n";
+			}
+			reader.close();
+		} catch (IOException e1) {
+			//If the rules can't be read, help the user find them
+			ruleText = "GIYF";
+			e1.printStackTrace();
+		}
+		
 		//Load images
 		loadImages(def);
 		
@@ -291,6 +337,31 @@ public class CluedoFrame extends JFrame implements GameListener {
 		displayRollDice(false);
 		
 		return buttonPanel;
+	}
+	
+	/**
+	 * Opens a dialog box showing the rules
+	 */
+	private void openRules(){
+		//Create the dialog
+		JDialog dialog = new JDialog(this);
+		dialog.setSize(400, 300);
+		dialog.setResizable(false);
+		dialog.setAlwaysOnTop(true);
+		
+		//Create the text area to display the rules
+		JTextArea rules = new JTextArea();
+		rules.setText(ruleText);
+		rules.setLineWrap(true);
+		rules.setWrapStyleWord(true);
+		rules.setEditable(false);
+		
+		//Add the text area to the dialog
+		JScrollPane ruleBox = new JScrollPane(rules, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		dialog.add(ruleBox);
+		
+		//Show the dialog
+		dialog.setVisible(true);
 	}
 
 	/**
