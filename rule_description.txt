@@ -1,0 +1,21 @@
+Every character, weapon and room is represented by a special card in the game. Before the game
+starts one character, one weapon and one room card are selected at random and placed in a special
+envelope. This is then located in the center of the board. These cards represent the “solution” — that
+is, they identify the murderer, the murder weapon and murder room. The remaining weapon, room
+and character cards are then dealt evenly to the players.
+
+Players take it in turns to roll the dice and move their character token a corresponding number of
+squares. When a player enters a room he/she can announce a suggestion which consists of that room,
+and a character and weapon (if necessary, the character and weapon pieces are moved into the room).
+By making the announcement, the player is hypothesising that these solve the murder.
+
+When an announcement is made, each player responds in a clock-wise fashion until either: the
+suggestion is refuted; or, all players have indicated they cannot refute the suggestion. A suggestion
+is refuted by a player if that player contains a matching card. In other words, the player contains a
+card and, hence, that card cannot be in the solution envelope.
+
+Play continues until a player believes he/she has determined the solution. At that point, he/she
+makes an accusation consisting of a weapon, character and room (note: unlike suggestions, the player
+does not need to be in a room to make an accusation involving it). The accusation is then checked
+by the player against the solution. If it is correct the player wins, otherwise the player is eliminated
+from the game.

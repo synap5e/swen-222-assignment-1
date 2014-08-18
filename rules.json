@@ -178,6 +178,7 @@
 				"card"	: "./images/card_spanner.png"
 			}
 	},
-	"card back"	: "./images/card_back.png"
+	"card back"	: "./images/card_back.png",
+	"rule text" : "./rule_description.txt"
 }
 
