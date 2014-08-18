@@ -5,6 +5,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.NoSuchElementException;
+
+import javax.swing.JOptionPane;
+
 import util.json.JsonObject;
 import util.json.JsonParseException;
 import util.json.JsonStreamReader;
@@ -38,8 +42,11 @@ public class Main {
 							} else {
 								startClientGame(gc);
 							}
-						} catch (IOException e) {
+						} catch (IOException | NoSuchElementException e) {
+							// NoSuchElementException is thrown when the network stream wrapper can't read the next json object
+							JOptionPane.showMessageDialog(null, "A network error has occured - It is likely the other player has disconnected. Game cannot continue.", "ERROR", JOptionPane.ERROR_MESSAGE);
 							e.printStackTrace();
+							System.exit(0);
 						}
 					}
 				}).start();
@@ -77,7 +84,6 @@ public class Main {
 		} catch (JsonParseException e) {
 			System.err.println("Could not load card definitions");
 			e.printStackTrace();
-			// TODO: GUI display?
 			System.exit(-1);
 		}
 		

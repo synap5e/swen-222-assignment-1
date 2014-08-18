@@ -65,10 +65,13 @@ public class Tile extends Location{
 	
 	@Override
 	public void addToken(Token token) {
-		// TODO: if full error
-		if (token instanceof Character){
-			occupant = (Character) token;
+		if (occupant != null){
+			throw new IllegalStateException("Cannot add a token to a tile that is already full");
 		}
+		if (!(token instanceof Character)){
+			throw new IllegalArgumentException("Cannot add a non-character token to a tile");
+		}
+		occupant = (Character) token;
 	}
 
 	@Override

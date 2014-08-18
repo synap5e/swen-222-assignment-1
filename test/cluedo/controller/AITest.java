@@ -109,10 +109,7 @@ public class AITest {
 			}
 
 			@Override
-			public void onSuggestion(String suggesterPlayerName,
-					Character suggester, Suggestion suggestion, Room room) {
-				// TODO Auto-generated method stub
-				
+			public void onSuggestion(String suggesterPlayerName, Character suggester, Suggestion suggestion, Room room) {
 			}
 		};
 	}
