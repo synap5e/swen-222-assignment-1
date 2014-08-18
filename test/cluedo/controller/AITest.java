@@ -24,7 +24,7 @@ import cluedo.model.cardcollection.Hand;
 import cluedo.model.cardcollection.Suggestion;
 import util.json.JsonObject;
 import util.json.JsonParseException;
-import util.json.MinimalJson;
+import util.json.JsonParser;
 
 public class AITest {
 	
@@ -34,7 +34,7 @@ public class AITest {
 	public void aiNeverIncorrect() throws JsonParseException, IOException{
 		int numberOfTrials = 10000;
 		BasicAIPlayer.disableThinkWait();
-		JsonObject defs = MinimalJson.parseJson(new File("./rules.json"));
+		JsonObject defs = JsonParser.parseJson(new File("./rules.json"));
 		
 		int c = 0;
 		for (int playerCount=2; playerCount <= 6; playerCount++){

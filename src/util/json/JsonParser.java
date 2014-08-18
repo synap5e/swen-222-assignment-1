@@ -10,20 +10,14 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
-/** A quick, minimal json parser hacked up in half an hour.
+/** A quick, json parser hacked up in half an hour.
  * 
  * @author Simon Pinfold
  *
  */
-public class MinimalJson {
+public class JsonParser {
 
 	private static Pattern pat = Pattern.compile("[ \t\n\r]+|(?=[\"{}\\[\\],:])|(?<=[\"{}\\[\\],:])");
-
-	public static void main(String[] args) throws JsonParseException, FileNotFoundException{
-		System.out.println(MinimalJson.parseJson("{\"abc\" : [12, \"asdad\" , 3,4.8], \"a\":3, \"c\":[1,2], \"d\":{\"a\":2,\"b\":{\"c\":1}}, "
-											   + "\"k\":[], \"l\":{}, \"m\" : null  ,\t\"n\":[null,null,{\"a\":null} ] }"));
-		System.out.println(MinimalJson.parseJson(new File("./rules/cards.json")));
-	}
 	
 	public static JsonObject parseJson(String s) throws JsonParseException{
 		Scanner scan = new Scanner(s);

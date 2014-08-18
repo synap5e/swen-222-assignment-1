@@ -9,12 +9,12 @@ public class JsonStreamReader{
 
 	public JsonStreamReader(final InputStream inputStream) {
 		this.scan = new Scanner(inputStream);
-		MinimalJson.initialise(scan);
+		JsonParser.initialise(scan);
 	}
 	
 	public JsonObject next(){
 		try {
-			return MinimalJson.parseJson(scan, true);
+			return JsonParser.parseJson(scan, true);
 		} catch (JsonParseException e) {
 			e.printStackTrace();
 		}

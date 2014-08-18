@@ -19,7 +19,7 @@ import org.junit.Test;
 import util.json.JsonObject;
 import util.json.JsonParseException;
 import util.json.JsonStreamReader;
-import util.json.MinimalJson;
+import util.json.JsonParser;
 import cluedo.controller.interaction.GameInput;
 import cluedo.controller.interaction.GameListener;
 import cluedo.controller.network.NetworkPlayerHandler;
@@ -170,8 +170,8 @@ public class NetworkConsistencyTests implements GameListener {
 	 * 
 	 */
 	public void testGameScript1() throws IOException, JsonParseException{
-		JsonObject defs = MinimalJson.parseJson(new File("./rules.json"));
-		JsonObject starts = MinimalJson.parseJson("{ \"Rope\" : \"Library\",\"Dagger\" : \"Ballroom\",\"Spanner\" : \"Conservatory\",\"Revolver\" : \"Kitchen\",\"Candlestick\" : \"Lounge\",\"Lead Piping\" : \"Billiard Room\"}");
+		JsonObject defs = JsonParser.parseJson(new File("./rules.json"));
+		JsonObject starts = JsonParser.parseJson("{ \"Rope\" : \"Library\",\"Dagger\" : \"Ballroom\",\"Spanner\" : \"Conservatory\",\"Revolver\" : \"Kitchen\",\"Candlestick\" : \"Lounge\",\"Lead Piping\" : \"Billiard Room\"}");
 				
 		Board masterBoard = new Board(defs, starts);
 		
@@ -217,8 +217,8 @@ public class NetworkConsistencyTests implements GameListener {
 	 * 
 	 */
 	public void testMultipleRemotePlayers() throws JsonParseException, IOException{
-		JsonObject defs = MinimalJson.parseJson(new File("./rules.json"));
-		JsonObject starts = MinimalJson.parseJson("{ \"Rope\" : \"Library\",\"Dagger\" : \"Ballroom\",\"Spanner\" : \"Conservatory\",\"Revolver\" : \"Kitchen\",\"Candlestick\" : \"Lounge\",\"Lead Piping\" : \"Billiard Room\"}");
+		JsonObject defs = JsonParser.parseJson(new File("./rules.json"));
+		JsonObject starts = JsonParser.parseJson("{ \"Rope\" : \"Library\",\"Dagger\" : \"Ballroom\",\"Spanner\" : \"Conservatory\",\"Revolver\" : \"Kitchen\",\"Candlestick\" : \"Lounge\",\"Lead Piping\" : \"Billiard Room\"}");
 				
 		Board masterBoard = new Board(defs, starts);
 		
@@ -253,8 +253,8 @@ public class NetworkConsistencyTests implements GameListener {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testRemotePlayerShowHand() throws IOException, JsonParseException{
-		JsonObject defs = MinimalJson.parseJson(new File("./rules.json"));
-		JsonObject starts = MinimalJson.parseJson("{ \"Rope\" : \"Library\",\"Dagger\" : \"Ballroom\",\"Spanner\" : \"Conservatory\",\"Revolver\" : \"Kitchen\",\"Candlestick\" : \"Lounge\",\"Lead Piping\" : \"Billiard Room\"}");
+		JsonObject defs = JsonParser.parseJson(new File("./rules.json"));
+		JsonObject starts = JsonParser.parseJson("{ \"Rope\" : \"Library\",\"Dagger\" : \"Ballroom\",\"Spanner\" : \"Conservatory\",\"Revolver\" : \"Kitchen\",\"Candlestick\" : \"Lounge\",\"Lead Piping\" : \"Billiard Room\"}");
 				
 		Board masterBoard = new Board(defs, starts);
 		
@@ -314,7 +314,7 @@ public class NetworkConsistencyTests implements GameListener {
 	 */
 	@SuppressWarnings("unchecked")
 	private void runGame(final Board masterBoard, final Queue<Object[]> ... playerScripts) throws IOException, JsonParseException {
-		JsonObject defs = MinimalJson.parseJson(new File("./rules.json"));
+		JsonObject defs = JsonParser.parseJson(new File("./rules.json"));
 		
 		NetworkPlayerHandler net;
 		this.master = new GameMaster(

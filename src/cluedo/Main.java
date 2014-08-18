@@ -12,7 +12,7 @@ import javax.swing.JOptionPane;
 import util.json.JsonObject;
 import util.json.JsonParseException;
 import util.json.JsonStreamReader;
-import util.json.MinimalJson;
+import util.json.JsonParser;
 import cluedo.controller.GameMaster;
 import cluedo.controller.GameSlave;
 import cluedo.controller.network.NetworkPlayerHandler;
@@ -76,10 +76,10 @@ public class Main {
 		JsonObject defs = null;
 		try {
 			try {
-			defs = MinimalJson.parseJson(new File("./rules.json"));
+			defs = JsonParser.parseJson(new File("./rules.json"));
 			} catch (FileNotFoundException fnfe){
 				// allow loading from jar file
-				defs = MinimalJson.parseJson(Main.class.getClassLoader().getResource("rules.json").openStream());
+				defs = JsonParser.parseJson(Main.class.getClassLoader().getResource("rules.json").openStream());
 			}
 		} catch (JsonParseException e) {
 			System.err.println("Could not load card definitions");
