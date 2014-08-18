@@ -345,6 +345,7 @@ public class CluedoFrame extends JFrame implements GameListener {
 	private void openRules(){
 		//Create the dialog
 		JDialog dialog = new JDialog(this);
+		dialog.setTitle("Rules");
 		dialog.setSize(400, 300);
 		dialog.setResizable(false);
 		dialog.setAlwaysOnTop(true);
